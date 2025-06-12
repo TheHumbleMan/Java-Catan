@@ -114,30 +114,45 @@ public class EnhancedHexGameBoard {
         
         // Remove duplicate vertices that represent the same intersection
         Set<VertexCoordinate> uniqueVertices = new HashSet<>();
-        Map<String, VertexCoordinate> vertexPositionMap = new HashMap<>();
+        List<VertexCoordinate> vertexList = new ArrayList<>(validVertices);
         
-        for (VertexCoordinate vertex : validVertices) {
-            HexCoordinate.Point2D position = vertex.toPixel(50.0, 0, 0); // Use standard size for comparison
-            String positionKey = String.format("%.1f,%.1f", position.x, position.y);
+        System.out.println("DEBUG: Starting with " + validVertices.size() + " vertices before deduplication");
+        
+        for (VertexCoordinate vertex : vertexList) {
+            boolean isDuplicate = false;
             
-            if (!vertexPositionMap.containsKey(positionKey)) {
-                vertexPositionMap.put(positionKey, vertex);
+            // Check if this vertex represents the same physical location as any existing vertex
+            for (VertexCoordinate existing : uniqueVertices) {
+                if (areVerticesAtSameLocation(vertex, existing)) {
+                    isDuplicate = true;
+                    break;
+                }
+            }
+            
+            if (!isDuplicate) {
                 uniqueVertices.add(vertex);
             }
         }
         
+        System.out.println("DEBUG: After deduplication: " + uniqueVertices.size() + " vertices");
         validVertices = uniqueVertices;
         
         // Similarly, remove duplicate edges
         Set<EdgeCoordinate> uniqueEdges = new HashSet<>();
-        Map<String, EdgeCoordinate> edgePositionMap = new HashMap<>();
+        List<EdgeCoordinate> edgeList = new ArrayList<>(validEdges);
         
-        for (EdgeCoordinate edge : validEdges) {
-            HexCoordinate.Point2D position = edge.toPixel(50.0, 0, 0); // Use standard size for comparison
-            String positionKey = String.format("%.1f,%.1f", position.x, position.y);
+        for (EdgeCoordinate edge : edgeList) {
+            boolean isDuplicate = false;
             
-            if (!edgePositionMap.containsKey(positionKey)) {
-                edgePositionMap.put(positionKey, edge);
+            // Check if this edge represents the same physical location as any existing edge
+            for (EdgeCoordinate existing : uniqueEdges) {
+                if (areEdgesAtSameLocation(edge, existing)) {
+                    isDuplicate = true;
+                    break;
+                }
+            }
+            
+            if (!isDuplicate) {
                 uniqueEdges.add(edge);
             }
         }
@@ -405,5 +420,59 @@ public class EnhancedHexGameBoard {
     
     public int getRobberY() {
         return robberPosition.getR();
+    }
+    
+    /**
+     * Check if two vertices represent the same physical location.
+     * This uses the mathematical properties of hexagonal grids to determine
+     * if vertices from different hexes are actually the same intersection.
+     */
+    private boolean areVerticesAtSameLocation(VertexCoordinate v1, VertexCoordinate v2) {
+        // If vertices are identical, they're the same
+        if (v1.equals(v2)) {
+            return true;
+        }
+        
+        // Check if vertices share at least one hex and are at the same physical location
+        List<HexCoordinate> hexes1 = v1.getAdjacentHexes();
+        List<HexCoordinate> hexes2 = v2.getAdjacentHexes();
+        
+        // If they share a hex, they might be the same vertex
+        boolean shareHex = false;
+        for (HexCoordinate hex1 : hexes1) {
+            for (HexCoordinate hex2 : hexes2) {
+                if (hex1.equals(hex2)) {
+                    shareHex = true;
+                    break;
+                }
+            }
+            if (shareHex) break;
+        }
+        
+        if (shareHex) {
+            // Use pixel distance as final check with larger tolerance
+            HexCoordinate.Point2D pos1 = v1.toPixel(50.0, 0, 0);
+            HexCoordinate.Point2D pos2 = v2.toPixel(50.0, 0, 0);
+            double distance = Math.sqrt(Math.pow(pos1.x - pos2.x, 2) + Math.pow(pos1.y - pos2.y, 2));
+            return distance < 5.0; // Larger tolerance for shared vertices
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Check if two edges represent the same physical location.
+     */
+    private boolean areEdgesAtSameLocation(EdgeCoordinate e1, EdgeCoordinate e2) {
+        // If edges are identical, they're the same
+        if (e1.equals(e2)) {
+            return true;
+        }
+        
+        // Use pixel distance check with tolerance
+        HexCoordinate.Point2D pos1 = e1.toPixel(50.0, 0, 0);
+        HexCoordinate.Point2D pos2 = e2.toPixel(50.0, 0, 0);
+        double distance = Math.sqrt(Math.pow(pos1.x - pos2.x, 2) + Math.pow(pos1.y - pos2.y, 2));
+        return distance < 5.0; // Tolerance for edge comparison
     }
 }

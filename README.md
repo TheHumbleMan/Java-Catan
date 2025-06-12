@@ -6,15 +6,34 @@ Eine Java-Implementierung des beliebten Brettspiels CATAN mit JavaFX als grafisc
 
 Dieses Projekt implementiert die Grundregeln des 1995 erschienenen Brettspiels CATAN (ursprünglich "Die Siedler von Catan") in Java. Das Spiel verwendet JavaFX für die grafische Benutzeroberfläche und Maven als Build-System.
 
+## Aktuelle Entwicklungen (2025)
+
+### 🎯 Erhebliche Verbesserungen am hexagonalen Spielbrett
+- **Vollständig überarbeitetes Board-System** mit präziser Kantenberechnung
+- **Optimierte Edge- und Vertex-Positionierung** für exakte Straßen- und Siedlungsplatzierung
+- **Mathematische Duplikatentfernung** zur korrekten Anzahl von Baufeldern
+- **Erweiterte Debug-Tools** für Board-Validierung und Geometrie-Tests
+- **Zahlreiche Test-Implementierungen** zur Qualitätssicherung
+
+### 📈 Technische Verbesserungen
+- **EnhancedHexGameBoard**: Komplett überarbeitete hexagonale Board-Implementierung
+- **EdgeCoordinate & VertexCoordinate**: Neue Koordinatenklassen für präzise Positionierung
+- **Präzise Koordinatenberechnung**: Millimetergenaue Positionierung mit Pixel-Konvertierung
+- **Edge-Generation-Algorithmus**: Mathematischer Ansatz für korrekte Straßenpositionen
+- **Vertex-Deduplication**: Intelligente Entfernung doppelter Bauplätze mit Toleranz-Check
+- **Umfangreiches Test-System**: 20+ spezialisierte Test- und Demo-Klassen
+- **Legacy-Kompatibilität**: Vollständige Rückwärtskompatibilität zu bestehenden Koordinaten
+
 ## Funktionen
 
 ### Implementierte Features
 - ✅ Vollständige Spiellogik nach den Original-CATAN-Regeln von 1995
 - ✅ **Authentische hexagonale Spielfelder** wie im Original CATAN
-- ✅ **Optimierte Baupositions-Sichtbarkeit** - Straßen und Städte klar erkennbar
-- ✅ **Verbessertes Spielbrett-Layout** mit korrekt positionierten Hexagons
-- ✅ Hexagonales Koordinatensystem mit Axial-Koordinaten (q,r)
+- ✅ **Präzise Board-Geometrie** mit mathematisch korrekter Positionierung
+- ✅ **Optimierte Baupositions-Sichtbarkeit** - Straßen und Städte exakt platziert
+- ✅ **Erweiterte hexagonale Koordinatensysteme** mit Axial- und Pixel-Koordinaten
 - ✅ Originalgetreue 19-Feld CATAN Brettaufteilung
+- ✅ **54 Siedlungsplätze und 72 Straßenpositions** wie im Original
 - ✅ 2-4 Spieler-Unterstützung
 - ✅ Zufällige Spielbrett-Generierung
 - ✅ Siedlungen, Städte und Straßen bauen
@@ -26,6 +45,7 @@ Dieses Projekt implementiert die Grundregeln des 1995 erschienenen Brettspiels C
 - ✅ Anfangsplatzierung von Siedlungen und Straßen
 - ✅ Deutsche und englische Lokalisierung
 - ✅ Rückwärtskompatibilität zu quadratischen Feldern
+- ✅ **Umfangreiche Test-Suite** für Board-Validierung
 
 ### Spielbrett-Modi
 Das Spiel unterstützt zwei Spielbrett-Modi:
@@ -80,26 +100,60 @@ mvn javafx:run
 mvn clean package
 ```
 
+### 🧪 Umfangreiche Test- und Demo-Suite
+
+Das Projekt verfügt über eine umfassende Sammlung von Test- und Demonstrationstools:
+
+#### Debug- und Validierungs-Tools
+- **EdgeCountAnalysis**: Analysiert die Anzahl der generierten Kanten
+- **EdgeMathTest**: Mathematische Validierung der Kantenberechnung 
+- **DeduplicationTest**: Test der Duplikat-Eliminierung bei Vertices/Edges
+- **VertexCoordinateTest**: Validierung des Vertex-Koordinatensystems
+- **RoadVisibilityTest**: Test der Straßen-Sichtbarkeit und -Positionierung
+- **SimpleEdgeTest**: Einfache Edge-Koordinaten Tests
+- **RealDuplicateAnalysis**: Tiefgehende Analyse echter Duplikate
+
+#### Visualisierungs- und Layout-Demos
+- **EnhancedBoardDemo**: Demonstration des verbesserten Board-Systems
+- **AuthenticCatanLayoutDemo**: Authentisches CATAN-Layout Showcase
+- **LayoutComparison**: Vergleich verschiedener Layout-Ansätze
+- **VisualLayoutTest**: Visuelle Darstellung der Board-Geometrie
+- **HexPositionDebug**: Debug-Tool für Hexagon-Positionen
+- **SymmetryTest**: Test der Board-Symmetrie
+
+#### Spezialisierte Generatoren
+- **CorrectEdgeGenerator**: Korrekte Edge-Generierung für das Board
+- **VertexDebugger**: Detailliertes Vertex-Debugging
+- **SimpleLayoutDemo**: Einfache Layout-Demonstration
+
 ## Projektstruktur
 
-```
+```text
 src/
 ├── main/
 │   ├── java/com/catan/
 │   │   ├── CatanApplication.java        # Haupt-Anwendungsklasse
 │   │   ├── controller/
 │   │   │   └── MainController.java      # UI-Controller
+│   │   ├── demo/                        # Test- und Demo-Tools (20+ Klassen)
+│   │   │   ├── EnhancedBoardDemo.java   # Board-System Demonstration
+│   │   │   ├── EdgeCountAnalysis.java   # Kanten-Analyse Tool
+│   │   │   ├── VertexDebugger.java      # Vertex-Debug Tool
+│   │   │   ├── RoadVisibilityTest.java  # Straßen-Sichtbarkeits-Test
+│   │   │   └── ...weitere Demo-Tools
 │   │   ├── model/                       # Spiel-Logik
 │   │   │   ├── Building.java
 │   │   │   ├── CatanGame.java
 │   │   │   ├── GameBoard.java
-│   │   │   ├── GameConstants.java
+│   │   │   ├── EnhancedHexGameBoard.java    # ⭐ Neue Enhanced Board-Klasse
+│   │   │   ├── HexGameBoard.java            # Hexagonales Board
+│   │   │   ├── HexCoordinate.java           # ⭐ Hexagon-Koordinaten
+│   │   │   ├── EdgeCoordinate.java          # ⭐ Kanten-Koordinaten  
+│   │   │   ├── VertexCoordinate.java        # ⭐ Vertex-Koordinaten
 │   │   │   ├── Player.java
-│   │   │   ├── PlayerColor.java
-│   │   │   ├── ResourceType.java
 │   │   │   ├── Road.java
 │   │   │   ├── TerrainTile.java
-│   │   │   └── TerrainType.java
+│   │   │   └── ...weitere Model-Klassen
 │   │   └── view/                        # UI-Komponenten
 │   │       └── UIComponents.java
 │   └── resources/
@@ -107,8 +161,13 @@ src/
 └── test/
     └── java/com/catan/model/            # Unit-Tests
         ├── CatanGameTest.java
-        └── PlayerTest.java
+        ├── EnhancedHexGameBoardTest.java    # ⭐ Enhanced Board Tests
+        ├── EdgeCoordinateTest.java          # ⭐ Edge-Koordinaten Tests
+        ├── VertexCoordinateTest.java        # ⭐ Vertex-Koordinaten Tests
+        └── ...weitere Test-Klassen
 ```
+
+⭐ = Neue Klassen in 2025
 
 ## Spielregeln
 
@@ -186,6 +245,37 @@ Unit-Tests sind verfügbar für:
 
 Tests ausführen mit: `mvn test`
 
+## Changelog 2025
+
+### Version 2.0 - Enhanced Hexagonal Board System
+**Datum: Januar - Juni 2025**
+
+#### 🔥 Hauptfeatures
+- ✅ **Vollständiges Board-System Redesign** mit mathematisch korrekter Geometrie
+- ✅ **EnhancedHexGameBoard** - Neue Board-Implementierung mit Vertex/Edge-Koordinaten
+- ✅ **EdgeCoordinate & VertexCoordinate** - Spezialisierte Koordinatenklassen
+- ✅ **Automatische Duplikat-Eliminierung** - Keine doppelten Kreuzungen mehr
+- ✅ **Pixel-perfekte Positionierung** - Millimetergenaue Platzierung von Objekten
+
+#### 🧪 Test-Infrastructure 
+- ✅ **20+ Demo/Test-Klassen** für umfassende Validierung
+- ✅ **EdgeCountAnalysis** - Mathematische Analyse der Kantenanzahl
+- ✅ **VertexDebugger** - Detailliertes Debugging von Vertex-Positionen
+- ✅ **RoadVisibilityTest** - Validierung der Straßen-Sichtbarkeit
+- ✅ **AuthenticCatanLayoutDemo** - Showcase des authentischen CATAN-Layouts
+
+#### 🔧 Technische Verbesserungen
+- ✅ **Legacy-Kompatibilität** - Vollständige Rückwärtskompatibilität
+- ✅ **Performance-Optimierungen** - Effiziente Duplikat-Erkennung
+- ✅ **Robuste Koordinaten-Mathematik** - Präzise hexagonale Berechnungen
+- ✅ **Umfassende Unit-Tests** - EnhancedHexGameBoardTest, EdgeCoordinateTest, etc.
+
+#### 📐 Board-Geometrie Verbesserungen
+- ✅ **Exakte 54 Vertices** - Wie im Original CATAN (keine Duplikate)
+- ✅ **Präzise 72 Edges** - Korrekte Anzahl von Straßenpositionen  
+- ✅ **Authentische 19-Feld Anordnung** - Original CATAN 5-Reihen Layout (3-4-5-4-3)
+- ✅ **Millimeter-genaue Abstände** - Perfekte Positionierung für UI-Darstellung
+
 ## Lizenz und Credits
 
 Dieses Projekt ist eine Implementierung der CATAN-Spielregeln zu Bildungszwecken.
@@ -214,6 +304,40 @@ CatanGame game = new CatanGame(playerNames, true);
 // Oder explizit quadratisches Brett für Kompatibilität
 CatanGame legacyGame = new CatanGame(playerNames, false);
 ```
+
+### Neue Koordinaten-Systeme (2025)
+
+Das Enhanced Board System führt drei spezialisierte Koordinatenklassen ein:
+
+#### HexCoordinate
+```java
+// Axial-Koordinaten für hexagonale Felder
+HexCoordinate hex = new HexCoordinate(q, r);
+Point2D pixelPos = hex.toPixel(hexSize, centerX, centerY);
+int distance = hex1.distanceTo(hex2);
+```
+
+#### VertexCoordinate  
+```java
+// Koordinaten für Gebäude-Positionen (Kreuzungen)
+VertexCoordinate vertex = new VertexCoordinate(x, y, direction);
+List<HexCoordinate> adjacentHexes = vertex.getAdjacentHexes();
+List<EdgeCoordinate> adjacentEdges = vertex.getAdjacentEdges();
+```
+
+#### EdgeCoordinate
+```java
+// Koordinaten für Straßen-Positionen
+EdgeCoordinate edge = new EdgeCoordinate(x, y, direction);
+VertexCoordinate[] connectedVertices = edge.getConnectedVertices();
+List<HexCoordinate> adjacentHexes = edge.getAdjacentHexes();
+```
+
+Diese Koordinatensysteme gewährleisten:
+- ✅ **Exakt eine Kreuzung pro Schnittpunkt** (keine Duplikate)
+- ✅ **Straßen genau zwischen Siedlungen** positioniert
+- ✅ **Mathematisch korrekte Nachbarschaftsbeziehungen**
+- ✅ **Pixel-genaue Darstellung** für die UI
 
 ### Board-Klassen
 - `HexCoordinate`: Axial-Koordinatensystem (q,r)

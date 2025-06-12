@@ -115,8 +115,8 @@ public class MainController {
         
         // Settlement/road positioning constants
         final double SETTLEMENT_SIZE = 8.0;
-        final double ROAD_LENGTH = 30.0;
-        final double ROAD_WIDTH = 4.0;
+        final double ROAD_LENGTH = 35.0; // Increased length for better visibility
+        final double ROAD_WIDTH = 8.0; // Increased width for better visibility
         
         // First: Render all hexagon terrain tiles
         for (TerrainTile tile : enhancedBoard.getAllTiles()) {
@@ -148,9 +148,11 @@ public class MainController {
             }
         }
         
-        // Second: Only show relevant settlement spots based on game state
+        // Second: Show only authentic CATAN settlement positions (54 total)
         Player currentPlayer = game.getCurrentPlayer();
         Set<VertexCoordinate> relevantVertices = getRelevantVerticesForCurrentState(enhancedBoard, currentPlayer);
+        
+        System.out.println("DEBUG: Rendering " + relevantVertices.size() + " settlement vertices");
         
         for (VertexCoordinate vertex : relevantVertices) {
             // Calculate proper vertex position using corrected math
@@ -162,39 +164,64 @@ public class MainController {
             
             // Create settlement spot
             javafx.scene.shape.Circle settlementSpot = new javafx.scene.shape.Circle(SETTLEMENT_SIZE);
-            settlementSpot.setCenterX(vertexPos.x);
-            settlementSpot.setCenterY(vertexPos.y);
+            settlementSpot.setLayoutX(vertexPos.x);
+            settlementSpot.setLayoutY(vertexPos.y);
             
-            // Color and style the settlement spot
+            // Style the settlement spot based on state
             if (isOccupied) {
+                // Find the building and show it with player color
                 Building building = enhancedBoard.getBuildings().stream()
                     .filter(b -> b.getVertexCoordinate() != null && b.getVertexCoordinate().equals(vertex))
                     .findFirst().orElse(null);
+                
                 if (building != null) {
                     settlementSpot.setFill(getPlayerColor(building.getOwner()));
                     settlementSpot.setStroke(Color.BLACK);
                     settlementSpot.setStrokeWidth(2.0);
+                    
+                    // Make cities larger
+                    if (building.getType() == Building.Type.CITY) {
+                        settlementSpot.setRadius(SETTLEMENT_SIZE * 1.5);
+                    }
                 }
             } else if (canBuild) {
+                // Buildable position - green
                 settlementSpot.setFill(Color.LIGHTGREEN);
                 settlementSpot.setStroke(Color.DARKGREEN);
                 settlementSpot.setStrokeWidth(1.5);
                 settlementSpot.setOnMouseClicked(e -> handleEnhancedVertexClick(vertex, settlementSpot, enhancedBoard));
+                
+                // Add hover effects
+                settlementSpot.setOnMouseEntered(e -> {
+                    settlementSpot.setScaleX(1.2);
+                    settlementSpot.setScaleY(1.2);
+                });
+                settlementSpot.setOnMouseExited(e -> {
+                    settlementSpot.setScaleX(1.0);
+                    settlementSpot.setScaleY(1.0);
+                });
             } else {
-                // Don't show unavailable spots to reduce clutter
-                continue;
+                // Non-buildable position - show as light gray for reference
+                settlementSpot.setFill(Color.LIGHTGRAY);
+                settlementSpot.setStroke(Color.GRAY);
+                settlementSpot.setStrokeWidth(0.5);
+                settlementSpot.setOpacity(0.4);
             }
             
             // Add tooltip
-            javafx.scene.control.Tooltip tooltip = new javafx.scene.control.Tooltip(
-                isOccupied ? "Siedlung vorhanden" : "Klicken für Siedlung");
+            String tooltipText = isOccupied ? "Gebäude vorhanden" : 
+                                (canBuild ? "Klicken für Siedlung" : "Nicht bebaubar");
+            javafx.scene.control.Tooltip tooltip = new javafx.scene.control.Tooltip(tooltipText);
             javafx.scene.control.Tooltip.install(settlementSpot, tooltip);
             
             boardGrid.getChildren().add(settlementSpot);
+            // Bring settlements to front
+            settlementSpot.toFront();
         }
         
-        // Third: Only show relevant road spots based on game state
+        // Third: Show only authentic CATAN road positions (72 total)
         Set<EdgeCoordinate> relevantEdges = getRelevantEdgesForCurrentState(enhancedBoard, currentPlayer);
+        System.out.println("DEBUG: Rendering " + relevantEdges.size() + " road edges");
         
         for (EdgeCoordinate edge : relevantEdges) {
             // Calculate proper edge position using corrected math
@@ -205,38 +232,60 @@ public class MainController {
             boolean isRoadOccupied = enhancedBoard.getRoads().stream()
                     .anyMatch(r -> r.getEdgeCoordinate() != null && r.getEdgeCoordinate().equals(edge));
             
-            // Create road segment
+            // Create road segment with increased visibility
             Rectangle roadSegment = new Rectangle(ROAD_LENGTH, ROAD_WIDTH);
             roadSegment.setX(edgePos.x - ROAD_LENGTH/2);
             roadSegment.setY(edgePos.y - ROAD_WIDTH/2);
             roadSegment.setRotate(rotation);
             
+            // Make all roads more visible by adding an outline effect
+            roadSegment.setEffect(new javafx.scene.effect.DropShadow(
+                javafx.scene.effect.BlurType.THREE_PASS_BOX, Color.BLACK, 2, 0.0, 1, 1));
+            
             // Color and style the road segment
             if (isRoadOccupied) {
+                // Find the road and show it with player color
                 com.catan.model.Road road = enhancedBoard.getRoads().stream()
                     .filter(r -> r.getEdgeCoordinate() != null && r.getEdgeCoordinate().equals(edge))
                     .findFirst().orElse(null);
                 if (road != null) {
                     roadSegment.setFill(getPlayerColor(road.getOwner()));
                     roadSegment.setStroke(Color.BLACK);
-                    roadSegment.setStrokeWidth(1.0);
+                    roadSegment.setStrokeWidth(2.0); // Thicker stroke for existing roads
                 }
             } else if (canBuildRoad) {
+                // Buildable road - blue
                 roadSegment.setFill(Color.LIGHTBLUE);
                 roadSegment.setStroke(Color.DARKBLUE);
-                roadSegment.setStrokeWidth(1.0);
+                roadSegment.setStrokeWidth(2.0); // Thicker stroke for better visibility
                 roadSegment.setOnMouseClicked(e -> handleEnhancedEdgeClick(edge, roadSegment, enhancedBoard));
+                
+                // Add hover effects for buildable roads
+                roadSegment.setOnMouseEntered(e -> {
+                    roadSegment.setScaleX(1.1);
+                    roadSegment.setScaleY(1.1);
+                });
+                roadSegment.setOnMouseExited(e -> {
+                    roadSegment.setScaleX(1.0);
+                    roadSegment.setScaleY(1.0);
+                });
             } else {
-                // Don't show unavailable roads to reduce clutter
-                continue;
+                // Non-buildable roads - show in dim gray for reference
+                roadSegment.setFill(Color.LIGHTGRAY);
+                roadSegment.setStroke(Color.GRAY);
+                roadSegment.setStrokeWidth(1.0);
+                roadSegment.setOpacity(0.3);
             }
             
             // Add tooltip
-            javafx.scene.control.Tooltip roadTooltip = new javafx.scene.control.Tooltip(
-                isRoadOccupied ? "Straße vorhanden" : "Klicken für Straße");
+            String tooltipText = isRoadOccupied ? "Straße vorhanden" : 
+                               (canBuildRoad ? "Klicken für Straße" : "Straße nicht möglich");
+            javafx.scene.control.Tooltip roadTooltip = new javafx.scene.control.Tooltip(tooltipText);
             javafx.scene.control.Tooltip.install(roadSegment, roadTooltip);
             
             boardGrid.getChildren().add(roadSegment);
+            // Bring roads to front to ensure they're visible above tiles
+            roadSegment.toFront();
         }
     }
     
@@ -1147,8 +1196,8 @@ public class MainController {
     }
     
     /**
-     * Get only the relevant vertices for the current game state to avoid clutter.
-     * Shows only buildable positions and occupied positions.
+     * Get only the authentic CATAN settlement positions (54 total).
+     * Shows only the actual game positions, not all mathematical possibilities.
      */
     private Set<VertexCoordinate> getRelevantVerticesForCurrentState(EnhancedHexGameBoard enhancedBoard, Player currentPlayer) {
         Set<VertexCoordinate> relevantVertices = new HashSet<>();
@@ -1160,19 +1209,17 @@ public class MainController {
             }
         }
         
-        // Add vertices where the current player can build
-        for (VertexCoordinate vertex : enhancedBoard.getValidVertices()) {
-            if (enhancedBoard.canPlaceBuilding(vertex, currentPlayer)) {
-                relevantVertices.add(vertex);
-            }
-        }
+        // Only add the valid vertices from the enhanced board (these are the authentic CATAN positions)
+        relevantVertices.addAll(enhancedBoard.getValidVertices());
         
+        // Do NOT generate additional vertices - use only the authentic game positions
+        System.out.println("DEBUG: Showing " + relevantVertices.size() + " authentic settlement positions");
         return relevantVertices;
     }
     
     /**
-     * Get only the relevant edges for the current game state to avoid clutter.
-     * Shows only buildable road positions and occupied road positions.
+     * Get only the authentic CATAN road positions (72 total).
+     * Shows only the actual game positions, not all mathematical possibilities.
      */
     private Set<EdgeCoordinate> getRelevantEdgesForCurrentState(EnhancedHexGameBoard enhancedBoard, Player currentPlayer) {
         Set<EdgeCoordinate> relevantEdges = new HashSet<>();
@@ -1184,13 +1231,11 @@ public class MainController {
             }
         }
         
-        // Add edges where the current player can build roads
-        for (EdgeCoordinate edge : enhancedBoard.getValidEdges()) {
-            if (enhancedBoard.canPlaceRoad(edge, currentPlayer)) {
-                relevantEdges.add(edge);
-            }
-        }
+        // Only add the valid edges from the enhanced board (these are the authentic CATAN positions)
+        relevantEdges.addAll(enhancedBoard.getValidEdges());
         
+        // Do NOT generate additional edges - use only the authentic game positions
+        System.out.println("DEBUG: Rendering " + relevantEdges.size() + " authentic road positions");
         return relevantEdges;
     }
     

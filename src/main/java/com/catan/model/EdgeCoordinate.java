@@ -33,14 +33,33 @@ public class EdgeCoordinate {
     }
     
     /**
+     * Simple Point2D class for pixel coordinates
+     */
+    public static class Point2D {
+        public final double x;
+        public final double y;
+        
+        public Point2D(double x, double y) {
+            this.x = x;
+            this.y = y;
+        }
+    }
+     /**
      * Get the two vertices that this edge connects.
      */
     public VertexCoordinate[] getConnectedVertices() {
+        // Each edge connects two adjacent vertices
+        int nextDirection = (direction + 1) % 6;
+        
+        // First vertex: current direction on this hex
         VertexCoordinate vertex1 = new VertexCoordinate(x, y, direction);
-        VertexCoordinate vertex2 = new VertexCoordinate(x, y, (direction + 1) % 6);
+        
+        // Second vertex: next direction on this hex
+        VertexCoordinate vertex2 = new VertexCoordinate(x, y, nextDirection);
+        
         return new VertexCoordinate[]{vertex1, vertex2};
     }
-    
+
     /**
      * Get the hexagon tiles that share this edge.
      */
@@ -50,7 +69,7 @@ public class EdgeCoordinate {
         // Add the primary hex that this edge belongs to
         hexes.add(new HexCoordinate(x, y));
         
-        // Add the neighboring hex on the other side of this edge
+        // Add neighboring hex based on edge direction (if it exists)
         switch (direction) {
             case 0: // Top-right edge
                 hexes.add(new HexCoordinate(x + 1, y - 1));
@@ -79,36 +98,26 @@ public class EdgeCoordinate {
      * Convert edge coordinate to pixel position for rendering.
      */
     public HexCoordinate.Point2D toPixel(double hexSize, double centerX, double centerY) {
-        // First get the hex center using CATAN positioning
-        HexCoordinate hexCoord = new HexCoordinate(x, y);
-        HexCoordinate.Point2D hexCenter = hexCoord.toPixelCatan(hexSize);
-        
         // Get the two vertices that this edge connects
         VertexCoordinate[] vertices = getConnectedVertices();
+        
+        // Calculate pixel positions for both vertices
         HexCoordinate.Point2D vertex1Pos = vertices[0].toPixel(hexSize, centerX, centerY);
         HexCoordinate.Point2D vertex2Pos = vertices[1].toPixel(hexSize, centerX, centerY);
         
-        // Calculate edge center (midpoint between vertices)
-        double edgeCenterX = (vertex1Pos.x + vertex2Pos.x) / 2.0;
-        double edgeCenterY = (vertex1Pos.y + vertex2Pos.y) / 2.0;
+        // Return the midpoint between the two vertices
+        double midX = (vertex1Pos.x + vertex2Pos.x) / 2.0;
+        double midY = (vertex1Pos.y + vertex2Pos.y) / 2.0;
         
-        return new HexCoordinate.Point2D(edgeCenterX, edgeCenterY);
+        return new HexCoordinate.Point2D(midX, midY);
     }
     
     /**
      * Get the rotation angle for rendering the road on this edge.
      */
     public double getRotationAngle(double hexSize, double centerX, double centerY) {
-        // Get the two vertices that this edge connects
-        VertexCoordinate[] vertices = getConnectedVertices();
-        HexCoordinate.Point2D vertex1Pos = vertices[0].toPixel(hexSize, centerX, centerY);
-        HexCoordinate.Point2D vertex2Pos = vertices[1].toPixel(hexSize, centerX, centerY);
-        
-        // Calculate angle between vertices
-        double deltaX = vertex2Pos.x - vertex1Pos.x;
-        double deltaY = vertex2Pos.y - vertex1Pos.y;
-        
-        return Math.toDegrees(Math.atan2(deltaY, deltaX));
+        // Calculate angle based on direction (each direction is 60 degrees apart)
+        return direction * 60.0; // Convert direction to degrees
     }
     
     @Override
