@@ -1,14 +1,14 @@
 package com.catan.demo;
 
-import com.catan.model.EnhancedHexGameBoard;
-import com.catan.model.VertexCoordinate;
+import com.catan.model.AuthenticCatanBoard;
 import com.catan.model.HexCoordinate;
+import com.catan.model.VertexCoordinate;
 
 public class DeduplicationTest {
     public static void main(String[] args) {
         System.out.println("=== Testing Vertex/Edge Deduplication ===");
         
-        EnhancedHexGameBoard board = new EnhancedHexGameBoard();
+        AuthenticCatanBoard board = new AuthenticCatanBoard();
         
         int vertexCount = board.getValidVertices().size();
         int edgeCount = board.getValidEdges().size();
@@ -62,7 +62,6 @@ public class DeduplicationTest {
         System.out.println("=== Analysis Complete ===");
         System.out.println("If distances are all near 0, then toPixel() correctly identifies same vertices.");
         System.out.println("If distances are large, then the deduplication algorithm needs improvement.");
-        }
         
         if (edgeCount < 114) {
             System.out.println("✓ Edge deduplication working! Reduced from 114 to " + edgeCount);

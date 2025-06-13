@@ -10,11 +10,10 @@ import java.util.Map;
 
 /**
  * Represents the CATAN game board with terrain tiles, buildings, and roads.
- * Uses a simplified square grid instead of hexagons for easier implementation.
- * For hexagonal board, use HexGameBoard class.
+ * Supports both legacy square grid and authentic CATAN hexagonal layout.
  */
 public class GameBoard {
-    public static final int BOARD_SIZE = 5; // 5x5 grid of terrain tiles
+    public static final int BOARD_SIZE = 5; // 5x5 grid of terrain tiles for legacy board
     
     private final TerrainTile[][] tiles;
     private final Map<String, Building> buildings; // Key: "x,y"
@@ -22,49 +21,38 @@ public class GameBoard {
     private int robberX;
     private int robberY;
     
-    // Optional hexagonal board support
-    private final HexGameBoard hexBoard;
-    private final EnhancedHexGameBoard enhancedHexBoard;
-    private final boolean useHexBoard;
-    private final boolean useEnhanced;
+    // Authentic CATAN board support
+    public final AuthenticCatanBoard authenticBoard;
+    public final boolean useAuthentic;
     
     public GameBoard() {
-        this(false, false); // Default to square grid for backward compatibility
+        this(true); // Default to authentic CATAN board
     }
     
-    public GameBoard(boolean useHexagonal) {
-        this(useHexagonal, false); // Use legacy hex board by default
-    }
-    
-    public GameBoard(boolean useHexagonal, boolean useEnhanced) {
-        this.useHexBoard = useHexagonal;
-        this.useEnhanced = useEnhanced && useHexagonal; // Enhanced only works with hexagonal
+    public GameBoard(boolean useAuthentic) {
+        this.useAuthentic = useAuthentic;
         
-        if (useHexagonal) {
-            if (this.useEnhanced) {
-                // Use enhanced hexagonal board with vertex/edge coordinates
-                this.enhancedHexBoard = new EnhancedHexGameBoard();
-                this.hexBoard = null;
-            } else {
-                // Use legacy hexagonal board
-                this.hexBoard = new HexGameBoard();
-                this.enhancedHexBoard = null;
-            }
+        if (this.useAuthentic) {
+            // Use new authentic CATAN board
+            this.authenticBoard = new AuthenticCatanBoard();
             this.tiles = null;
             this.buildings = null;
             this.roads = null;
         } else {
-            // Use traditional square board
-            this.hexBoard = null;
-            this.enhancedHexBoard = null;
+            // Use legacy square board
+            this.authenticBoard = null;
             this.tiles = new TerrainTile[BOARD_SIZE][BOARD_SIZE];
             this.buildings = new HashMap<>();
             this.roads = new ArrayList<>();
-            initializeBoard();
+            this.robberX = 2;
+            this.robberY = 2;
+            
+            // Initialize the legacy board
+            initializeLegacyBoard();
         }
     }
     
-    private void initializeBoard() {
+    private void initializeLegacyBoard() {
         // Define the standard CATAN terrain distribution
         List<TerrainType> terrainTypes = Arrays.asList(
             TerrainType.FOREST, TerrainType.FOREST, TerrainType.FOREST, TerrainType.FOREST,
@@ -87,11 +75,10 @@ public class GameBoard {
         int terrainIndex = 0;
         int numberIndex = 0;
         
-        // Fill the 5x5 board (25 tiles total, but we only use 19 for standard CATAN)
+        // Fill the 5x5 board
         for (int x = 0; x < BOARD_SIZE; x++) {
             for (int y = 0; y < BOARD_SIZE; y++) {
-                // Skip corner tiles to create a more CATAN-like shape
-                if (isValidTilePosition(x, y) && terrainIndex < terrainTypes.size()) {
+                if (terrainIndex < terrainTypes.size()) {
                     TerrainType terrain = terrainTypes.get(terrainIndex++);
                     int numberToken = 0;
                     
@@ -111,20 +98,9 @@ public class GameBoard {
         }
     }
     
-    private boolean isValidTilePosition(int x, int y) {
-        // Create a diamond-like shape similar to CATAN board
-        int center = BOARD_SIZE / 2;
-        int distance = Math.abs(x - center) + Math.abs(y - center);
-        return distance <= 2; // This creates a diamond shape with 13 tiles
-    }
-    
     public TerrainTile getTile(int x, int y) {
-        if (useHexBoard) {
-            if (useEnhanced) {
-                return enhancedHexBoard.getTile(x, y);
-            } else {
-                return hexBoard.getTile(x, y);
-            }
+        if (useAuthentic) {
+            return authenticBoard.getHexTile(new HexCoordinate(x, y));
         }
         
         if (x >= 0 && x < BOARD_SIZE && y >= 0 && y < BOARD_SIZE) {
@@ -134,12 +110,9 @@ public class GameBoard {
     }
     
     public boolean canPlaceBuilding(int x, int y, Player player) {
-        if (useHexBoard) {
-            if (useEnhanced) {
-                return enhancedHexBoard.canPlaceBuilding(x, y, player);
-            } else {
-                return hexBoard.canPlaceBuilding(x, y, player);
-            }
+        if (useAuthentic) {
+            // For authentic board, use vertex-based methods instead
+            return false;
         }
         
         // Check if position is valid and not occupied
@@ -152,12 +125,9 @@ public class GameBoard {
     }
     
     public boolean canPlaceRoad(int startX, int startY, int endX, int endY, Player player) {
-        if (useHexBoard) {
-            if (useEnhanced) {
-                return enhancedHexBoard.canPlaceRoad(startX, startY, endX, endY, player);
-            } else {
-                return hexBoard.canPlaceRoad(startX, startY, endX, endY, player);
-            }
+        if (useAuthentic) {
+            // For authentic board, use edge-based methods instead
+            return false;
         }
         
         // Check if positions are valid and adjacent
@@ -186,12 +156,8 @@ public class GameBoard {
     }
     
     public boolean placeBuilding(Building.Type type, int x, int y, Player player) {
-        if (useHexBoard) {
-            if (useEnhanced) {
-                return enhancedHexBoard.placeBuilding(type, x, y, player);
-            } else {
-                return hexBoard.placeBuilding(type, x, y, player);
-            }
+        if (useAuthentic) {
+            return false; // Use vertex-based methods
         }
         
         if (canPlaceBuilding(x, y, player)) {
@@ -202,12 +168,8 @@ public class GameBoard {
     }
     
     public boolean placeRoad(int startX, int startY, int endX, int endY, Player player) {
-        if (useHexBoard) {
-            if (useEnhanced) {
-                return enhancedHexBoard.placeRoad(startX, startY, endX, endY, player);
-            } else {
-                return hexBoard.placeRoad(startX, startY, endX, endY, player);
-            }
+        if (useAuthentic) {
+            return false; // Use edge-based methods
         }
         
         if (canPlaceRoad(startX, startY, endX, endY, player)) {
@@ -218,12 +180,8 @@ public class GameBoard {
     }
     
     public void moveRobber(int x, int y) {
-        if (useHexBoard) {
-            if (useEnhanced) {
-                enhancedHexBoard.moveRobber(x, y);
-            } else {
-                hexBoard.moveRobber(x, y);
-            }
+        if (useAuthentic) {
+            authenticBoard.moveRobber(new HexCoordinate(x, y));
             return;
         }
         
@@ -243,12 +201,8 @@ public class GameBoard {
     }
     
     public List<Building> getBuildingsAdjacentToTile(int tileX, int tileY) {
-        if (useHexBoard) {
-            if (useEnhanced) {
-                return enhancedHexBoard.getBuildingsAdjacentToTile(tileX, tileY);
-            } else {
-                return hexBoard.getBuildingsAdjacentToTile(tileX, tileY);
-            }
+        if (useAuthentic) {
+            return authenticBoard.getBuildingsAdjacentToTile(new HexCoordinate(tileX, tileY));
         }
         
         List<Building> adjacentBuildings = new ArrayList<>();
@@ -267,12 +221,8 @@ public class GameBoard {
     }
     
     public boolean upgradeToCity(int x, int y, Player player) {
-        if (useHexBoard) {
-            if (useEnhanced) {
-                return enhancedHexBoard.upgradeToCity(x, y, player);
-            } else {
-                return hexBoard.upgradeToCity(x, y, player);
-            }
+        if (useAuthentic) {
+            return false; // Use vertex-based methods
         }
         
         String key = x + "," + y;
@@ -287,78 +237,109 @@ public class GameBoard {
     }
     
     public int getTotalBuildings() {
-        if (useHexBoard) {
-            if (useEnhanced) {
-                return enhancedHexBoard.getTotalBuildings();
-            } else {
-                return hexBoard.getTotalBuildings();
-            }
+        if (useAuthentic) {
+            return authenticBoard.getTotalBuildings();
         }
         return buildings.size();
     }
     
     public Collection<Building> getBuildings() {
-        if (useHexBoard) {
-            if (useEnhanced) {
-                return enhancedHexBoard.getBuildings();
-            } else {
-                return hexBoard.getBuildings();
-            }
+        if (useAuthentic) {
+            return authenticBoard.getBuildings();
         }
         return buildings.values();
     }
     
     public List<Road> getRoads() {
-        if (useHexBoard) {
-            if (useEnhanced) {
-                return new ArrayList<>(enhancedHexBoard.getRoads());
-            } else {
-                return hexBoard.getRoads();
-            }
+        if (useAuthentic) {
+            return new ArrayList<>(authenticBoard.getRoads());
         }
         return roads;
     }
     
-    public int getRobberX() {
-        if (useHexBoard) {
-            if (useEnhanced) {
-                return enhancedHexBoard.getRobberX();
-            } else {
-                return hexBoard.getRobberX();
-            }
+    // === AUTHENTIC CATAN BOARD METHODS ===
+    
+    /**
+     * Check if a building can be placed at a vertex coordinate (authentic board).
+     */
+    public boolean canPlaceBuilding(VertexCoordinate vertex, Player player) {
+        if (useAuthentic) {
+            return authenticBoard.canPlaceBuilding(vertex, player);
         }
-        return robberX;
+        return false;
     }
     
-    public int getRobberY() {
-        if (useHexBoard) {
-            if (useEnhanced) {
-                return enhancedHexBoard.getRobberY();
-            } else {
-                return hexBoard.getRobberY();
-            }
+    /**
+     * Place a building at a vertex coordinate (authentic board).
+     */
+    public boolean placeBuilding(Building.Type type, VertexCoordinate vertex, Player player) {
+        if (useAuthentic) {
+            return authenticBoard.placeBuilding(type, vertex, player);
         }
-        return robberY;
+        return false;
     }
     
-    // Hexagonal board specific methods
-    public boolean isHexagonal() {
-        return useHexBoard;
+    /**
+     * Check if a road can be placed at an edge coordinate (authentic board).
+     */
+    public boolean canPlaceRoad(EdgeCoordinate edge, Player player) {
+        if (useAuthentic) {
+            return authenticBoard.canPlaceRoad(edge, player);
+        }
+        return false;
     }
     
-    public boolean isEnhanced() {
-        return useEnhanced;
+    /**
+     * Place a road at an edge coordinate (authentic board).
+     */
+    public boolean placeRoad(EdgeCoordinate edge, Player player) {
+        if (useAuthentic) {
+            return authenticBoard.placeRoad(edge, player);
+        }
+        return false;
     }
     
-    public HexGameBoard getHexBoard() {
-        return hexBoard;
+    /**
+     * Get building at a vertex coordinate (authentic board).
+     */
+    public Building getBuildingAt(VertexCoordinate vertex) {
+        if (useAuthentic) {
+            return authenticBoard.getBuildingAt(vertex);
+        }
+        return null;
     }
     
-    public EnhancedHexGameBoard getEnhancedHexBoard() {
-        return enhancedHexBoard;
+    /**
+     * Upgrade a settlement to a city at a vertex coordinate (authentic board).
+     */
+    public boolean upgradeToCity(VertexCoordinate vertex, Player player) {
+        if (useAuthentic) {
+            return authenticBoard.upgradeToCity(vertex, player);
+        }
+        return false;
     }
     
-    // Helper methods for square board (when not using hexagonal)
+    /**
+     * Get valid settlement positions for current game state.
+     */
+    public List<VertexCoordinate> getValidSettlementPositions() {
+        if (useAuthentic) {
+            return new ArrayList<>(authenticBoard.getValidVertices());
+        }
+        return new ArrayList<>();
+    }
+    
+    /**
+     * Get valid road positions for current game state.
+     */
+    public List<EdgeCoordinate> getValidRoadPositions() {
+        if (useAuthentic) {
+            return new ArrayList<>(authenticBoard.getValidEdges());
+        }
+        return new ArrayList<>();
+    }
+    
+    // Helper methods for legacy square board
     private boolean isValidBuildingPosition(int x, int y) {
         return x >= 0 && x <= BOARD_SIZE && y >= 0 && y <= BOARD_SIZE;
     }
@@ -370,13 +351,11 @@ public class GameBoard {
     }
     
     private boolean hasAdjacentRoad(int x, int y, Player player) {
-        if (useHexBoard) return false; // Handled by hexBoard
         return roads.stream().anyMatch(road -> 
             road.getOwner() == player && road.connectsTo(x, y));
     }
     
     private boolean hasAdjacentBuilding(int x, int y, Player player) {
-        if (useHexBoard) return false; // Handled by hexBoard
         Building building = buildings.get(x + "," + y);
         return building != null && building.getOwner() == player;
     }

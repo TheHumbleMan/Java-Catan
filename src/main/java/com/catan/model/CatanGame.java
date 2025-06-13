@@ -30,14 +30,10 @@ public class CatanGame {
     }
     
     public CatanGame(List<String> playerNames) {
-        this(playerNames, true, true); // Default to enhanced hexagonal board
+        this(playerNames, true); // Default to authentic CATAN board
     }
     
-    public CatanGame(List<String> playerNames, boolean useHexagonal) {
-        this(playerNames, useHexagonal, true); // Default to enhanced if hexagonal
-    }
-    
-    public CatanGame(List<String> playerNames, boolean useHexagonal, boolean useEnhanced) {
+    public CatanGame(List<String> playerNames, boolean useAuthentic) {
         if (playerNames.size() < 2 || playerNames.size() > 4) {
             throw new IllegalArgumentException("CATAN requires 2-4 players");
         }
@@ -49,13 +45,8 @@ public class CatanGame {
             players.add(new Player(playerNames.get(i), colors[i]));
         }
         
-        // Initialize board based on hexagonal and enhanced preferences
-        if (useHexagonal) {
-            this.board = new GameBoard(true, useEnhanced); // Use hexagonal board with optional enhancement
-        } else {
-            this.board = new GameBoard(); // Use legacy square board
-        }
-        
+        // Initialize board
+        this.board = new GameBoard(useAuthentic);
         this.random = new Random();
         this.currentPlayerIndex = 0;
         this.currentPhase = GamePhase.INITIAL_PLACEMENT_1;
@@ -186,6 +177,38 @@ public class CatanGame {
         return false;
     }
     
+    // New coordinate-based methods for authentic board support
+    
+    public boolean buildSettlement(VertexCoordinate coordinate) {
+        Player currentPlayer = getCurrentPlayer();
+        
+        if (currentPhase == GamePhase.PLAYING) {
+            if (currentPlayer.canBuildSettlement() && board.canPlaceBuilding(coordinate, currentPlayer)) {
+                if (currentPlayer.buildSettlement() && board.placeBuilding(Building.Type.SETTLEMENT, coordinate, currentPlayer)) {
+                    checkVictoryCondition();
+                    return true;
+                }
+            }
+        } else {
+            // Initial placement - free settlement
+            if (board.canPlaceBuilding(coordinate, currentPlayer)) {
+                if (board.placeBuilding(Building.Type.SETTLEMENT, coordinate, currentPlayer)) {
+                    currentPlayer.addVictoryPoints(1);
+                    
+                    // In second round, player gets resources from adjacent tiles
+                    if (currentPhase == GamePhase.INITIAL_PLACEMENT_2) {
+                        // For authentic board, simplified resource generation
+                        // Give one random resource as placeholder
+                        currentPlayer.addResource(ResourceType.LUMBER, 1);
+                    }
+                    
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
     private void giveInitialResources(int x, int y, Player player) {
         // Give resources from adjacent tiles
         for (int dx = -1; dx <= 1; dx++) {
@@ -225,6 +248,24 @@ public class CatanGame {
         return false;
     }
     
+    public boolean buildCity(VertexCoordinate coordinate) {
+        Player currentPlayer = getCurrentPlayer();
+        
+        if (currentPhase == GamePhase.PLAYING && currentPlayer.canBuildCity()) {
+            Building existingBuilding = board.getBuildingAt(coordinate);
+            if (existingBuilding != null && existingBuilding.getType() == Building.Type.SETTLEMENT 
+                && existingBuilding.getOwner() == currentPlayer) {
+                
+                if (currentPlayer.buildCity()) {
+                    board.upgradeToCity(coordinate, currentPlayer);
+                    checkVictoryCondition();
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
     public boolean buildRoad(int startX, int startY, int endX, int endY) {
         Player currentPlayer = getCurrentPlayer();
         
@@ -238,6 +279,26 @@ public class CatanGame {
             // Initial placement - free road
             if (board.canPlaceRoad(startX, startY, endX, endY, currentPlayer)) {
                 return board.placeRoad(startX, startY, endX, endY, currentPlayer);
+            }
+        }
+        return false;
+    }
+    
+    public boolean buildRoad(EdgeCoordinate coordinate) {
+        Player currentPlayer = getCurrentPlayer();
+        
+        if (currentPhase == GamePhase.PLAYING) {
+            if (currentPlayer.canBuildRoad() && board.canPlaceRoad(coordinate, currentPlayer)) {
+                if (currentPlayer.buildRoad() && board.placeRoad(coordinate, currentPlayer)) {
+                    return true;
+                }
+            }
+        } else {
+            // Initial placement - free road
+            if (board.canPlaceRoad(coordinate, currentPlayer)) {
+                if (board.placeRoad(coordinate, currentPlayer)) {
+                    return true;
+                }
             }
         }
         return false;
