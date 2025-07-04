@@ -1,0 +1,132 @@
+# Diff Details
+
+Date : 2025-06-13 11:36:12
+
+Directory /home/robert/Java-Catan
+
+Total : 117 files,  -4760 codes, -342 comments, -1137 blanks, all -6239 lines
+
+[Summary](results.md) / [Details](details.md) / [Diff Summary](diff.md) / Diff Details
+
+## Files
+| filename | language | code | comment | blank | total |
+| :--- | :--- | ---: | ---: | ---: | ---: |
+| [CLEANUP\_COMPLETE.md](/CLEANUP_COMPLETE.md) | Markdown | 68 | 0 | 14 | 82 |
+| [COMPLETE\_OVERHAUL\_SUMMARY.md](/COMPLETE_OVERHAUL_SUMMARY.md) | Markdown | 98 | 0 | 22 | 120 |
+| [EdgeCalc.class](/EdgeCalc.class) | Java | -7 | 0 | 0 | -7 |
+| [EdgeCalc.java](/EdgeCalc.java) | Java | -1 | 0 | -1 | -2 |
+| [Markdowns/AUTHENTIC\_CATAN\_BOARD\_OVERHAUL.md](/Markdowns/AUTHENTIC_CATAN_BOARD_OVERHAUL.md) | Markdown | -111 | 0 | -31 | -142 |
+| [Markdowns/AUTHENTIC\_CATAN\_LAYOUT\_COMPLETE.md](/Markdowns/AUTHENTIC_CATAN_LAYOUT_COMPLETE.md) | Markdown | -90 | 0 | -25 | -115 |
+| [Markdowns/BOARD\_POSITIONING\_FIX.md](/Markdowns/BOARD_POSITIONING_FIX.md) | Markdown | -13 | 0 | -4 | -17 |
+| [Markdowns/CATAN\_LAYOUT\_KORRIGIERT.md](/Markdowns/CATAN_LAYOUT_KORRIGIERT.md) | Markdown | -49 | 0 | -19 | -68 |
+| [Markdowns/CATAN\_LAYOUT\_VOLLSTÄNDIG\_KORRIGIERT.md](/Markdowns/CATAN_LAYOUT_VOLLST%C3%84NDIG_KORRIGIERT.md) | Markdown | -76 | 0 | -21 | -97 |
+| [Markdowns/CLOSER\_SPACING\_ADJUSTMENT.md](/Markdowns/CLOSER_SPACING_ADJUSTMENT.md) | Markdown | -84 | 0 | -25 | -109 |
+| [Markdowns/COMPACT\_LAYOUT\_IMPROVEMENTS.md](/Markdowns/COMPACT_LAYOUT_IMPROVEMENTS.md) | Markdown | -93 | 0 | -27 | -120 |
+| [Markdowns/COMPACT\_LAYOUT\_WITH\_FIXED\_STREETS.md](/Markdowns/COMPACT_LAYOUT_WITH_FIXED_STREETS.md) | Markdown | -100 | 0 | -26 | -126 |
+| [Markdowns/COMPLETE\_IMPLEMENTATION\_OVERVIEW.md](/Markdowns/COMPLETE_IMPLEMENTATION_OVERVIEW.md) | Markdown | -95 | 0 | -26 | -121 |
+| [Markdowns/COORDINATE\_FIXES\_SUMMARY.md](/Markdowns/COORDINATE_FIXES_SUMMARY.md) | Markdown | -72 | 0 | -20 | -92 |
+| [Markdowns/DUPLICATE\_SETTLEMENT\_ELIMINATION\_ULTRA\_PRECISION.md](/Markdowns/DUPLICATE_SETTLEMENT_ELIMINATION_ULTRA_PRECISION.md) | Markdown | -121 | 0 | -33 | -154 |
+| [Markdowns/ENHANCED\_BOARD\_COMPLETE.md](/Markdowns/ENHANCED_BOARD_COMPLETE.md) | Markdown | -91 | 0 | -27 | -118 |
+| [Markdowns/FINAL\_OPTIMIZATION\_SUMMARY.md](/Markdowns/FINAL_OPTIMIZATION_SUMMARY.md) | Markdown | -88 | 0 | -26 | -114 |
+| [Markdowns/FINAL\_UI\_SOLUTION\_COMPLETE.md](/Markdowns/FINAL_UI_SOLUTION_COMPLETE.md) | Markdown | -91 | 0 | -26 | -117 |
+| [Markdowns/HEXAGONAL\_IMPLEMENTATION\_SUMMARY.md](/Markdowns/HEXAGONAL_IMPLEMENTATION_SUMMARY.md) | Markdown | -104 | 0 | -33 | -137 |
+| [Markdowns/HEX\_SPACING\_KOMPAKT\_GEMACHT.md](/Markdowns/HEX_SPACING_KOMPAKT_GEMACHT.md) | Markdown | -75 | 0 | -23 | -98 |
+| [Markdowns/ROAD\_POSITIONING\_OPTIMIZATION.md](/Markdowns/ROAD_POSITIONING_OPTIMIZATION.md) | Markdown | -75 | 0 | -25 | -100 |
+| [Markdowns/SPACING\_AND\_DUPLICATE\_FIXES.md](/Markdowns/SPACING_AND_DUPLICATE_FIXES.md) | Markdown | -61 | 0 | -19 | -80 |
+| [Markdowns/SPACING\_IMPROVEMENTS.md](/Markdowns/SPACING_IMPROVEMENTS.md) | Markdown | -85 | 0 | -25 | -110 |
+| [Markdowns/TILE\_GRID\_ALIGNMENT\_IMPROVEMENTS.md](/Markdowns/TILE_GRID_ALIGNMENT_IMPROVEMENTS.md) | Markdown | -78 | 0 | -26 | -104 |
+| [Markdowns/TILE\_SIZE\_AND\_ROAD\_POSITIONING\_IMPROVEMENTS.md](/Markdowns/TILE_SIZE_AND_ROAD_POSITIONING_IMPROVEMENTS.md) | Markdown | -83 | 0 | -22 | -105 |
+| [Markdowns/UI\_IMPROVEMENTS\_COMPLETE.md](/Markdowns/UI_IMPROVEMENTS_COMPLETE.md) | Markdown | -141 | 0 | -38 | -179 |
+| [Markdowns/UI\_POSITIONING\_FIXES\_COMPLETE.md](/Markdowns/UI_POSITIONING_FIXES_COMPLETE.md) | Markdown | -106 | 0 | -28 | -134 |
+| [Markdowns/ULTRA\_COMPACT\_LAYOUT\_MAXIMUM\_CLOSENESS.md](/Markdowns/ULTRA_COMPACT_LAYOUT_MAXIMUM_CLOSENESS.md) | Markdown | -104 | 0 | -26 | -130 |
+| [Markdowns/VERY\_CLOSE\_SPACING\_FINAL.md](/Markdowns/VERY_CLOSE_SPACING_FINAL.md) | Markdown | -62 | 0 | -16 | -78 |
+| [src/main/java/com/catan/controller/AuthenticBoardController.java](/src/main/java/com/catan/controller/AuthenticBoardController.java) | Java | 219 | 54 | 47 | 320 |
+| [src/main/java/com/catan/controller/MainController.java](/src/main/java/com/catan/controller/MainController.java) | Java | -896 | -177 | -224 | -1,297 |
+| [src/main/java/com/catan/demo/AuthenticBoardDemo.java](/src/main/java/com/catan/demo/AuthenticBoardDemo.java) | Java | 58 | 8 | 18 | 84 |
+| [src/main/java/com/catan/demo/AuthenticCatanLayoutDemo.java](/src/main/java/com/catan/demo/AuthenticCatanLayoutDemo.java) | Java | -64 | -6 | -16 | -86 |
+| [src/main/java/com/catan/demo/CorrectEdgeGenerator.java](/src/main/java/com/catan/demo/CorrectEdgeGenerator.java) | Java | -143 | -39 | -34 | -216 |
+| [src/main/java/com/catan/demo/DeduplicationTest.java](/src/main/java/com/catan/demo/DeduplicationTest.java) | Java | -1 | 0 | 0 | -1 |
+| [src/main/java/com/catan/demo/EdgeCountAnalysis.class](/src/main/java/com/catan/demo/EdgeCountAnalysis.class) | Java | -58 | 0 | 0 | -58 |
+| [src/main/java/com/catan/demo/EdgeCountAnalysis.java](/src/main/java/com/catan/demo/EdgeCountAnalysis.java) | Java | -102 | -19 | -29 | -150 |
+| [src/main/java/com/catan/demo/EdgeMathTest.class](/src/main/java/com/catan/demo/EdgeMathTest.class) | Java | -44 | 0 | 0 | -44 |
+| [src/main/java/com/catan/demo/EdgeMathTest.java](/src/main/java/com/catan/demo/EdgeMathTest.java) | Java | -88 | -33 | -35 | -156 |
+| [src/main/java/com/catan/demo/EnhancedBoardDemo.java](/src/main/java/com/catan/demo/EnhancedBoardDemo.java) | Java | -79 | -14 | -24 | -117 |
+| [src/main/java/com/catan/demo/HexPositionDebug.java](/src/main/java/com/catan/demo/HexPositionDebug.java) | Java | -71 | -7 | -22 | -100 |
+| [src/main/java/com/catan/demo/LayoutComparison.java](/src/main/java/com/catan/demo/LayoutComparison.java) | Java | 0 | 0 | -1 | -1 |
+| [src/main/java/com/catan/demo/RealDuplicateAnalysis.java](/src/main/java/com/catan/demo/RealDuplicateAnalysis.java) | Java | -44 | -3 | -16 | -63 |
+| [src/main/java/com/catan/demo/RoadVisibilityTest.class](/src/main/java/com/catan/demo/RoadVisibilityTest.class) | Java | -25 | 0 | 0 | -25 |
+| [src/main/java/com/catan/demo/RoadVisibilityTest.java](/src/main/java/com/catan/demo/RoadVisibilityTest.java) | Java | -41 | -6 | -13 | -60 |
+| [src/main/java/com/catan/demo/SimpleEdgeTest.class](/src/main/java/com/catan/demo/SimpleEdgeTest.class) | Java | -41 | 0 | 0 | -41 |
+| [src/main/java/com/catan/demo/SimpleEdgeTest.java](/src/main/java/com/catan/demo/SimpleEdgeTest.java) | Java | -67 | -10 | -21 | -98 |
+| [src/main/java/com/catan/demo/SimpleLayoutDemo.java](/src/main/java/com/catan/demo/SimpleLayoutDemo.java) | Java | -47 | -7 | -15 | -69 |
+| [src/main/java/com/catan/demo/SymmetryTest.java](/src/main/java/com/catan/demo/SymmetryTest.java) | Java | -54 | -4 | -15 | -73 |
+| [src/main/java/com/catan/demo/VertexCoordinateTest.class](/src/main/java/com/catan/demo/VertexCoordinateTest.class) | Java | -34 | 0 | 0 | -34 |
+| [src/main/java/com/catan/demo/VertexCoordinateTest.java](/src/main/java/com/catan/demo/VertexCoordinateTest.java) | Java | -85 | -14 | -22 | -121 |
+| [src/main/java/com/catan/demo/VertexDebugger.java](/src/main/java/com/catan/demo/VertexDebugger.java) | Java | -50 | -3 | -16 | -69 |
+| [src/main/java/com/catan/demo/VisualLayoutTest.java](/src/main/java/com/catan/demo/VisualLayoutTest.java) | Java | 0 | 0 | -1 | -1 |
+| [src/main/java/com/catan/model/AuthenticCatanBoard.class](/src/main/java/com/catan/model/AuthenticCatanBoard.class) | Java | 108 | 0 | 0 | 108 |
+| [src/main/java/com/catan/model/AuthenticCatanBoard.java](/src/main/java/com/catan/model/AuthenticCatanBoard.java) | Java | 250 | 83 | 71 | 404 |
+| [src/main/java/com/catan/model/CatanGame.class](/src/main/java/com/catan/model/CatanGame.class) | Java | 8 | 0 | 0 | 8 |
+| [src/main/java/com/catan/model/CatanGame.java](/src/main/java/com/catan/model/CatanGame.java) | Java | 47 | 6 | 8 | 61 |
+| [src/main/java/com/catan/model/CatanGeometryCalculator.class](/src/main/java/com/catan/model/CatanGeometryCalculator.class) | Java | 76 | 0 | 0 | 76 |
+| [src/main/java/com/catan/model/CatanGeometryCalculator.java](/src/main/java/com/catan/model/CatanGeometryCalculator.java) | Java | 66 | 28 | 30 | 124 |
+| [src/main/java/com/catan/model/EnhancedHexGameBoard.class](/src/main/java/com/catan/model/EnhancedHexGameBoard.class) | Java | -138 | 0 | 0 | -138 |
+| [src/main/java/com/catan/model/EnhancedHexGameBoard.java](/src/main/java/com/catan/model/EnhancedHexGameBoard.java) | Java | -335 | -61 | -83 | -479 |
+| [src/main/java/com/catan/model/GameBoard.class](/src/main/java/com/catan/model/GameBoard.class) | Java | -19 | 0 | 0 | -19 |
+| [src/main/java/com/catan/model/GameBoard.java](/src/main/java/com/catan/model/GameBoard.java) | Java | -46 | 23 | 2 | -21 |
+| [src/main/java/com/catan/model/GameConstants.class](/src/main/java/com/catan/model/GameConstants.class) | Java | 69 | 0 | 0 | 69 |
+| [src/main/java/com/catan/model/HexGameBoard.class](/src/main/java/com/catan/model/HexGameBoard.class) | Java | -97 | 0 | 0 | -97 |
+| [src/main/java/com/catan/model/HexGameBoard.java](/src/main/java/com/catan/model/HexGameBoard.java) | Java | -192 | -30 | -53 | -275 |
+| [src/test/java/com/catan/model/CatanGameTest.java](/src/test/java/com/catan/model/CatanGameTest.java) | Java | 5 | 1 | 0 | 6 |
+| [src/test/java/com/catan/model/EnhancedHexGameBoardTest.java](/src/test/java/com/catan/model/EnhancedHexGameBoardTest.java) | Java | -128 | -24 | -40 | -192 |
+| [src/test/java/com/catan/model/HexGameBoardTest.java](/src/test/java/com/catan/model/HexGameBoardTest.java) | Java | -103 | -28 | -35 | -166 |
+| [target/classes/com/catan/controller/AuthenticBoardController$1.class](/target/classes/com/catan/controller/AuthenticBoardController$1.class) | Java | 14 | 0 | 0 | 14 |
+| [target/classes/com/catan/controller/AuthenticBoardController.class](/target/classes/com/catan/controller/AuthenticBoardController.class) | Java | 185 | 0 | 2 | 187 |
+| [target/classes/com/catan/controller/MainController.class](/target/classes/com/catan/controller/MainController.class) | Java | -476 | 0 | -5 | -481 |
+| [target/classes/com/catan/demo/AuthenticBoardDemo.class](/target/classes/com/catan/demo/AuthenticBoardDemo.class) | Java | 33 | 0 | 0 | 33 |
+| [target/classes/com/catan/demo/AuthenticCatanLayoutDemo.class](/target/classes/com/catan/demo/AuthenticCatanLayoutDemo.class) | Java | -71 | 0 | -1 | -72 |
+| [target/classes/com/catan/demo/CorrectEdgeGenerator.class](/target/classes/com/catan/demo/CorrectEdgeGenerator.class) | Java | -56 | 0 | -1 | -57 |
+| [target/classes/com/catan/demo/DeduplicationTest.class](/target/classes/com/catan/demo/DeduplicationTest.class) | Java | 11 | 0 | -1 | 10 |
+| [target/classes/com/catan/demo/EdgeCountAnalysis.class](/target/classes/com/catan/demo/EdgeCountAnalysis.class) | Java | -66 | 0 | 0 | -66 |
+| [target/classes/com/catan/demo/EdgeMathTest.class](/target/classes/com/catan/demo/EdgeMathTest.class) | Java | -56 | 0 | 0 | -56 |
+| [target/classes/com/catan/demo/EnhancedBoardDemo.class](/target/classes/com/catan/demo/EnhancedBoardDemo.class) | Java | -78 | 0 | -1 | -79 |
+| [target/classes/com/catan/demo/HexPositionDebug.class](/target/classes/com/catan/demo/HexPositionDebug.class) | Java | -54 | 0 | -3 | -57 |
+| [target/classes/com/catan/demo/RealDuplicateAnalysis.class](/target/classes/com/catan/demo/RealDuplicateAnalysis.class) | Java | -24 | 0 | 0 | -24 |
+| [target/classes/com/catan/demo/RoadVisibilityTest.class](/target/classes/com/catan/demo/RoadVisibilityTest.class) | Java | -28 | 0 | 0 | -28 |
+| [target/classes/com/catan/demo/SimpleEdgeTest.class](/target/classes/com/catan/demo/SimpleEdgeTest.class) | Java | -45 | 0 | 0 | -45 |
+| [target/classes/com/catan/demo/SimpleLayoutDemo.class](/target/classes/com/catan/demo/SimpleLayoutDemo.class) | Java | -32 | 0 | -1 | -33 |
+| [target/classes/com/catan/demo/SymmetryTest.class](/target/classes/com/catan/demo/SymmetryTest.class) | Java | -35 | 0 | -3 | -38 |
+| [target/classes/com/catan/demo/VertexCoordinateTest.class](/target/classes/com/catan/demo/VertexCoordinateTest.class) | Java | -39 | 0 | 0 | -39 |
+| [target/classes/com/catan/demo/VertexDebugger.class](/target/classes/com/catan/demo/VertexDebugger.class) | Java | -38 | 0 | 0 | -38 |
+| [target/classes/com/catan/model/AuthenticCatanBoard.class](/target/classes/com/catan/model/AuthenticCatanBoard.class) | Java | 117 | 0 | 0 | 117 |
+| [target/classes/com/catan/model/Building$Type.class](/target/classes/com/catan/model/Building$Type.class) | Java | 4 | 0 | 0 | 4 |
+| [target/classes/com/catan/model/Building.class](/target/classes/com/catan/model/Building.class) | Java | -4 | 0 | 0 | -4 |
+| [target/classes/com/catan/model/CatanGame$GamePhase.class](/target/classes/com/catan/model/CatanGame$GamePhase.class) | Java | 2 | 0 | 0 | 2 |
+| [target/classes/com/catan/model/CatanGame.class](/target/classes/com/catan/model/CatanGame.class) | Java | 1 | 0 | 0 | 1 |
+| [target/classes/com/catan/model/CatanGeometryCalculator.class](/target/classes/com/catan/model/CatanGeometryCalculator.class) | Java | 76 | 0 | 0 | 76 |
+| [target/classes/com/catan/model/EdgeCoordinate.class](/target/classes/com/catan/model/EdgeCoordinate.class) | Java | 13 | 0 | 0 | 13 |
+| [target/classes/com/catan/model/EnhancedHexGameBoard.class](/target/classes/com/catan/model/EnhancedHexGameBoard.class) | Java | -97 | -41 | -1 | -139 |
+| [target/classes/com/catan/model/GameBoard.class](/target/classes/com/catan/model/GameBoard.class) | Java | -13 | -12 | 0 | -25 |
+| [target/classes/com/catan/model/GameConstants.class](/target/classes/com/catan/model/GameConstants.class) | Java | 39 | 0 | 0 | 39 |
+| [target/classes/com/catan/model/HexCoordinate.class](/target/classes/com/catan/model/HexCoordinate.class) | Java | 10 | 0 | 0 | 10 |
+| [target/classes/com/catan/model/HexGameBoard.class](/target/classes/com/catan/model/HexGameBoard.class) | Java | -93 | 0 | 0 | -93 |
+| [target/classes/com/catan/model/Player.class](/target/classes/com/catan/model/Player.class) | Java | -6 | -2 | -1 | -9 |
+| [target/classes/com/catan/model/PlayerColor.class](/target/classes/com/catan/model/PlayerColor.class) | Java | 3 | 0 | 0 | 3 |
+| [target/classes/com/catan/model/ResourceType.class](/target/classes/com/catan/model/ResourceType.class) | Java | 2 | 0 | 0 | 2 |
+| [target/classes/com/catan/model/TerrainTile.class](/target/classes/com/catan/model/TerrainTile.class) | Java | -2 | -5 | 0 | -7 |
+| [target/classes/com/catan/model/TerrainType.class](/target/classes/com/catan/model/TerrainType.class) | Java | -1 | 0 | 0 | -1 |
+| [target/classes/com/catan/model/VertexCoordinate.class](/target/classes/com/catan/model/VertexCoordinate.class) | Java | 26 | 0 | 0 | 26 |
+| [target/classes/com/catan/view/UIComponents$1.class](/target/classes/com/catan/view/UIComponents$1.class) | Java | 13 | 0 | 0 | 13 |
+| [target/classes/com/catan/view/UIComponents.class](/target/classes/com/catan/view/UIComponents.class) | Java | -9 | 0 | 0 | -9 |
+| [target/surefire-reports/TEST-com.catan.model.CatanGameTest.xml](/target/surefire-reports/TEST-com.catan.model.CatanGameTest.xml) | XML | 158 | 0 | 0 | 158 |
+| [target/surefire-reports/TEST-com.catan.model.EdgeCoordinateTest.xml](/target/surefire-reports/TEST-com.catan.model.EdgeCoordinateTest.xml) | XML | 62 | 0 | 0 | 62 |
+| [target/surefire-reports/TEST-com.catan.model.PlayerTest.xml](/target/surefire-reports/TEST-com.catan.model.PlayerTest.xml) | XML | 62 | 0 | 0 | 62 |
+| [target/surefire-reports/TEST-com.catan.model.VertexCoordinateTest.xml](/target/surefire-reports/TEST-com.catan.model.VertexCoordinateTest.xml) | XML | 62 | 0 | 0 | 62 |
+| [target/test-classes/com/catan/model/CatanGameTest.class](/target/test-classes/com/catan/model/CatanGameTest.class) | Java | -12 | 0 | 0 | -12 |
+| [target/test-classes/com/catan/model/EdgeCoordinateTest.class](/target/test-classes/com/catan/model/EdgeCoordinateTest.class) | Java | -13 | 0 | 0 | -13 |
+| [target/test-classes/com/catan/model/EnhancedHexGameBoardTest.class](/target/test-classes/com/catan/model/EnhancedHexGameBoardTest.class) | Java | -46 | 0 | 0 | -46 |
+| [target/test-classes/com/catan/model/HexGameBoardTest.class](/target/test-classes/com/catan/model/HexGameBoardTest.class) | Java | -61 | 0 | 0 | -61 |
+| [target/test-classes/com/catan/model/PlayerTest.class](/target/test-classes/com/catan/model/PlayerTest.class) | Java | -9 | 0 | 0 | -9 |
+| [target/test-classes/com/catan/model/VertexCoordinateTest.class](/target/test-classes/com/catan/model/VertexCoordinateTest.class) | Java | -13 | 0 | 0 | -13 |
+
+[Summary](results.md) / [Details](details.md) / [Diff Summary](diff.md) / Diff Details

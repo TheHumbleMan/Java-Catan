@@ -15,6 +15,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.control.ScrollPane;
+
 
 /**
  * Main controller for the CATAN game UI.
@@ -35,6 +37,9 @@ public class MainController implements Initializable {
     @FXML private Button rollDiceButton;
     @FXML private Button endTurnButton;
     @FXML private VBox gameControlsBox;
+    @FXML private ScrollPane boardScrollPane;
+    
+
     
     private CatanGame game;
     private AuthenticBoardController boardController;
@@ -46,7 +51,10 @@ public class MainController implements Initializable {
         
         // Hide game controls initially
         gameControlsBox.setVisible(false);
-        gamePane.setVisible(false);
+        boardScrollPane.setVisible(false);
+        
+        //sodass am Anfang gefragt wird nach Namen
+        playerSetupBox.setVisible(true);
     }
     
     @FXML
@@ -86,7 +94,7 @@ public class MainController implements Initializable {
             // Show game interface
             playerSetupBox.setVisible(false);
             gameControlsBox.setVisible(true);
-            gamePane.setVisible(true);
+            boardScrollPane.setVisible(true);
             
             // Update UI
             updateGameStatus();
@@ -141,5 +149,30 @@ public class MainController implements Initializable {
             rollDiceButton.setDisable(game.getCurrentPhase() != CatanGame.GamePhase.PLAYING);
             endTurnButton.setDisable(false);
         }
+    }
+    @FXML
+	private void handleNewGame() {
+	    System.out.println("Neues Spiel gestartet!");
+	    
+	    // Zeige Setup Panel an
+	    playerSetupBox.setVisible(true);
+	    
+	    // Blende Controls und Board aus
+	    gameControlsBox.setVisible(false);
+	    gamePane.setVisible(false);
+	    
+	    // Optional: Felder leeren
+	    player1Field.clear();
+	    player2Field.clear();
+	    player3Field.clear();
+	    player4Field.clear();
+	    
+	    // Status Label leeren
+	    gameStatusLabel.setText("");
+	}
+    @FXML
+    private void handleExit() {
+        System.out.println("Spiel wird beendet...");
+        System.exit(0); // Anwendung schließen
     }
 }

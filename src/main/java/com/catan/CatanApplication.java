@@ -19,6 +19,7 @@ public class CatanApplication extends Application {
     
     @Override
     public void start(Stage stage) throws IOException {
+    	System.out.println("FXML resource: " + CatanApplication.class.getResource("/main-view.fxml"));
         FXMLLoader fxmlLoader = new FXMLLoader(CatanApplication.class.getResource("/main-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), WINDOW_WIDTH, WINDOW_HEIGHT);
         
