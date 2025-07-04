@@ -1,0 +1,145 @@
+package com.catan.controller;
+
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
+
+import com.catan.model.CatanGame;
+import com.catan.model.Player;
+
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
+
+/**
+ * Main controller for the CATAN game UI.
+ * Automatically detects and uses the appropriate board controller.
+ */
+public class MainController implements Initializable {
+    
+    @FXML private VBox playerSetupBox;
+    @FXML private TextField player1Field;
+    @FXML private TextField player2Field;
+    @FXML private TextField player3Field;
+    @FXML private TextField player4Field;
+    @FXML private Button startGameButton;
+    @FXML private Pane gamePane;
+    @FXML private Label gameStatusLabel;
+    @FXML private Label currentPlayerLabel;
+    @FXML private Label diceRollLabel;
+    @FXML private Button rollDiceButton;
+    @FXML private Button endTurnButton;
+    @FXML private VBox gameControlsBox;
+    
+    private CatanGame game;
+    private AuthenticBoardController boardController;
+    
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        // Initialize UI components
+        // TODO: Add UI styling methods to UIComponents class if needed
+        
+        // Hide game controls initially
+        gameControlsBox.setVisible(false);
+        gamePane.setVisible(false);
+    }
+    
+    @FXML
+    private void startGame() {
+        // Collect player names
+        List<String> playerNames = new ArrayList<>();
+        
+        if (!player1Field.getText().trim().isEmpty()) {
+            playerNames.add(player1Field.getText().trim());
+        }
+        if (!player2Field.getText().trim().isEmpty()) {
+            playerNames.add(player2Field.getText().trim());
+        }
+        if (!player3Field.getText().trim().isEmpty()) {
+            playerNames.add(player3Field.getText().trim());
+        }
+        if (!player4Field.getText().trim().isEmpty()) {
+            playerNames.add(player4Field.getText().trim());
+        }
+        
+        // Validate player count
+        if (playerNames.size() < 2) {
+            gameStatusLabel.setText("Error: At least 2 players required!");
+            return;
+        }
+        
+        try {
+            // Create game with authentic CATAN board by default
+            game = new CatanGame(playerNames);
+            
+            // Create and initialize the board controller
+            boardController = new AuthenticBoardController(game, gamePane);
+            
+            // Render the board
+            boardController.renderBoard();
+            
+            // Show game interface
+            playerSetupBox.setVisible(false);
+            gameControlsBox.setVisible(true);
+            gamePane.setVisible(true);
+            
+            // Update UI
+            updateGameStatus();
+            
+        } catch (Exception e) {
+            gameStatusLabel.setText("Error starting game: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    
+    @FXML
+    private void rollDice() {
+        if (game != null && game.getCurrentPhase() == CatanGame.GamePhase.PLAYING) {
+            int roll = game.rollDice();
+            diceRollLabel.setText("Dice Roll: " + roll);
+            updateGameStatus();
+        }
+    }
+    
+    @FXML
+    private void endTurn() {
+        if (game != null) {
+            game.endTurn();
+            updateGameStatus();
+            
+            // Clear dice roll for new turn
+            if (game.getCurrentPhase() == CatanGame.GamePhase.PLAYING) {
+                diceRollLabel.setText("Dice Roll: -");
+            }
+        }
+    }
+    
+    private void updateGameStatus() {
+        if (game == null) return;
+        
+        Player currentPlayer = game.getCurrentPlayer();
+        currentPlayerLabel.setText("Current Player: " + currentPlayer.getName() + 
+                                   " (VP: " + currentPlayer.getVictoryPoints() + ")");
+        
+        String phase = switch (game.getCurrentPhase()) {
+            case INITIAL_PLACEMENT_1 -> "Initial Setup - Round 1";
+            case INITIAL_PLACEMENT_2 -> "Initial Setup - Round 2";
+            case PLAYING -> "Playing";
+        };
+        
+        if (game.isGameFinished()) {
+            gameStatusLabel.setText("Game Over! Winner: " + game.getWinner().getName());
+            rollDiceButton.setDisable(true);
+            endTurnButton.setDisable(true);
+        } else {
+            gameStatusLabel.setText("Phase: " + phase);
+            rollDiceButton.setDisable(game.getCurrentPhase() != CatanGame.GamePhase.PLAYING);
+            endTurnButton.setDisable(false);
+        }
+    }
+}

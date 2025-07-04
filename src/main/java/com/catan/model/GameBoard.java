@@ -339,6 +339,13 @@ public class GameBoard {
         return new ArrayList<>();
     }
     
+    /**
+     * Get the authentic CATAN board instance.
+     */
+    public AuthenticCatanBoard getAuthenticBoard() {
+        return authenticBoard;
+    }
+    
     // Helper methods for legacy square board
     private boolean isValidBuildingPosition(int x, int y) {
         return x >= 0 && x <= BOARD_SIZE && y >= 0 && y <= BOARD_SIZE;
