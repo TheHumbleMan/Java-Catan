@@ -8,9 +8,13 @@ com\catan\view\UIComponents.class
 com\catan\demo\AuthenticBoardDemo.class
 com\catan\model\CatanGame$GamePhase.class
 com\catan\model\EdgeCoordinate$Point2D.class
+<<<<<<< HEAD
 com\catan\controller\MainController.class
 com\catan\controller\AuthenticBoardController$1.class
 com\catan\controller\MainController$1.class
+=======
+com\catan\controller\AuthenticBoardController$1.class
+>>>>>>> 7d2aef989d0c45ddf2cdfaa559eb2b24636eab0d
 com\catan\model\Building.class
 com\catan\view\UIComponents$1.class
 com\catan\model\ResourceType.class
