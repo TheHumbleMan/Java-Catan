@@ -152,30 +152,35 @@ public class AuthenticCatanBoard {
      * Berechnet die authentischen 72 Straßenpositionen (Edges) des CATAN-Boards.
      */
     private Set<EdgeCoordinate> calculateAuthenticEdges() {
-        Set<EdgeCoordinate> edges = new HashSet<>();
+        Set<RoundedPoint2D> worldKeys = new HashSet<>();
+        Set<EdgeCoordinate> uniqueEdges = new HashSet<>();
 
-        // Iteriere über alle 19 Hex-Felder des Boards
-        for (HexCoordinate hex : STANDARD_HEX_POSITIONS) {
+        for (HexCoordinate hex : STANDARD_HEX_SET) {
             int q = hex.getQ();
             int r = hex.getR();
 
-            // Füge alle 6 Edges hinzu, normalisiert, sodass doppelte logische Positionen zusammengefasst werden
             for (int dir = 0; dir < 6; dir++) {
-                EdgeCoordinate edge = new EdgeCoordinate(q, r, dir).normalize(); // Falls normalize() in EdgeCoordinate implementiert
-                edges.add(edge);
+                EdgeCoordinate edge = new EdgeCoordinate(q, r, dir);
+                HexCoordinate.Point2D pos = edge.toPixel(hexSize, centerX, centerY);
+                RoundedPoint2D rounded = new RoundedPoint2D(pos.x, pos.y);
+
+                if (!worldKeys.contains(rounded)) {
+                    worldKeys.add(rounded);
+                    uniqueEdges.add(edge);
+                }
             }
         }
 
-        // Debug-Ausgabe zur Überprüfung der Anzahl
-        System.out.println("Berechnete einzigartige Edges: " + edges.size());
+        System.out.println("Berechnete einzigartige Edges: " + uniqueEdges.size());
 
         // Erwartete Anzahl = 72 bei Standard CATAN Layout
-        if (edges.size() != 72) {
-            System.err.println("Warnung: Anzahl der berechneten Straßen-Edges ist unerwartet: " + edges.size());
+        if (uniqueEdges.size() != 72) {
+            System.err.println("Warnung: Anzahl der berechneten Straßen-Edges ist unerwartet: " + uniqueEdges.size());
         }
 
-        return edges;
+        return uniqueEdges;
     }
+
 
     
     /**

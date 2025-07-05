@@ -152,7 +152,7 @@ public class EdgeCoordinate {
      */
     public double getRotationAngle(double hexSize, double centerX, double centerY) {
         // Calculate angle based on direction (each direction is 60 degrees apart)
-        return direction * 60.0; // Convert direction to degrees
+        return (direction * 60.0) - 30; // Convert direction to degrees
     }
     
     @Override
