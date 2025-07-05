@@ -33,6 +33,7 @@ public class AuthenticCatanBoard {
         // Row 5 (bottom, 3 hexagons): r = 2
         new HexCoordinate(-1, 2), new HexCoordinate(0, 2), new HexCoordinate(1, 2)
     );
+    private static final Set<HexCoordinate> STANDARD_HEX_SET = new HashSet<>(STANDARD_HEX_POSITIONS);
     
     private final Map<HexCoordinate, TerrainTile> hexTiles;
     private final Map<VertexCoordinate, Building> buildings;
@@ -106,62 +107,74 @@ public class AuthenticCatanBoard {
      * Berechnet die authentischen 54 Siedlungsplätze eines CATAN-Boards.
      * Verwendet eine vereinfachte Strategie um exakt die korrekten Positionen zu generieren.
      */
+    /**
+     * Berechnet die authentischen 54 Siedlungspositionen (Vertices) des CATAN-Boards.
+     */
     private Set<VertexCoordinate> calculateAuthenticVertices() {
-        // Verwende eine begrenzte Anzahl von Vertices pro Hex um 54 zu erreichen
         Set<VertexCoordinate> vertices = new HashSet<>();
-        
-        // Äußere Vertices (Rand des Boards)
-        for (HexCoordinate hex : STANDARD_HEX_POSITIONS) {
-            // Füge nur bestimmte Vertices hinzu basierend auf Position
+
+        for (HexCoordinate hex : STANDARD_HEX_SET) {
             int q = hex.getQ();
             int r = hex.getR();
-            
-            // Spezielle Logik für Rand-Hexagone
-            if (isEdgeHex(hex)) {
-                // Für Rand-Hexagone: nur bestimmte Vertices
-                for (int dir = 0; dir < 6; dir++) {
-                    if (isValidBoardVertex(hex, dir)) {
-                        vertices.add(new VertexCoordinate(q, r, dir));
-                    }
-                }
-            } else {
-                // Für interne Hexagone: alle Vertices
-                for (int dir = 0; dir < 6; dir++) {
-                    vertices.add(new VertexCoordinate(q, r, dir));
+
+            for (int dir = 0; dir < 6; dir++) {
+                VertexCoordinate vertex = new VertexCoordinate(q, r, dir);
+                VertexCoordinate normalized = vertex.normalize(STANDARD_HEX_SET);
+
+                // Prüfe, ob dieser Vertex mindestens an 2 gültige Hexes angrenzt (inneres Board)
+                long adjacentHexCount = normalized.getAdjacentHexes().stream()
+                    .filter(STANDARD_HEX_SET::contains)
+                    .count();
+
+                if (adjacentHexCount >= 2) {
+                    vertices.add(normalized);
                 }
             }
         }
-        
-        // Limitiere auf 54 durch Entfernung bestimmter Vertices
-        if (vertices.size() > 54) {
-            List<VertexCoordinate> vertexList = new ArrayList<>(vertices);
-            vertices = new HashSet<>(vertexList.subList(0, 54));
-        }
-        
+
+        System.out.println("Berechnete einzigartige Vertices: " + vertices.size());
         return vertices;
     }
+
+
+
+
+
+
+
     
     /**
      * Berechnet die authentischen 72 Straßenpositionen eines CATAN-Boards.
      */
+    /**
+     * Berechnet die authentischen 72 Straßenpositionen (Edges) des CATAN-Boards.
+     */
     private Set<EdgeCoordinate> calculateAuthenticEdges() {
         Set<EdgeCoordinate> edges = new HashSet<>();
-        
-        // Für jedes Hexagon: füge alle Edges hinzu
+
+        // Iteriere über alle 19 Hex-Felder des Boards
         for (HexCoordinate hex : STANDARD_HEX_POSITIONS) {
-            for (int direction = 0; direction < 6; direction++) {
-                edges.add(new EdgeCoordinate(hex.getQ(), hex.getR(), direction));
+            int q = hex.getQ();
+            int r = hex.getR();
+
+            // Füge alle 6 Edges hinzu, normalisiert, sodass doppelte logische Positionen zusammengefasst werden
+            for (int dir = 0; dir < 6; dir++) {
+                EdgeCoordinate edge = new EdgeCoordinate(q, r, dir).normalize(); // Falls normalize() in EdgeCoordinate implementiert
+                edges.add(edge);
             }
         }
-        
-        // Limitiere auf 72 durch Entfernung bestimmter Edges
-        if (edges.size() > 72) {
-            List<EdgeCoordinate> edgeList = new ArrayList<>(edges);
-            edges = new HashSet<>(edgeList.subList(0, 72));
+
+        // Debug-Ausgabe zur Überprüfung der Anzahl
+        System.out.println("Berechnete einzigartige Edges: " + edges.size());
+
+        // Erwartete Anzahl = 72 bei Standard CATAN Layout
+        if (edges.size() != 72) {
+            System.err.println("Warnung: Anzahl der berechneten Straßen-Edges ist unerwartet: " + edges.size());
         }
-        
+
         return edges;
     }
+
     
     /**
      * Prüft ob ein Hexagon am Rand des Boards liegt.

@@ -3,6 +3,7 @@ package com.catan.model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * Represents a vertex coordinate in the hexagonal CATAN board.
@@ -115,7 +116,7 @@ public class VertexCoordinate {
     /**
      * Convert vertex coordinate to pixel position for rendering.
      */
-    public HexCoordinate.Point2D toPixel(double hexSize, double centerX, double centerY) {
+    public HexCoordinate.Point2D toPixel(double hexSize, double centerX, double centerY) { //hexSize is radius
         // First get the hex center using CATAN positioning
         HexCoordinate hexCoord = new HexCoordinate(x, y);
         HexCoordinate.Point2D hexCenter = hexCoord.toPixelCatan(hexSize);
@@ -126,9 +127,72 @@ public class VertexCoordinate {
         
         double vertexX = centerX + hexCenter.x + vertexRadius * Math.cos(angle);
         double vertexY = centerY + hexCenter.y + vertexRadius * Math.sin(angle);
-        
         return new HexCoordinate.Point2D(vertexX, vertexY);
     }
+    /**
+     * Gibt die kanonische (normalisierte) Repräsentation dieses Vertex zurück.
+     * Dadurch wird sichergestellt, dass dieselbe logische Vertex-Position,
+     * die von benachbarten Hex-Feldern erzeugt wird, immer konsistent
+     * dargestellt wird. Dies verhindert Duplikate in Sets oder Maps
+     * und ermöglicht eine korrekte Board-Topologie.
+     */
+    public VertexCoordinate normalize(Set<HexCoordinate> validHexes) {
+        VertexCoordinate canonical = this;
+
+        int prevDir = (direction + 5) % 6;
+        HexCoordinate neighborPrev = getNeighborHexCoordinate(prevDir);
+        int neighborPrevDir = (prevDir + 2) % 6;
+        if (validHexes.contains(neighborPrev)) {
+            VertexCoordinate candidatePrev = new VertexCoordinate(neighborPrev.getQ(), neighborPrev.getR(), neighborPrevDir);
+            if (candidatePrev.compareTo(canonical) < 0) {
+                canonical = candidatePrev;
+            }
+        }
+
+        HexCoordinate neighbor = getNeighborHexCoordinate(direction);
+        int neighborDir = (direction + 4) % 6;
+        if (validHexes.contains(neighbor)) {
+            VertexCoordinate candidate = new VertexCoordinate(neighbor.getQ(), neighbor.getR(), neighborDir);
+            if (candidate.compareTo(canonical) < 0) {
+                canonical = candidate;
+            }
+        }
+
+        return canonical;
+    }
+
+
+
+
+
+    /**
+     * Berechnet und gibt die benachbarte HexCoordinate in der angegebenen Richtung zurück.
+     * Verwendet dazu axiale Richtungsvektoren für Hexagons mit Spitze oben (pointy-top).
+     *
+     * @param dir Die Richtung (0-5), in der der Nachbar gesucht wird.
+     * @return Die HexCoordinate des benachbarten Hex-Feldes.
+     */
+    private HexCoordinate getNeighborHexCoordinate(int dir) {
+        int[] DIRECTION_Q = {1, 1, 0, -1, -1, 0};
+        int[] DIRECTION_R = {0, -1, -1, 0, 1, 1};
+
+        int q = x + DIRECTION_Q[dir];
+        int r = y + DIRECTION_R[dir];
+        return new HexCoordinate(q, r);
+    }
+    /**
+     * Vergleicht diese VertexCoordinate lexikografisch mit einer anderen.
+     * Sortiert zuerst nach x, dann y, dann direction.
+     *
+     * @param other Die andere VertexCoordinate zum Vergleich.
+     * @return Negativ, wenn diese < other, 0 wenn gleich, positiv, wenn diese > other.
+     */
+    public int compareTo(VertexCoordinate other) {
+        if (this.x != other.x) return Integer.compare(this.x, other.x);
+        if (this.y != other.y) return Integer.compare(this.y, other.y);
+        return Integer.compare(this.direction, other.direction);
+    }
+
     
     @Override
     public boolean equals(Object obj) {

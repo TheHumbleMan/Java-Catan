@@ -26,8 +26,8 @@ import javafx.scene.text.Text;
 public class AuthenticBoardController {
     
     // CATAN-authentische Board-Layout-Konstanten
-    private static final double HEX_RADIUS = 55.0;
-    private static final double HEX_SPACING = 63.0; // Optimaler Abstand für authentisches Layout -> größer wenn man lücken will
+    private static final double HEX_RADIUS = 80.0; //davor 55
+    private static final double HEX_SPACING = HEX_RADIUS + 13; // Optimaler Abstand für authentisches Layout -> größer wenn man lücken will -> davor 85 oder so
     private static final double BOARD_CENTER_X = 580.0;   //ursprünglich 400 WENN MAN ÄNDERN WILL CatanApplication WINDOWS_HEIGHT etc
     private static final double BOARD_CENTER_Y = 400.0;   //URSPRüNGLICH 350!!!
     
@@ -108,6 +108,7 @@ public class AuthenticBoardController {
         
         for (VertexCoordinate vertex : allVertices) {
             HexCoordinate.Point2D vertexPos = vertex.toPixel(HEX_RADIUS, BOARD_CENTER_X, BOARD_CENTER_Y);
+        	
             
             boolean canBuild = board.canPlaceBuilding(vertex, currentPlayer);
             boolean isOccupied = board.getBuildings().stream()

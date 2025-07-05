@@ -111,6 +111,41 @@ public class EdgeCoordinate {
         
         return new HexCoordinate.Point2D(midX, midY);
     }
+    /**
+     * Gibt die kanonische (normalisierte) Repräsentation dieser EdgeCoordinate zurück.
+     * Dadurch wird sichergestellt, dass dieselbe logische Kante, die von benachbarten Hex-Feldern erzeugt wird,
+     * immer konsistent dargestellt wird. Dies verhindert Duplikate in Sets oder Maps.
+     */
+    public EdgeCoordinate normalize() {
+        EdgeCoordinate canonical = this;
+
+        // Berechne Nachbarhex, das diese Kante ebenfalls erzeugt
+        HexCoordinate neighborHex = this.getNeighborHexCoordinate(direction);
+        int neighborDir = (direction + 3) % 6; // Gegenüberliegende Kante im Nachbarhex
+
+        EdgeCoordinate candidate = new EdgeCoordinate(neighborHex.getQ(), neighborHex.getR(), neighborDir);
+
+        // Wähle lexikografisch kleinste Repräsentation
+        if (candidate.compareTo(canonical) < 0) {
+            canonical = candidate;
+        }
+
+        return canonical;
+    }
+    private HexCoordinate getNeighborHexCoordinate(int dir) {
+        int[] DIRECTION_Q = {1, 1, 0, -1, -1, 0};
+        int[] DIRECTION_R = {0, -1, -1, 0, 1, 1};
+
+        int q = this.x + DIRECTION_Q[dir];
+        int r = this.y + DIRECTION_R[dir];
+        return new HexCoordinate(q, r);
+    }
+    public int compareTo(EdgeCoordinate other) {
+        if (this.x != other.x) return Integer.compare(this.x, other.x);
+        if (this.y != other.y) return Integer.compare(this.y, other.y);
+        return Integer.compare(this.direction, other.direction);
+    }
+
     
     /**
      * Get the rotation angle for rendering the road on this edge.

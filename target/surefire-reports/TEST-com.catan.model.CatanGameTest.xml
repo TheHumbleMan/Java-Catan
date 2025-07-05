@@ -15,7 +15,7 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="DE"/>
     <property name="sun.boot.library.path" value="C:\Program Files\Eclipse Adoptium\jdk-17.0.15.6-hotspot\bin"/>
-    <property name="sun.java.command" value="C:\Users\robts\AppData\Local\Temp\surefire16166323187773151394\surefirebooter-20250705100255166_3.jar C:\Users\robts\AppData\Local\Temp\surefire16166323187773151394 2025-07-05T10-02-54_930-jvmRun1 surefire-20250705100255166_1tmp surefire_0-20250705100255166_2tmp"/>
+    <property name="sun.java.command" value="C:\Users\robts\AppData\Local\Temp\surefire4030191598903821012\surefirebooter-20250705162024070_3.jar C:\Users\robts\AppData\Local\Temp\surefire4030191598903821012 2025-07-05T16-20-23_858-jvmRun1 surefire-20250705162024070_1tmp surefire_0-20250705162024070_2tmp"/>
     <property name="jdk.debug" value="release"/>
     <property name="surefire.test.class.path" value="C:\Users\robts\OneDrive\Desktop\catan_projekt\Java-Catan\target\test-classes;C:\Users\robts\OneDrive\Desktop\catan_projekt\Java-Catan\target\classes;C:\Users\robts\.m2\repository\org\openjfx\javafx-controls\17.0.2\javafx-controls-17.0.2.jar;C:\Users\robts\.m2\repository\org\openjfx\javafx-controls\17.0.2\javafx-controls-17.0.2-win.jar;C:\Users\robts\.m2\repository\org\openjfx\javafx-graphics\17.0.2\javafx-graphics-17.0.2.jar;C:\Users\robts\.m2\repository\org\openjfx\javafx-graphics\17.0.2\javafx-graphics-17.0.2-win.jar;C:\Users\robts\.m2\repository\org\openjfx\javafx-base\17.0.2\javafx-base-17.0.2.jar;C:\Users\robts\.m2\repository\org\openjfx\javafx-base\17.0.2\javafx-base-17.0.2-win.jar;C:\Users\robts\.m2\repository\org\openjfx\javafx-fxml\17.0.2\javafx-fxml-17.0.2.jar;C:\Users\robts\.m2\repository\org\openjfx\javafx-fxml\17.0.2\javafx-fxml-17.0.2-win.jar;C:\Users\robts\.m2\repository\org\junit\jupiter\junit-jupiter-api\5.8.2\junit-jupiter-api-5.8.2.jar;C:\Users\robts\.m2\repository\org\opentest4j\opentest4j\1.2.0\opentest4j-1.2.0.jar;C:\Users\robts\.m2\repository\org\junit\platform\junit-platform-commons\1.8.2\junit-platform-commons-1.8.2.jar;C:\Users\robts\.m2\repository\org\apiguardian\apiguardian-api\1.1.2\apiguardian-api-1.1.2.jar;C:\Users\robts\.m2\repository\org\junit\jupiter\junit-jupiter-engine\5.8.2\junit-jupiter-engine-5.8.2.jar;C:\Users\robts\.m2\repository\org\junit\platform\junit-platform-engine\1.8.2\junit-platform-engine-1.8.2.jar;"/>
     <property name="sun.cpu.endian" value="little"/>
@@ -30,7 +30,7 @@
     <property name="line.separator" value="&#10;"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
-    <property name="surefire.real.class.path" value="C:\Users\robts\AppData\Local\Temp\surefire16166323187773151394\surefirebooter-20250705100255166_3.jar"/>
+    <property name="surefire.real.class.path" value="C:\Users\robts\AppData\Local\Temp\surefire4030191598903821012\surefirebooter-20250705162024070_3.jar"/>
     <property name="user.script" value=""/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="java.runtime.version" value="17.0.15+6"/>
@@ -58,28 +58,52 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="61.0"/>
   </properties>
-  <testcase name="testInvalidPlayerCount" classname="com.catan.model.CatanGameTest" time="0.029">
-    <system-out><![CDATA[✓ Authentisches CATAN-Board initialisiert: 54 Siedlungen, 72 Straßen
+  <testcase name="testInvalidPlayerCount" classname="com.catan.model.CatanGameTest" time="0.031">
+    <system-out><![CDATA[Berechnete einzigartige Vertices: 52
+Berechnete einzigartige Edges: 74
+✓ Authentisches CATAN-Board initialisiert: 52 Siedlungen, 74 Straßen
 ]]></system-out>
+    <system-err><![CDATA[Warnung: Anzahl der berechneten Straßen-Edges ist unerwartet: 74
+]]></system-err>
   </testcase>
   <testcase name="testTrading" classname="com.catan.model.CatanGameTest" time="0.002">
-    <system-out><![CDATA[✓ Authentisches CATAN-Board initialisiert: 54 Siedlungen, 72 Straßen
+    <system-out><![CDATA[Berechnete einzigartige Vertices: 52
+Berechnete einzigartige Edges: 74
+✓ Authentisches CATAN-Board initialisiert: 52 Siedlungen, 74 Straßen
 ]]></system-out>
+    <system-err><![CDATA[Warnung: Anzahl der berechneten Straßen-Edges ist unerwartet: 74
+]]></system-err>
   </testcase>
   <testcase name="testGameInitialization" classname="com.catan.model.CatanGameTest" time="0.002">
-    <system-out><![CDATA[✓ Authentisches CATAN-Board initialisiert: 54 Siedlungen, 72 Straßen
+    <system-out><![CDATA[Berechnete einzigartige Vertices: 52
+Berechnete einzigartige Edges: 74
+✓ Authentisches CATAN-Board initialisiert: 52 Siedlungen, 74 Straßen
 ]]></system-out>
+    <system-err><![CDATA[Warnung: Anzahl der berechneten Straßen-Edges ist unerwartet: 74
+]]></system-err>
   </testcase>
-  <testcase name="testDiceRolling" classname="com.catan.model.CatanGameTest" time="0">
-    <system-out><![CDATA[✓ Authentisches CATAN-Board initialisiert: 54 Siedlungen, 72 Straßen
+  <testcase name="testDiceRolling" classname="com.catan.model.CatanGameTest" time="0.001">
+    <system-out><![CDATA[Berechnete einzigartige Vertices: 52
+Berechnete einzigartige Edges: 74
+✓ Authentisches CATAN-Board initialisiert: 52 Siedlungen, 74 Straßen
 ]]></system-out>
+    <system-err><![CDATA[Warnung: Anzahl der berechneten Straßen-Edges ist unerwartet: 74
+]]></system-err>
   </testcase>
   <testcase name="testResourceProduction" classname="com.catan.model.CatanGameTest" time="0.001">
-    <system-out><![CDATA[✓ Authentisches CATAN-Board initialisiert: 54 Siedlungen, 72 Straßen
+    <system-out><![CDATA[Berechnete einzigartige Vertices: 52
+Berechnete einzigartige Edges: 74
+✓ Authentisches CATAN-Board initialisiert: 52 Siedlungen, 74 Straßen
 ]]></system-out>
+    <system-err><![CDATA[Warnung: Anzahl der berechneten Straßen-Edges ist unerwartet: 74
+]]></system-err>
   </testcase>
   <testcase name="testBuildingCosts" classname="com.catan.model.CatanGameTest" time="0.001">
-    <system-out><![CDATA[✓ Authentisches CATAN-Board initialisiert: 54 Siedlungen, 72 Straßen
+    <system-out><![CDATA[Berechnete einzigartige Vertices: 52
+Berechnete einzigartige Edges: 74
+✓ Authentisches CATAN-Board initialisiert: 52 Siedlungen, 74 Straßen
 ]]></system-out>
+    <system-err><![CDATA[Warnung: Anzahl der berechneten Straßen-Edges ist unerwartet: 74
+]]></system-err>
   </testcase>
 </testsuite>
