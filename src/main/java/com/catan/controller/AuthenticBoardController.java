@@ -27,7 +27,7 @@ public class AuthenticBoardController {
     
     // CATAN-authentische Board-Layout-Konstanten
     private static final double HEX_RADIUS = 55.0;
-    private static final double HEX_SPACING = 95.0; // Optimaler Abstand für authentisches Layout
+    private static final double HEX_SPACING = 63.0; // Optimaler Abstand für authentisches Layout -> größer wenn man lücken will
     private static final double BOARD_CENTER_X = 580.0;   //ursprünglich 400 WENN MAN ÄNDERN WILL CatanApplication WINDOWS_HEIGHT etc
     private static final double BOARD_CENTER_Y = 400.0;   //URSPRüNGLICH 350!!!
     
