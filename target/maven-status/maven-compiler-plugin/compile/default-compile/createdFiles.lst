@@ -12,6 +12,7 @@ com\catan\controller\MainController.class
 com\catan\controller\AuthenticBoardController$1.class
 com\catan\controller\MainController$1.class
 com\catan\model\Building.class
+com\catan\model\RoundedPoint2D.class
 com\catan\view\UIComponents$1.class
 com\catan\model\ResourceType.class
 com\catan\model\CatanGeometryCalculator.class

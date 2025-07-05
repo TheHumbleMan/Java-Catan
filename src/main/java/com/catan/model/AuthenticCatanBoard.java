@@ -15,50 +15,53 @@ import java.util.Set;
  * Basiert auf der originalen Catan-Spielbrettgeometrie.
  */
 public class AuthenticCatanBoard {
-    
-    // Standard CATAN hex board layout (19 tiles) - Authentic 5-row pattern: 3-4-5-4-3
+
     private static final List<HexCoordinate> STANDARD_HEX_POSITIONS = Arrays.asList(
-        // Row 1 (top, 3 hexagons): r = -2
         new HexCoordinate(-1, -2), new HexCoordinate(0, -2), new HexCoordinate(1, -2),
-        
-        // Row 2 (4 hexagons): r = -1  
         new HexCoordinate(-2, -1), new HexCoordinate(-1, -1), new HexCoordinate(0, -1), new HexCoordinate(1, -1),
-        
-        // Row 3 (center, 5 hexagons): r = 0
         new HexCoordinate(-2, 0), new HexCoordinate(-1, 0), new HexCoordinate(0, 0), new HexCoordinate(1, 0), new HexCoordinate(2, 0),
-        
-        // Row 4 (4 hexagons): r = 1
         new HexCoordinate(-2, 1), new HexCoordinate(-1, 1), new HexCoordinate(0, 1), new HexCoordinate(1, 1),
-        
-        // Row 5 (bottom, 3 hexagons): r = 2
         new HexCoordinate(-1, 2), new HexCoordinate(0, 2), new HexCoordinate(1, 2)
     );
+
     private static final Set<HexCoordinate> STANDARD_HEX_SET = new HashSet<>(STANDARD_HEX_POSITIONS);
-    
+
+    // Konstanten
+    private final double hexSize;
+    private final double centerX;
+    private final double centerY;
+
     private final Map<HexCoordinate, TerrainTile> hexTiles;
     private final Map<VertexCoordinate, Building> buildings;
     private final Map<EdgeCoordinate, Road> roads;
     private HexCoordinate robberPosition;
-    
-    // Authentische CATAN Geometrie: Exakt 54 Siedlungsplätze und 72 Straßen
+
     private final Set<VertexCoordinate> validVertices;
     private final Set<EdgeCoordinate> validEdges;
-    
+
+    // === Neuer Default-Konstruktor ===
     public AuthenticCatanBoard() {
-        hexTiles = new HashMap<>();
-        buildings = new HashMap<>();
-        roads = new HashMap<>();
-        
-        // Initialisiere Board
+        this(80.0, 580.0, 400.0); // Standardwerte, falls nichts übergeben wird
+    }
+
+    // === Dein bisheriger Konstruktor bleibt bestehen ===
+    public AuthenticCatanBoard(double hexSize, double centerX, double centerY) {
+        this.hexSize = hexSize;
+        this.centerX = centerX;
+        this.centerY = centerY;
+
+        this.hexTiles = new HashMap<>();
+        this.buildings = new HashMap<>();
+        this.roads = new HashMap<>();
+
         initializeHexBoard();
-        
-        // Validierung: Falls die Zahlen nicht stimmen, verwende vorberechnete Werte
-        validVertices = new HashSet<>(calculateAuthenticVertices());
-        validEdges = new HashSet<>(calculateAuthenticEdges());
-        
+
+        this.validVertices = new HashSet<>(calculateAuthenticVertices());
+        this.validEdges = new HashSet<>(calculateAuthenticEdges());
+
         System.out.println("✓ Authentisches CATAN-Board initialisiert: " + 
-                         validVertices.size() + " Siedlungen, " + 
-                         validEdges.size() + " Straßen");
+                           validVertices.size() + " Siedlungen, " + 
+                           validEdges.size() + " Straßen");
     }
     
     private void initializeHexBoard() {
@@ -111,7 +114,8 @@ public class AuthenticCatanBoard {
      * Berechnet die authentischen 54 Siedlungspositionen (Vertices) des CATAN-Boards.
      */
     private Set<VertexCoordinate> calculateAuthenticVertices() {
-        Set<VertexCoordinate> vertices = new HashSet<>();
+        Set<RoundedPoint2D> worldKeys = new HashSet<>();
+        Set<VertexCoordinate> uniqueVertices = new HashSet<>();
 
         for (HexCoordinate hex : STANDARD_HEX_SET) {
             int q = hex.getQ();
@@ -119,22 +123,20 @@ public class AuthenticCatanBoard {
 
             for (int dir = 0; dir < 6; dir++) {
                 VertexCoordinate vertex = new VertexCoordinate(q, r, dir);
-                VertexCoordinate normalized = vertex.normalize(STANDARD_HEX_SET);
+                HexCoordinate.Point2D pos = vertex.toPixel(hexSize, centerX, centerY);
+                RoundedPoint2D rounded = new RoundedPoint2D(pos.x, pos.y);
 
-                // Prüfe, ob dieser Vertex mindestens an 2 gültige Hexes angrenzt (inneres Board)
-                long adjacentHexCount = normalized.getAdjacentHexes().stream()
-                    .filter(STANDARD_HEX_SET::contains)
-                    .count();
-
-                if (adjacentHexCount >= 2) {
-                    vertices.add(normalized);
+                if (!worldKeys.contains(rounded)) {
+                    worldKeys.add(rounded);
+                    uniqueVertices.add(vertex);
                 }
             }
         }
 
-        System.out.println("Berechnete einzigartige Vertices: " + vertices.size());
-        return vertices;
+        System.out.println("Berechnete einzigartige Vertices: " + uniqueVertices.size());
+        return uniqueVertices;
     }
+
 
 
 

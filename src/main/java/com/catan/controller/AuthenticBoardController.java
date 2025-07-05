@@ -26,8 +26,7 @@ import javafx.scene.text.Text;
 public class AuthenticBoardController {
     
     // CATAN-authentische Board-Layout-Konstanten
-    private static final double HEX_RADIUS = 80.0; //davor 55
-    private static final double HEX_SPACING = HEX_RADIUS + 13; // Optimaler Abstand für authentisches Layout -> größer wenn man lücken will -> davor 85 oder so
+    private static final double HEX_RADIUS = 110; //davor 55
     private static final double BOARD_CENTER_X = 580.0;   //ursprünglich 400 WENN MAN ÄNDERN WILL CatanApplication WINDOWS_HEIGHT etc
     private static final double BOARD_CENTER_Y = 400.0;   //URSPRüNGLICH 350!!!
     
@@ -37,12 +36,12 @@ public class AuthenticBoardController {
     private static final double ROAD_WIDTH = 6.0;
     
     private final CatanGame game;
-    private final AuthenticCatanBoard board;
+    private final AuthenticCatanBoard board = new AuthenticCatanBoard(HEX_RADIUS, BOARD_CENTER_X, BOARD_CENTER_Y);
     private final Pane boardPane;
     
     public AuthenticBoardController(CatanGame game, Pane boardPane) {
         this.game = game;
-        this.board = game.getBoard().authenticBoard;
+        //this.board = game.getBoard().authenticBoard;
         this.boardPane = boardPane;
         
         if (board == null) {
@@ -72,7 +71,7 @@ public class AuthenticBoardController {
         for (TerrainTile tile : board.getAllTiles()) {
             if (tile.getHexCoordinate() != null) {
                 HexCoordinate hexCoord = tile.getHexCoordinate();
-                HexCoordinate.Point2D hexCenter = hexCoord.toPixelCatan(HEX_SPACING);
+                HexCoordinate.Point2D hexCenter = hexCoord.toPixelCatan(HEX_RADIUS);
                 
                 // Erstelle authentisches Hexagon
                 Polygon hexagon = UIComponents.createHexagon(HEX_RADIUS);
