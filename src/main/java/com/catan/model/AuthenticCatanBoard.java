@@ -38,6 +38,8 @@ public class AuthenticCatanBoard {
 
     private final Map<RoundedPoint2D, List<VertexCoordinate>> validVertices;
     private final Set<EdgeCoordinate> validEdges;
+    
+    private final Map<VertexCoordinate, VertexCoordinate> test;
 
     // === Neuer Default-Konstruktor ===
     public AuthenticCatanBoard() {
@@ -57,6 +59,7 @@ public class AuthenticCatanBoard {
         initializeHexBoard();
 
         this.validVertices = new HashMap<>(calculateAuthenticVertices());
+        this.test = createNormalizeMap(new HashMap<>(calculateAuthenticVertices()));
         this.validEdges = new HashSet<>(calculateAuthenticEdges());
 
         System.out.println("✓ Authentisches CATAN-Board initialisiert: " + 
@@ -141,7 +144,18 @@ public class AuthenticCatanBoard {
 
         return verticeMap;
     }
-
+private Map<VertexCoordinate, VertexCoordinate> createNormalizeMap(Map<RoundedPoint2D, List<VertexCoordinate>>oldMap){
+	Map<VertexCoordinate, VertexCoordinate> verticeMap = new HashMap<>();
+	for (Map.Entry<RoundedPoint2D, List<VertexCoordinate>> entry : oldMap.entrySet()) {
+		for (VertexCoordinate element : entry.getValue()) {
+			verticeMap.put(element, entry.getValue().get(0)); //nimmt immer das erste Element und mappt die anderen auf das
+		}
+	}
+	for (Map.Entry<VertexCoordinate, VertexCoordinate> entry : verticeMap.entrySet()) {
+	    System.out.println("Key: " + entry.getKey() + " -> Value: " + entry.getValue());
+	}
+	return verticeMap;
+}
 
 
 
@@ -185,7 +199,7 @@ public class AuthenticCatanBoard {
 
         return uniqueEdges;
     }
-
+    
 
     
     /**
