@@ -29,14 +29,14 @@ import javafx.scene.text.Text;
 public class AuthenticBoardController {
     
     // CATAN-authentische Board-Layout-Konstanten
-    private static final double HEX_RADIUS = 80; //davor 55
-    private static final double BOARD_CENTER_X = 580.0;   //ursprünglich 400 WENN MAN ÄNDERN WILL CatanApplication WINDOWS_HEIGHT etc
-    private static final double BOARD_CENTER_Y = 400.0;   //URSPRüNGLICH 350!!!
+    private static final double HEX_RADIUS = 45; //davor 55
+    private static final double BOARD_CENTER_X = 300.0;   //ursprünglich 400 WENN MAN ÄNDERN WILL CatanApplication WINDOWS_HEIGHT etc
+    private static final double BOARD_CENTER_Y = 200.0;   //URSPRüNGLICH 350!!!
     
     // Siedlungs- und Straßen-Konstanten
     private static final double SETTLEMENT_SIZE = 8.0;
-    private static final double ROAD_LENGTH = 40.0;
-    private static final double ROAD_WIDTH = 6.0;
+    private static final double ROAD_LENGTH = 20.0;
+    private static final double ROAD_WIDTH = 4.0;
     
     private final CatanGame game;
     private final AuthenticCatanBoard board = new AuthenticCatanBoard(HEX_RADIUS, BOARD_CENTER_X, BOARD_CENTER_Y);

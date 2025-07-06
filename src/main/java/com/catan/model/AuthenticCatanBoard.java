@@ -115,8 +115,6 @@ public class AuthenticCatanBoard {
      */
     private Map<RoundedPoint2D, List<VertexCoordinate>> calculateAuthenticVertices() {
         Map<RoundedPoint2D, List<VertexCoordinate>> verticeMap = new HashMap<>();
-        Set<VertexCoordinate> uniqueVertices = new HashSet<>();
-
         for (HexCoordinate hex : STANDARD_HEX_SET) {
             int q = hex.getQ();
             int r = hex.getR();
@@ -126,19 +124,21 @@ public class AuthenticCatanBoard {
                 HexCoordinate.Point2D pos = vertex.toPixel(hexSize, centerX, centerY);
                 RoundedPoint2D rounded = new RoundedPoint2D(pos.x, pos.y);
 
+                System.out.println("Vertex dir=" + dir + " q: " + q + " r: " + r +
+                        " x=" + pos.x + " roundedX=" + rounded.x +
+                        " y=" + pos.y + " roundedY=" + rounded.y);
                 verticeMap.computeIfAbsent(rounded, k -> new ArrayList<>()).add(vertex);
-                for (Map.Entry<RoundedPoint2D, List<VertexCoordinate>> entry : verticeMap.entrySet()) {
-                    RoundedPoint2D key = entry.getKey();
-                    List<VertexCoordinate> value = entry.getValue();
-
-                    System.out.println("Key: " + key + ", Value: " + value);
-                }
+                                
 
                 
             }
         }
+        for (Map.Entry<RoundedPoint2D, List<VertexCoordinate>> entry : verticeMap.entrySet()) {
+            RoundedPoint2D key = entry.getKey();
+            List<VertexCoordinate> value = entry.getValue();
+            System.out.println("Key X: " + key.getX() + "Key Y: " + key.getY() + ", Value: " + value);
+        }
 
-        System.out.println("Berechnete einzigartige Vertices: " + uniqueVertices.size());
         return verticeMap;
     }
 
