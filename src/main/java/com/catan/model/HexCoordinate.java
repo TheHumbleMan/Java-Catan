@@ -97,7 +97,6 @@ public class HexCoordinate {
 
 
 
-
     
     @Override
     public boolean equals(Object obj) {

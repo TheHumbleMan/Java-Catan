@@ -126,7 +126,7 @@ public class AuthenticCatanBoard {
                 HexCoordinate.Point2D pos = vertex.toPixel(hexSize, centerX, centerY);
                 RoundedPoint2D rounded = new RoundedPoint2D(pos.x, pos.y);
 
-                if (!worldKeys.contains(rounded)) {
+                if (!worldKeys.contains(rounded) || true) {
                     worldKeys.add(rounded);
                     uniqueVertices.add(vertex);
                 }
@@ -222,6 +222,7 @@ public class AuthenticCatanBoard {
         
         // Distanz-Regel: Keine Gebäude auf benachbarten Vertices
         for (EdgeCoordinate adjacentEdge : vertex.getAdjacentEdges()) {
+        	//System.out.println("X wert:" + adjacentEdge.getX() + "Y wert:" + adjacentEdge.getY() + "dir wert:" + adjacentEdge.getDirection());
             if (validEdges.contains(adjacentEdge)) {
                 VertexCoordinate[] connectedVertices = adjacentEdge.getConnectedVertices();
                 for (VertexCoordinate connectedVertex : connectedVertices) {

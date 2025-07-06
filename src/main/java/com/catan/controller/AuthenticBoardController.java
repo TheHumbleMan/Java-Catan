@@ -104,11 +104,8 @@ public class AuthenticBoardController {
     private void renderSettlementSpots() {
         Player currentPlayer = game.getCurrentPlayer();
         Set<VertexCoordinate> allVertices = board.getValidVertices();
-        
         for (VertexCoordinate vertex : allVertices) {
             HexCoordinate.Point2D vertexPos = vertex.toPixel(HEX_RADIUS, BOARD_CENTER_X, BOARD_CENTER_Y);
-        	
-            
             boolean canBuild = board.canPlaceBuilding(vertex, currentPlayer);
             boolean isOccupied = board.getBuildings().stream()
                     .anyMatch(b -> b.getVertexCoordinate() != null && b.getVertexCoordinate().equals(vertex));

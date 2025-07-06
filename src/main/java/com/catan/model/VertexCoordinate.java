@@ -18,7 +18,7 @@ public class VertexCoordinate {
     public VertexCoordinate(int x, int y, int direction) {
         this.x = x;
         this.y = y;
-        this.direction = direction % 6; // Ensure direction is 0-5
+        this.direction = (direction) % 6; // Ensure direction is 0-5
     }
     
     public int getX() {
@@ -82,33 +82,21 @@ public class VertexCoordinate {
         // Each vertex connects to 3 edges
         int prevDirection = (direction + 5) % 6; // Previous direction
         int nextDirection = (direction + 1) % 6; // Next direction
-        
+        int[] DIRECTION_Q_m2 = {0, 1, 0, -1, -1, 0}; //change Q_coordinate to unreasonable value, R can be ignored since field is off_limits
+        int[] DIRECTION_R_m2 = {0, -1, -1, 0, 1, 1};
+        int[] DIRECTION_Q_m1 = {1, 1, 0, -1, -1, 0};
+        int[] DIRECTION_R_m1 = {0, -1, -1, 0, 1, 1};
+        int[] DIRECTION_Q_0 = {1, 1, 0, -1, -1, 0};
+        int[] DIRECTION_R_0 = {0, -1, -1, 0, 1, 1};
+        int[] DIRECTION_Q_1 = {1, 1, 0, -1, -1, 0};
+        int[] DIRECTION_R_1 = {0, -1, -1, 0, 1, 1};
+        int[] DIRECTION_Q_2 = {1, 1, 0, -1, -1, 0};
+        int[] DIRECTION_R_2 = {0, -1, -1, 0, 1, 1};
         // Edge to previous vertex of same hex
         edges.add(new EdgeCoordinate(x, y, prevDirection));
+        edges.add(new EdgeCoordinate(x, y, nextDirection));
+        edges.add(new EdgeCoordinate(2, 2, 0));
         // Edge to next vertex of same hex
-        edges.add(new EdgeCoordinate(x, y, direction));
-        
-        // Edge to vertex on adjacent hex (depends on direction)
-        switch (direction) {
-            case 0: // Top vertex
-                edges.add(new EdgeCoordinate(x, y - 1, 3));
-                break;
-            case 1: // Top-right vertex
-                edges.add(new EdgeCoordinate(x + 1, y - 1, 4));
-                break;
-            case 2: // Bottom-right vertex
-                edges.add(new EdgeCoordinate(x + 1, y, 5));
-                break;
-            case 3: // Bottom vertex
-                edges.add(new EdgeCoordinate(x, y + 1, 0));
-                break;
-            case 4: // Bottom-left vertex
-                edges.add(new EdgeCoordinate(x - 1, y + 1, 1));
-                break;
-            case 5: // Top-left vertex
-                edges.add(new EdgeCoordinate(x - 1, y, 2));
-                break;
-        }
         
         return edges;
     }
@@ -125,68 +113,15 @@ public class VertexCoordinate {
         double angle = (Math.PI / 3.0 * direction) + (Math.PI / 6.0); // Pointy-top orientation
         double vertexRadius = hexSize;
         
-        double vertexX = centerX + hexCenter.x + vertexRadius * Math.cos(angle);
-        double vertexY = centerY + hexCenter.y + vertexRadius * Math.sin(angle);
+        double vertexX = centerX + hexCenter.x + vertexRadius * Math.cos((Math.PI / 2) - (direction * Math.PI / 3.0));
+        double vertexY = centerY + hexCenter.y + vertexRadius * Math.sin((Math.PI / 2) - (direction * Math.PI / 3.0));
         return new HexCoordinate.Point2D(vertexX, vertexY);
     }
-    /**
-     * Gibt die kanonische (normalisierte) Repräsentation dieses Vertex zurück.
-     * Dadurch wird sichergestellt, dass dieselbe logische Vertex-Position,
-     * die von benachbarten Hex-Feldern erzeugt wird, immer konsistent
-     * dargestellt wird. Dies verhindert Duplikate in Sets oder Maps
-     * und ermöglicht eine korrekte Board-Topologie.
-     */
-    public VertexCoordinate normalize(Set<HexCoordinate> validHexes) {
-        VertexCoordinate canonical = this;
-
-        int prevDir = (direction + 5) % 6;
-        HexCoordinate neighborPrev = getNeighborHexCoordinate(prevDir);
-        int neighborPrevDir = (prevDir + 2) % 6;
-        if (validHexes.contains(neighborPrev)) {
-            VertexCoordinate candidatePrev = new VertexCoordinate(neighborPrev.getQ(), neighborPrev.getR(), neighborPrevDir);
-            if (candidatePrev.compareTo(canonical) < 0) {
-                canonical = candidatePrev;
-            }
-        }
-
-        HexCoordinate neighbor = getNeighborHexCoordinate(direction);
-        int neighborDir = (direction + 4) % 6;
-        if (validHexes.contains(neighbor)) {
-            VertexCoordinate candidate = new VertexCoordinate(neighbor.getQ(), neighbor.getR(), neighborDir);
-            if (candidate.compareTo(canonical) < 0) {
-                canonical = candidate;
-            }
-        }
-
-        return canonical;
-    }
+   
 
 
 
-
-
-    /**
-     * Berechnet und gibt die benachbarte HexCoordinate in der angegebenen Richtung zurück.
-     * Verwendet dazu axiale Richtungsvektoren für Hexagons mit Spitze oben (pointy-top).
-     *
-     * @param dir Die Richtung (0-5), in der der Nachbar gesucht wird.
-     * @return Die HexCoordinate des benachbarten Hex-Feldes.
-     */
-    private HexCoordinate getNeighborHexCoordinate(int dir) {
-        int[] DIRECTION_Q = {1, 1, 0, -1, -1, 0};
-        int[] DIRECTION_R = {0, -1, -1, 0, 1, 1};
-
-        int q = x + DIRECTION_Q[dir];
-        int r = y + DIRECTION_R[dir];
-        return new HexCoordinate(q, r);
-    }
-    /**
-     * Vergleicht diese VertexCoordinate lexikografisch mit einer anderen.
-     * Sortiert zuerst nach x, dann y, dann direction.
-     *
-     * @param other Die andere VertexCoordinate zum Vergleich.
-     * @return Negativ, wenn diese < other, 0 wenn gleich, positiv, wenn diese > other.
-     */
+   
     public int compareTo(VertexCoordinate other) {
         if (this.x != other.x) return Integer.compare(this.x, other.x);
         if (this.y != other.y) return Integer.compare(this.y, other.y);
