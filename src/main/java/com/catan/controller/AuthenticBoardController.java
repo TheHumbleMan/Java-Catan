@@ -1,5 +1,7 @@
 package com.catan.controller;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.catan.model.AuthenticCatanBoard;
@@ -8,6 +10,7 @@ import com.catan.model.CatanGame;
 import com.catan.model.EdgeCoordinate;
 import com.catan.model.HexCoordinate;
 import com.catan.model.Player;
+import com.catan.model.RoundedPoint2D;
 import com.catan.model.TerrainTile;
 import com.catan.model.VertexCoordinate;
 import com.catan.view.UIComponents;
@@ -103,9 +106,11 @@ public class AuthenticBoardController {
      */
     private void renderSettlementSpots() {
         Player currentPlayer = game.getCurrentPlayer();
-        Set<VertexCoordinate> allVertices = board.getValidVertices();
-        for (VertexCoordinate vertex : allVertices) {
-            HexCoordinate.Point2D vertexPos = vertex.toPixel(HEX_RADIUS, BOARD_CENTER_X, BOARD_CENTER_Y);
+        Map<RoundedPoint2D, List<VertexCoordinate>> allVertices = board.getValidVertices();
+        for (Map.Entry<RoundedPoint2D, List<VertexCoordinate>> entry : allVertices.entrySet()) {
+        	
+        	VertexCoordinate vertex = entry.getValue().get(0);
+            RoundedPoint2D vertexPos = entry.getKey();
             boolean canBuild = board.canPlaceBuilding(vertex, currentPlayer);
             boolean isOccupied = board.getBuildings().stream()
                     .anyMatch(b -> b.getVertexCoordinate() != null && b.getVertexCoordinate().equals(vertex));

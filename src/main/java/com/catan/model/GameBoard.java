@@ -322,12 +322,13 @@ public class GameBoard {
     /**
      * Get valid settlement positions for current game state.
      */
+    /*
     public List<VertexCoordinate> getValidSettlementPositions() {
         if (useAuthentic) {
             return new ArrayList<>(authenticBoard.getValidVertices());
         }
         return new ArrayList<>();
-    }
+    } */
     
     /**
      * Get valid road positions for current game state.

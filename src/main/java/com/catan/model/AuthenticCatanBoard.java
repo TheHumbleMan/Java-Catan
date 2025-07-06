@@ -36,7 +36,7 @@ public class AuthenticCatanBoard {
     private final Map<EdgeCoordinate, Road> roads;
     private HexCoordinate robberPosition;
 
-    private final Set<VertexCoordinate> validVertices;
+    private final Map<RoundedPoint2D, List<VertexCoordinate>> validVertices;
     private final Set<EdgeCoordinate> validEdges;
 
     // === Neuer Default-Konstruktor ===
@@ -56,7 +56,7 @@ public class AuthenticCatanBoard {
 
         initializeHexBoard();
 
-        this.validVertices = new HashSet<>(calculateAuthenticVertices());
+        this.validVertices = new HashMap<>(calculateAuthenticVertices());
         this.validEdges = new HashSet<>(calculateAuthenticEdges());
 
         System.out.println("✓ Authentisches CATAN-Board initialisiert: " + 
@@ -113,8 +113,8 @@ public class AuthenticCatanBoard {
     /**
      * Berechnet die authentischen 54 Siedlungspositionen (Vertices) des CATAN-Boards.
      */
-    private Set<VertexCoordinate> calculateAuthenticVertices() {
-        Set<RoundedPoint2D> worldKeys = new HashSet<>();
+    private Map<RoundedPoint2D, List<VertexCoordinate>> calculateAuthenticVertices() {
+        Map<RoundedPoint2D, List<VertexCoordinate>> verticeMap = new HashMap<>();
         Set<VertexCoordinate> uniqueVertices = new HashSet<>();
 
         for (HexCoordinate hex : STANDARD_HEX_SET) {
@@ -126,15 +126,20 @@ public class AuthenticCatanBoard {
                 HexCoordinate.Point2D pos = vertex.toPixel(hexSize, centerX, centerY);
                 RoundedPoint2D rounded = new RoundedPoint2D(pos.x, pos.y);
 
-                if (!worldKeys.contains(rounded) || true) {
-                    worldKeys.add(rounded);
-                    uniqueVertices.add(vertex);
+                verticeMap.computeIfAbsent(rounded, k -> new ArrayList<>()).add(vertex);
+                for (Map.Entry<RoundedPoint2D, List<VertexCoordinate>> entry : verticeMap.entrySet()) {
+                    RoundedPoint2D key = entry.getKey();
+                    List<VertexCoordinate> value = entry.getValue();
+
+                    System.out.println("Key: " + key + ", Value: " + value);
                 }
+
+                
             }
         }
 
         System.out.println("Berechnete einzigartige Vertices: " + uniqueVertices.size());
-        return uniqueVertices;
+        return verticeMap;
     }
 
 
@@ -211,9 +216,9 @@ public class AuthenticCatanBoard {
      */
     public boolean canPlaceBuilding(VertexCoordinate vertex, Player player) {
         // Vertex muss valide sein
-        if (!validVertices.contains(vertex)) {
+       /* if (!validVertices.contains(vertex)) {
             return false;
-        }
+        }*/
         
         // Position darf nicht besetzt sein
         if (buildings.containsKey(vertex)) {
@@ -374,8 +379,8 @@ public class AuthenticCatanBoard {
 
     // === GETTERS ===
     
-    public Set<VertexCoordinate> getValidVertices() {
-        return new HashSet<>(validVertices);
+    public Map<RoundedPoint2D, List<VertexCoordinate>> getValidVertices() {
+        return new HashMap<>(validVertices);
     }
     
     public Set<EdgeCoordinate> getValidEdges() {

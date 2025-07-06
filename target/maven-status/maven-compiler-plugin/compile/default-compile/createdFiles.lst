@@ -5,7 +5,6 @@ com\catan\demo\DeduplicationTest.class
 com\catan\model\AuthenticCatanBoard.class
 com\catan\model\EdgeCoordinate.class
 com\catan\view\UIComponents.class
-com\catan\demo\AuthenticBoardDemo.class
 com\catan\model\CatanGame$GamePhase.class
 com\catan\model\EdgeCoordinate$Point2D.class
 com\catan\controller\MainController.class
