@@ -75,7 +75,7 @@ public class AuthenticBoardController {
         for (TerrainTile tile : board.getAllTiles()) {
             if (tile.getHexCoordinate() != null) {
                 HexCoordinate hexCoord = tile.getHexCoordinate();
-                HexCoordinate.Point2D hexCenter = hexCoord.toPixelCatan(HEX_RADIUS);
+                RoundedPoint2D hexCenter = hexCoord.toPixelCatan(HEX_RADIUS);
                 
                 // Erstelle authentisches Hexagon
                 Polygon hexagon = UIComponents.createHexagon(HEX_RADIUS);
@@ -126,6 +126,7 @@ public class AuthenticBoardController {
             // Style den Siedlungsspot basierend auf Zustand
             if (isOccupied) {
                 // Finde das Gebäude und zeige es mit Spielerfarbe
+            	System.out.println("Koordinaten: q=" + vertex.getX() + " r=" + vertex.getY() + "dir=" + vertex.getDirection());
                 Building building = board.getBuildings().stream()
                     .filter(b -> b.getVertexCoordinate() != null && b.getVertexCoordinate().equals(vertex))
                     .findFirst().orElse(null);
@@ -183,7 +184,7 @@ public class AuthenticBoardController {
         Set<EdgeCoordinate> allEdges = board.getValidEdges();
         
         for (EdgeCoordinate edge : allEdges) {
-            HexCoordinate.Point2D edgePos = edge.toPixel(HEX_RADIUS, BOARD_CENTER_X, BOARD_CENTER_Y);
+            RoundedPoint2D edgePos = edge.toPixel(HEX_RADIUS, BOARD_CENTER_X, BOARD_CENTER_Y);
             double rotation = edge.getRotationAngle(HEX_RADIUS, BOARD_CENTER_X, BOARD_CENTER_Y);
             
             boolean canBuildRoad = board.canPlaceRoad(edge, currentPlayer);

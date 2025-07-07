@@ -44,7 +44,7 @@ class EdgeCoordinateTest {
     @Test
     void testToPixelPosition() {
         EdgeCoordinate edge = new EdgeCoordinate(0, 0, 0);
-        HexCoordinate.Point2D pixel = edge.toPixel(50, 300, 300);
+        RoundedPoint2D pixel = edge.toPixel(50, 300, 300);
         
         assertNotNull(pixel);
         // The exact values depend on the implementation, just verify it returns valid coordinates

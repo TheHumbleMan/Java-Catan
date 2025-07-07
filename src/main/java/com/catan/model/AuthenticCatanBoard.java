@@ -126,12 +126,11 @@ public class AuthenticCatanBoard {
             for (int dir = 0; dir < 6; dir++) {
             	
                 VertexCoordinate vertex = new VertexCoordinate(q, r, dir);
-                HexCoordinate.Point2D pos = vertex.toPixel(hexSize, centerX, centerY);
-                RoundedPoint2D rounded = new RoundedPoint2D(pos.x, pos.y);
+                RoundedPoint2D rounded = vertex.toPixel(hexSize, centerX, centerY);
 
                 System.out.println("Vertex dir=" + dir + " q: " + q + " r: " + r +
-                        " x=" + pos.x + " roundedX=" + rounded.x +
-                        " y=" + pos.y + " roundedY=" + rounded.y);
+                        " x=" + rounded.getX() + " roundedX=" + rounded.x +
+                        " y=" + rounded.getY() + " roundedY=" + rounded.y);
                 verticeMap.computeIfAbsent(rounded, k -> new ArrayList<>()).add(vertex);
                                 
 
@@ -188,8 +187,7 @@ public VertexCoordinate getNormalizedCoordinate(VertexCoordinate vertex) {
 
             for (int dir = 0; dir < 6; dir++) {
                 EdgeCoordinate edge = new EdgeCoordinate(q, r, dir);
-                HexCoordinate.Point2D pos = edge.toPixel(hexSize, centerX, centerY);
-                RoundedPoint2D rounded = new RoundedPoint2D(pos.x, pos.y);
+                RoundedPoint2D rounded = edge.toPixel(hexSize, centerX, centerY);
 
                 if (!worldKeys.contains(rounded)) {
                     worldKeys.add(rounded);

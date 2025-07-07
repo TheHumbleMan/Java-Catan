@@ -44,7 +44,7 @@ public class CatanGeometryCalculator {
                 VertexCoordinate vertex = new VertexCoordinate(hex.getQ(), hex.getR(), direction);
                 
                 // Berechne eindeutige Position
-                HexCoordinate.Point2D pos = vertex.toPixel(100.0, 0, 0);
+                RoundedPoint2D pos = vertex.toPixel(100.0, 0, 0);
                 String key = Math.round(pos.x * 10) + "," + Math.round(pos.y * 10);
                 
                 uniqueVertices.put(key, vertex);
@@ -86,7 +86,7 @@ public class CatanGeometryCalculator {
                 EdgeCoordinate edge = new EdgeCoordinate(hex.getQ(), hex.getR(), direction);
                 
                 // Berechne eindeutige Position
-                HexCoordinate.Point2D pos = edge.toPixel(100.0, 0, 0);
+                RoundedPoint2D pos = edge.toPixel(100.0, 0, 0);
                 String key = Math.round(pos.x * 10) + "," + Math.round(pos.y * 10);
                 
                 uniqueEdges.put(key, edge);

@@ -59,7 +59,7 @@ public class HexCoordinate {
      * Convert hex coordinates to pixel coordinates for authentic CATAN 5-row layout.
      * This method positions hexagons in straight rows (3-4-5-4-3) with vertical symmetry.
      */
-    public Point2D toPixelCatan(double hexSize) {
+    public RoundedPoint2D toPixelCatan(double hexSize) {
         double hexWidth = Math.sqrt(3) * hexSize; // für pointy-top
         double hexHeight = 2.0 * hexSize;
 
@@ -89,7 +89,7 @@ public class HexCoordinate {
                 x = q * hexWidth; // fallback
         }
 
-        return new Point2D(x, y);
+        return new RoundedPoint2D(x, y);
     }
 
 

@@ -2,6 +2,7 @@ package com.catan.demo;
 
 import com.catan.model.AuthenticCatanBoard;
 import com.catan.model.HexCoordinate;
+import com.catan.model.RoundedPoint2D;
 import com.catan.model.VertexCoordinate;
 
 public class DeduplicationTest {
@@ -36,8 +37,8 @@ public class DeduplicationTest {
         System.out.println("Vertex1: " + vertex1);
         System.out.println("Vertex2: " + vertex2);
         
-        HexCoordinate.Point2D pos1 = vertex1.toPixel(50.0, 0, 0);
-        HexCoordinate.Point2D pos2 = vertex2.toPixel(50.0, 0, 0);
+        RoundedPoint2D pos1 = vertex1.toPixel(50.0, 0, 0);
+        RoundedPoint2D pos2 = vertex2.toPixel(50.0, 0, 0);
         
         System.out.println("Position1: (" + pos1.x + ", " + pos1.y + ")");
         System.out.println("Position2: (" + pos2.x + ", " + pos2.y + ")");
@@ -86,8 +87,8 @@ public class DeduplicationTest {
     }
     
     private static void checkDuplicateCase(VertexCoordinate v1, VertexCoordinate v2, String description) {
-        HexCoordinate.Point2D pos1 = v1.toPixel(50.0, 0, 0);
-        HexCoordinate.Point2D pos2 = v2.toPixel(50.0, 0, 0);
+        RoundedPoint2D pos1 = v1.toPixel(50.0, 0, 0);
+        RoundedPoint2D pos2 = v2.toPixel(50.0, 0, 0);
         double distance = Math.sqrt(Math.pow(pos1.x - pos2.x, 2) + Math.pow(pos1.y - pos2.y, 2));
         
         System.out.println(description + ": distance = " + distance);

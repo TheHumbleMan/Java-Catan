@@ -44,7 +44,7 @@ class VertexCoordinateTest {
     @Test
     void testToPixelPosition() {
         VertexCoordinate vertex = new VertexCoordinate(0, 0, 0);
-        HexCoordinate.Point2D pixel = vertex.toPixel(50, 300, 300);
+        RoundedPoint2D pixel = vertex.toPixel(50, 300, 300);
         
         assertNotNull(pixel);
         // The exact values depend on the implementation, just verify it returns valid coordinates

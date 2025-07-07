@@ -104,10 +104,10 @@ public class VertexCoordinate {
     /**
      * Convert vertex coordinate to pixel position for rendering.
      */
-    public HexCoordinate.Point2D toPixel(double hexSize, double centerX, double centerY) { //hexSize is radius
+    public RoundedPoint2D toPixel(double hexSize, double centerX, double centerY) { //hexSize is radius
         // First get the hex center using CATAN positioning
         HexCoordinate hexCoord = new HexCoordinate(x, y);
-        HexCoordinate.Point2D hexCenter = hexCoord.toPixelCatan(hexSize);
+        RoundedPoint2D hexCenter = hexCoord.toPixelCatan(hexSize);
         
         // Calculate vertex offset from hex center
         double angle = (Math.PI / 3.0 * direction) + (Math.PI / 6.0); // Pointy-top orientation
@@ -115,7 +115,7 @@ public class VertexCoordinate {
         
         double vertexX = centerX + hexCenter.x + vertexRadius * Math.cos((Math.PI / 2) - (direction * Math.PI / 3.0));
         double vertexY = centerY + hexCenter.y - vertexRadius * Math.sin((Math.PI / 2) - (direction * Math.PI / 3.0));
-        return new HexCoordinate.Point2D(vertexX, vertexY);
+        return new RoundedPoint2D(vertexX, vertexY);
     }
     
    
