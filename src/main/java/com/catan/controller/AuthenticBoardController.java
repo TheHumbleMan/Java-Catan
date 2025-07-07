@@ -62,9 +62,10 @@ public class AuthenticBoardController {
         renderHexagonTiles();
         renderSettlementSpots();
         renderRoadSpots();
-        
+        int settlement_count = new HashSet<>(board.getValidVertices().values()).size();
+        //board.getValidVertices().size()
         System.out.println("✓ Authentisches CATAN-Board gerendert: " + 
-                         board.getValidVertices().size() + " Siedlungen, " + 
+        		settlement_count + " Siedlungsmöglichkeiten, " + 
                          board.getValidEdges().size() + " Straßen");
     }
     
@@ -109,9 +110,8 @@ public class AuthenticBoardController {
         Player currentPlayer = game.getCurrentPlayer();
         Map<VertexCoordinate, VertexCoordinate> allVertices = board.getValidVertices();
         Set<VertexCoordinate> uniqueVertices = new HashSet<>(allVertices.values());
-
         for (VertexCoordinate uniqueVertice : uniqueVertices) {
-            System.out.println(uniqueVertice);
+            //System.out.println(uniqueVertice); nur überprüfung
         	VertexCoordinate vertex = uniqueVertice;
             RoundedPoint2D vertexPos = uniqueVertice.toPixel(HEX_RADIUS, BOARD_CENTER_X, BOARD_CENTER_Y);
             boolean canBuild = board.canPlaceBuilding(vertex, currentPlayer);
