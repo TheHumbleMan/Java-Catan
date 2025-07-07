@@ -333,11 +333,11 @@ public class GameBoard {
     /**
      * Get valid road positions for current game state.
      */
-    public List<EdgeCoordinate> getValidRoadPositions() {
+    public Map<EdgeCoordinate, EdgeCoordinate> getValidRoadPositions() {
         if (useAuthentic) {
-            return new ArrayList<>(authenticBoard.getValidEdges());
+            return new HashMap<>(authenticBoard.getValidEdges());
         }
-        return new ArrayList<>();
+        return new HashMap<>();
     }
     
     /**

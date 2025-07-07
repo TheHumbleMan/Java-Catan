@@ -36,7 +36,8 @@ public class AuthenticCatanBoard {
     private final Map<EdgeCoordinate, Road> roads;
     private HexCoordinate robberPosition;
 
-    private final Set<EdgeCoordinate> validEdges;
+    private final Map<EdgeCoordinate, EdgeCoordinate> normalizedEdgeMap;
+    private final Map<RoundedPoint2D, List<EdgeCoordinate>> coordEdgeMap;
     
     // VerticeMap
     private final Map<RoundedPoint2D, List<VertexCoordinate>> coordVerticeMap;
@@ -58,14 +59,16 @@ public class AuthenticCatanBoard {
         this.roads = new HashMap<>();
         //maps
         this.coordVerticeMap = calculateAuthenticVertices();
-        this.normalizedVerticeMap = createNormalizeMap(coordVerticeMap);
+        this.normalizedVerticeMap = createNormalizeVertexMap(coordVerticeMap);
+        
+        this.coordEdgeMap = calculateAuthenticEdges();
+        this.normalizedEdgeMap = createNormalizeEdgeMap(coordEdgeMap);
         
         initializeHexBoard();
-        this.validEdges = new HashSet<>(calculateAuthenticEdges());
 
         System.out.println("✓ Authentisches CATAN-Board initialisiert: " + 
                            normalizedVerticeMap.size() + " Siedlungen, " + 
-                           validEdges.size() + " Straßen");
+                           normalizedEdgeMap.size() + " Siedlungsoptionen"); //eigentlich unnötige Abfrage
     }
     
     private void initializeHexBoard() {
@@ -145,7 +148,36 @@ public class AuthenticCatanBoard {
 
         return verticeMap;
     }
-private Map<VertexCoordinate, VertexCoordinate> createNormalizeMap(Map<RoundedPoint2D, List<VertexCoordinate>>oldMap){
+    
+    private Map<RoundedPoint2D, List<EdgeCoordinate>> calculateAuthenticEdges() {
+        Map<RoundedPoint2D, List<EdgeCoordinate>> edgeMap = new HashMap<>();
+        for (HexCoordinate hex : STANDARD_HEX_SET) {
+            int q = hex.getQ();
+            int r = hex.getR();
+
+            for (int dir = 0; dir < 6; dir++) {
+            	
+                EdgeCoordinate edge = new EdgeCoordinate(q, r, dir);
+                RoundedPoint2D rounded = edge.toPixel(hexSize, centerX, centerY);
+
+                System.out.println("Vertex dir=" + dir + " q: " + q + " r: " + r +
+                        " x=" + rounded.getX() + " roundedX=" + rounded.x +
+                        " y=" + rounded.getY() + " roundedY=" + rounded.y);
+                edgeMap.computeIfAbsent(rounded, k -> new ArrayList<>()).add(edge);
+                                
+
+                
+            }
+        }
+        for (Map.Entry<RoundedPoint2D, List<EdgeCoordinate>> entry : edgeMap.entrySet()) {
+            RoundedPoint2D key = entry.getKey();
+            List<EdgeCoordinate> value = entry.getValue();
+            System.out.println("Key X: " + key.getX() + "Key Y: " + key.getY() + ", Value: " + value);
+        }
+
+        return edgeMap;
+    }
+private Map<VertexCoordinate, VertexCoordinate> createNormalizeVertexMap(Map<RoundedPoint2D, List<VertexCoordinate>>oldMap){
 	Map<VertexCoordinate, VertexCoordinate> verticeMap = new HashMap<>();
 	for (Map.Entry<RoundedPoint2D, List<VertexCoordinate>> entry : oldMap.entrySet()) {
 		for (VertexCoordinate element : entry.getValue()) {
@@ -158,54 +190,31 @@ private Map<VertexCoordinate, VertexCoordinate> createNormalizeMap(Map<RoundedPo
 }
 	return verticeMap;
 }
-public VertexCoordinate getNormalizedCoordinate(VertexCoordinate vertex) {
+
+private Map<EdgeCoordinate, EdgeCoordinate> createNormalizeEdgeMap(Map<RoundedPoint2D, List<EdgeCoordinate>> oldMap) {
+    Map<EdgeCoordinate, EdgeCoordinate> edgeMap = new HashMap<>();
+    for (Map.Entry<RoundedPoint2D, List<EdgeCoordinate>> entry : oldMap.entrySet()) {
+        for (EdgeCoordinate element : entry.getValue()) {
+            edgeMap.put(element, entry.getValue().get(0)); // nimmt immer das erste Element und mappt die anderen darauf
+        }
+    }
+    for (Map.Entry<EdgeCoordinate, EdgeCoordinate> entry : edgeMap.entrySet()) {
+        System.out.println("Key: " + entry.getKey() + " -> Value: " + entry.getValue());
+        System.out.println("Size: " + edgeMap.size());
+    }
+    return edgeMap;
+}
+
+public VertexCoordinate getNormalizedVertexCoordinate(VertexCoordinate vertex) {
 	VertexCoordinate normalizedVertex = this.normalizedVerticeMap.get(vertex);
 	return normalizedVertex;
 }
 
+public EdgeCoordinate getNormalizedEdgeCoordinate(EdgeCoordinate edge) {
+    EdgeCoordinate normalizedEdge = this.normalizedEdgeMap.get(edge);
+    return normalizedEdge;
+}
 
-
-
-
-
-
-
-    
-    /**
-     * Berechnet die authentischen 72 Straßenpositionen eines CATAN-Boards.
-     */
-    /**
-     * Berechnet die authentischen 72 Straßenpositionen (Edges) des CATAN-Boards.
-     */
-    private Set<EdgeCoordinate> calculateAuthenticEdges() {
-        Set<RoundedPoint2D> worldKeys = new HashSet<>();
-        Set<EdgeCoordinate> uniqueEdges = new HashSet<>();
-
-        for (HexCoordinate hex : STANDARD_HEX_SET) {
-            int q = hex.getQ();
-            int r = hex.getR();
-
-            for (int dir = 0; dir < 6; dir++) {
-                EdgeCoordinate edge = new EdgeCoordinate(q, r, dir);
-                RoundedPoint2D rounded = edge.toPixel(hexSize, centerX, centerY);
-
-                if (!worldKeys.contains(rounded)) {
-                    worldKeys.add(rounded);
-                    uniqueEdges.add(edge);
-                }
-            }
-        }
-
-        System.out.println("Berechnete einzigartige Edges: " + uniqueEdges.size());
-
-        // Erwartete Anzahl = 72 bei Standard CATAN Layout
-        if (uniqueEdges.size() != 72) {
-            System.err.println("Warnung: Anzahl der berechneten Straßen-Edges ist unerwartet: " + uniqueEdges.size());
-        }
-
-        return uniqueEdges;
-    }
-    
 
     
     /**
@@ -248,7 +257,7 @@ public VertexCoordinate getNormalizedCoordinate(VertexCoordinate vertex) {
         // Distanz-Regel: Keine Gebäude auf benachbarten Vertices
         for (EdgeCoordinate adjacentEdge : vertex.getAdjacentEdges()) {
         	//System.out.println("X wert:" + adjacentEdge.getX() + "Y wert:" + adjacentEdge.getY() + "dir wert:" + adjacentEdge.getDirection());
-            if (validEdges.contains(adjacentEdge)) {
+            if (normalizedEdgeMap.containsValue(adjacentEdge)) {
                 VertexCoordinate[] connectedVertices = adjacentEdge.getConnectedVertices();
                 for (VertexCoordinate connectedVertex : connectedVertices) {
                     if (!connectedVertex.equals(vertex) && buildings.containsKey(connectedVertex)) {
@@ -282,7 +291,7 @@ public VertexCoordinate getNormalizedCoordinate(VertexCoordinate vertex) {
      */
     public boolean canPlaceRoad(EdgeCoordinate edge, Player player) {
         // Edge muss valide sein
-        if (!validEdges.contains(edge)) {
+        if (!normalizedEdgeMap.containsValue(edge)) {
             return false;
         }
         
@@ -403,8 +412,8 @@ public VertexCoordinate getNormalizedCoordinate(VertexCoordinate vertex) {
         return new HashMap<>(normalizedVerticeMap);
     }
     
-    public Set<EdgeCoordinate> getValidEdges() {
-        return new HashSet<>(validEdges);
+    public Map<EdgeCoordinate, EdgeCoordinate> getValidEdges() {
+        return new HashMap<>(normalizedEdgeMap);
     }
     
     public Collection<TerrainTile> getAllTiles() {

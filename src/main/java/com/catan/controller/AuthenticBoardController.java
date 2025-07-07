@@ -66,7 +66,7 @@ public class AuthenticBoardController {
         //board.getValidVertices().size()
         System.out.println("✓ Authentisches CATAN-Board gerendert: " + 
         		settlement_count + " Siedlungsmöglichkeiten, " + 
-                         board.getValidEdges().size() + " Straßen");
+                         board.getValidVertices().size() + " Siedlungsoptionen");
     }
     
     /**
@@ -181,9 +181,10 @@ public class AuthenticBoardController {
      */
     private void renderRoadSpots() {
         Player currentPlayer = game.getCurrentPlayer();
-        Set<EdgeCoordinate> allEdges = board.getValidEdges();
+        Map<EdgeCoordinate, EdgeCoordinate> allEdges = board.getValidEdges();
+        Set<EdgeCoordinate> uniqueEdges = new HashSet<>(allEdges.values());
         
-        for (EdgeCoordinate edge : allEdges) {
+        for (EdgeCoordinate edge : uniqueEdges) {
             RoundedPoint2D edgePos = edge.toPixel(HEX_RADIUS, BOARD_CENTER_X, BOARD_CENTER_Y);
             double rotation = edge.getRotationAngle(HEX_RADIUS, BOARD_CENTER_X, BOARD_CENTER_Y);
             
