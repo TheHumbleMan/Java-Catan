@@ -1,5 +1,6 @@
 package com.catan.controller;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -106,11 +107,13 @@ public class AuthenticBoardController {
      */
     private void renderSettlementSpots() {
         Player currentPlayer = game.getCurrentPlayer();
-        Map<RoundedPoint2D, List<VertexCoordinate>> allVertices = board.getValidVertices();
-        for (Map.Entry<RoundedPoint2D, List<VertexCoordinate>> entry : allVertices.entrySet()) {
-        	
-        	VertexCoordinate vertex = entry.getValue().get(0);
-            RoundedPoint2D vertexPos = entry.getKey();
+        Map<VertexCoordinate, VertexCoordinate> allVertices = board.getValidVertices();
+        Set<VertexCoordinate> uniqueVertices = new HashSet<>(allVertices.values());
+
+        for (VertexCoordinate uniqueVertice : uniqueVertices) {
+            System.out.println(uniqueVertice);
+        	VertexCoordinate vertex = uniqueVertice;
+            RoundedPoint2D vertexPos = uniqueVertice.toPixel(HEX_RADIUS, BOARD_CENTER_X, BOARD_CENTER_Y);
             boolean canBuild = board.canPlaceBuilding(vertex, currentPlayer);
             boolean isOccupied = board.getBuildings().stream()
                     .anyMatch(b -> b.getVertexCoordinate() != null && b.getVertexCoordinate().equals(vertex));
