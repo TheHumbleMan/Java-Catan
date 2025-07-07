@@ -191,7 +191,7 @@ public class AuthenticBoardController {
             Rectangle roadSegment = new Rectangle(ROAD_LENGTH, ROAD_WIDTH);
             roadSegment.setX(edgePos.x - ROAD_LENGTH/2);
             roadSegment.setY(edgePos.y - ROAD_WIDTH/2);
-            roadSegment.setRotate(rotation);
+            roadSegment.setRotate(-rotation);
             
             // Style das Straßensegment
             if (isRoadOccupied) {

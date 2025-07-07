@@ -39,6 +39,9 @@ public class AuthenticCatanBoard {
     private final Map<RoundedPoint2D, List<VertexCoordinate>> validVertices;
     private final Set<EdgeCoordinate> validEdges;
     
+    // VerticeMap
+    private final Map<RoundedPoint2D, List<VertexCoordinate>> coordVerticeMap;
+    private final Map<VertexCoordinate, VertexCoordinate> normalizedVerticeMap;
     private final Map<VertexCoordinate, VertexCoordinate> test;
 
     // === Neuer Default-Konstruktor ===
@@ -55,9 +58,12 @@ public class AuthenticCatanBoard {
         this.hexTiles = new HashMap<>();
         this.buildings = new HashMap<>();
         this.roads = new HashMap<>();
-
+        //maps
+        this.coordVerticeMap = calculateAuthenticVertices();
+        this.normalizedVerticeMap = createNormalizeMap(coordVerticeMap);
+        
         initializeHexBoard();
-
+        
         this.validVertices = new HashMap<>(calculateAuthenticVertices());
         this.test = createNormalizeMap(new HashMap<>(calculateAuthenticVertices()));
         this.validEdges = new HashSet<>(calculateAuthenticEdges());
@@ -123,6 +129,7 @@ public class AuthenticCatanBoard {
             int r = hex.getR();
 
             for (int dir = 0; dir < 6; dir++) {
+            	
                 VertexCoordinate vertex = new VertexCoordinate(q, r, dir);
                 HexCoordinate.Point2D pos = vertex.toPixel(hexSize, centerX, centerY);
                 RoundedPoint2D rounded = new RoundedPoint2D(pos.x, pos.y);
@@ -153,9 +160,15 @@ private Map<VertexCoordinate, VertexCoordinate> createNormalizeMap(Map<RoundedPo
 	}
 	for (Map.Entry<VertexCoordinate, VertexCoordinate> entry : verticeMap.entrySet()) {
 	    System.out.println("Key: " + entry.getKey() + " -> Value: " + entry.getValue());
-	}
+	    System.out.println("Size: " + verticeMap.size());	
+}
 	return verticeMap;
 }
+public VertexCoordinate getNormalizedCoordinate(VertexCoordinate vertex) {
+	VertexCoordinate normalizedVertex = this.normalizedVerticeMap.get(vertex);
+	return normalizedVertex;
+}
+
 
 
 

@@ -114,7 +114,7 @@ public class VertexCoordinate {
         double vertexRadius = hexSize;
         
         double vertexX = centerX + hexCenter.x + vertexRadius * Math.cos((Math.PI / 2) - (direction * Math.PI / 3.0));
-        double vertexY = centerY + hexCenter.y + vertexRadius * Math.sin((Math.PI / 2) - (direction * Math.PI / 3.0));
+        double vertexY = centerY + hexCenter.y - vertexRadius * Math.sin((Math.PI / 2) - (direction * Math.PI / 3.0));
         return new HexCoordinate.Point2D(vertexX, vertexY);
     }
    
