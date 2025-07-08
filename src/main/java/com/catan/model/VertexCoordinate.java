@@ -75,7 +75,7 @@ public class VertexCoordinate {
     }
     
     /**
-     * Get the edges (for roads) that connect to this vertex.
+     * Get the 
      */
     public List<VertexCoordinate> getAdjacentVertices(double hexSize, double centerX, double centerY, Map<RoundedPoint2D, VertexCoordinate> coordMap) {
         List<VertexCoordinate> vertices = new ArrayList<>();
@@ -93,7 +93,9 @@ public class VertexCoordinate {
         else if (direction == 0 || direction == 2 || direction == 4) {
         	vertex3 = calculateVerticeParityEven(hexSize, centerX, centerY, vertex0, vertex1, vertex2, coordMap);
         }
+        if (vertex3 != null) {
         vertices.add(vertex3);
+        }
         return vertices;
     }
     
@@ -122,7 +124,7 @@ public class VertexCoordinate {
 		   double vertexX = centerVertice.getX() + hexSize * Math.cos((Math.PI / 6) + (4 * i * Math.PI / 6.0));
 	       double vertexY = centerVertice.getY() - hexSize * Math.sin((Math.PI / 6) + (4 * i * Math.PI / 6.0));
 	       RoundedPoint2D point = new RoundedPoint2D(vertexX, vertexY);
-	       if (!point.equals(comp1) && !point.equals(comp2)) {
+	       if (!point.equals(comp1) && !point.equals(comp2) && coordMap.containsKey(point)) {
 	    	   vertex = coordMap.get(point);
 	       }
 	       }
@@ -139,7 +141,7 @@ public class VertexCoordinate {
 		   double vertexX = centerVertice.getX() + hexSize * Math.cos((Math.PI / 2) + (4 * i * Math.PI / 6.0));
 	       double vertexY = centerVertice.getY() - hexSize * Math.sin((Math.PI / 2) + (4 * i * Math.PI / 6.0));
 	       RoundedPoint2D point = new RoundedPoint2D(vertexX, vertexY);
-	       if (!point.equals(comp1) && !point.equals(comp2)) {
+	       if (!point.equals(comp1) && !point.equals(comp2) && coordMap.containsKey(point)) {
 	    	   vertex = coordMap.get(point);
 	       }
 	       }
