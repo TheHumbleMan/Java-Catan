@@ -125,6 +125,7 @@ public class AuthenticCatanBoard {
     /**
      * Berechnet die authentischen 54 Siedlungspositionen (Vertices) des CATAN-Boards.
      */
+    //alle diese Map Sachen ignorieren, sorgt nur für dafür Vertice maps brauchbar zu initialisieren
     private Map<RoundedPoint2D, List<VertexCoordinate>> calculateAuthenticVertices() {
         Map<RoundedPoint2D, List<VertexCoordinate>> verticeMap = new HashMap<>();
         for (HexCoordinate hex : STANDARD_HEX_SET) {
@@ -234,34 +235,12 @@ public EdgeCoordinate getNormalizedEdgeCoordinate(EdgeCoordinate edge) {
     return normalizedEdge;
 }
  //gibt für x und y wert die korrekten normalized catan coords an
-public VertexCoordinate getNormalizedCatanCoordinate(int x, int y) {
+public VertexCoordinate getNormalizedVertexCoordinate(int x, int y) {
 	RoundedPoint2D point = new RoundedPoint2D(x, y);
 	VertexCoordinate normalizedVertex = normalizedCatanCoordMap.get(point);
 	return normalizedVertex;
 }
 
-
-    
-    /**
-     * Prüft ob ein Hexagon am Rand des Boards liegt.
-     */
-    private boolean isEdgeHex(HexCoordinate hex) {
-        int q = hex.getQ();
-        int r = hex.getR();
-        
-        // Rand-Hexagone haben extreme q oder r Werte
-        return Math.abs(q) == 2 || Math.abs(r) == 2 || 
-               (r == -2 && Math.abs(q) <= 1) || 
-               (r == 2 && Math.abs(q) <= 1);
-    }
-    
-    /**
-     * Prüft ob ein Vertex-Direction für das Board gültig ist.
-     */
-    private boolean isValidBoardVertex(HexCoordinate hex, int direction) {
-        // Vereinfachte Logik: verwende alle Directions
-        return true;
-    }
     
     // === GAME LOGIC METHODS ===
     
@@ -269,17 +248,24 @@ public VertexCoordinate getNormalizedCatanCoordinate(int x, int y) {
      * Prüft ob eine Siedlung an einem Vertex platziert werden kann.
      */
     public boolean canPlaceBuilding(VertexCoordinate vertex, Player player) {
+    	//ressourcenlimitierung fehlt noch!!
+    	
         // Vertex muss valide sein
-       /* if (!validVertices.contains(vertex)) {
+        if (!getValidVertices().containsKey(vertex)) {
             return false;
-        }*/
+        }
         
         // Position darf nicht besetzt sein
         if (buildings.containsKey(vertex)) {
             return false;
         }
         
-        // Distanz-Regel: Keine Gebäude auf benachbarten Vertices
+        //Distanzregel
+        for (VertexCoordinate vert : vertex.getAdjacentVertices(hexSize, centerX, centerY, normalizedCatanCoordMap)) {
+        	if (buildings.containsKey(vert)) {
+        		return false;
+        	}
+        }
         return true;
     }
     

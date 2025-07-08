@@ -106,10 +106,12 @@ public class AuthenticBoardController {
     /**
      * Rendert die 54 authentischen Siedlungsplätze.
      */
+    //HIER IST AKTUELL DAS PROBLEM, DASS ES EINMAL DURCHLÄUFT, WENN ERST EIN SPOT GEPRÜFT WIRD, UND DANACH DANEBEN DIE SIEDLUNG 
+    //GERENDERT WIRD ÜBERSPRINGT ER DAS, ANDERER APPROACH NÖTIG
     private void renderSettlementSpots() {
         Player currentPlayer = game.getCurrentPlayer();
         Map<VertexCoordinate, VertexCoordinate> allVertices = board.getValidVertices();
-        Set<VertexCoordinate> uniqueVertices = new HashSet<>(allVertices.values());
+        Set<VertexCoordinate> uniqueVertices = new HashSet<>(allVertices.values()); //DIE SIND JETZT NORMALIZED
         for (VertexCoordinate uniqueVertice : uniqueVertices) {
             //System.out.println(uniqueVertice); nur überprüfung
         	VertexCoordinate vertex = uniqueVertice;
@@ -126,7 +128,6 @@ public class AuthenticBoardController {
             // Style den Siedlungsspot basierend auf Zustand
             if (isOccupied) {
                 // Finde das Gebäude und zeige es mit Spielerfarbe
-            	//System.out.println("Koordinaten: q=" + vertex.getX() + " r=" + vertex.getY() + "dir=" + vertex.getDirection());
                 Building building = board.getBuildings().stream()
                     .filter(b -> b.getVertexCoordinate() != null && b.getVertexCoordinate().equals(vertex))
                     .findFirst().orElse(null);

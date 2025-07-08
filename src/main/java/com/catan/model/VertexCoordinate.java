@@ -75,16 +75,15 @@ public class VertexCoordinate {
     }
     
     /**
-     * Get the 
+     * Get the adjacent Vertices 
      */
     public List<VertexCoordinate> getAdjacentVertices(double hexSize, double centerX, double centerY, Map<RoundedPoint2D, VertexCoordinate> coordMap) {
         List<VertexCoordinate> vertices = new ArrayList<>();
-        //add current 
+        //das Feld auf dem man steht wird nicht hinzugefügt
         VertexCoordinate vertex0 = new VertexCoordinate(x, y, direction);
         VertexCoordinate vertex1 = new VertexCoordinate(x, y, (direction+1) % 6);
         VertexCoordinate vertex2 = new VertexCoordinate(x, y, (direction-1) % 6);
         VertexCoordinate vertex3 = null;
-        vertices.add(vertex0);
         vertices.add(vertex1);
         vertices.add(vertex2);
         if (direction == 1 || direction == 3 || direction == 5) {
