@@ -80,17 +80,18 @@ public class VertexCoordinate {
     public List<VertexCoordinate> getAdjacentVertices(double hexSize, double centerX, double centerY, Map<RoundedPoint2D, VertexCoordinate> coordMap) {
         List<VertexCoordinate> vertices = new ArrayList<>();
         //add current 
+        VertexCoordinate vertex0 = new VertexCoordinate(x, y, direction);
         VertexCoordinate vertex1 = new VertexCoordinate(x, y, (direction+1) % 6);
         VertexCoordinate vertex2 = new VertexCoordinate(x, y, (direction-1) % 6);
         VertexCoordinate vertex3 = null;
-        vertices.add(new VertexCoordinate(x, y, direction));
+        vertices.add(vertex0);
         vertices.add(vertex1);
         vertices.add(vertex2);
         if (direction == 1 || direction == 3 || direction == 5) {
-        	vertex3 = calculateVerticeParityOdd(hexSize, centerX, centerY, vertex1, vertex2, coordMap);
+        	vertex3 = calculateVerticeParityOdd(hexSize, centerX, centerY, vertex0, vertex1, vertex2, coordMap);
         }
         else if (direction == 0 || direction == 2 || direction == 4) {
-        	vertex3 = calculateVerticeParityEven(hexSize, centerX, centerY, vertex1, vertex2, coordMap);
+        	vertex3 = calculateVerticeParityEven(hexSize, centerX, centerY, vertex0, vertex1, vertex2, coordMap);
         }
         vertices.add(vertex3);
         return vertices;
@@ -111,15 +112,15 @@ public class VertexCoordinate {
         double vertexY = centerY + hexCenter.y - vertexRadius * Math.sin((Math.PI / 2) - (direction * Math.PI / 3.0));
         return new RoundedPoint2D(vertexX, vertexY);
     }
-   public VertexCoordinate calculateVerticeParityOdd (double hexSize, double centerX, double centerY, VertexCoordinate vertex1, VertexCoordinate vertex2, Map<RoundedPoint2D, VertexCoordinate> coordMap) {
-	   HexCoordinate hexCoord = new HexCoordinate(x, y);
-       RoundedPoint2D hexCenter = hexCoord.toPixelCatan(hexSize);
+   public VertexCoordinate calculateVerticeParityOdd (double hexSize, double centerX, double centerY,VertexCoordinate vertex0, VertexCoordinate vertex1, VertexCoordinate vertex2, Map<RoundedPoint2D, VertexCoordinate> coordMap) {
+	   
+       RoundedPoint2D centerVertice = vertex0.toPixel(hexSize, centerX, centerY);
 	   RoundedPoint2D comp1 = vertex1.toPixel(hexSize, centerX, centerY);
 	   RoundedPoint2D comp2 = vertex2.toPixel(hexSize, centerX, centerY);
 	   VertexCoordinate vertex = null;
 	   for (int i = 0; i<3;i++) {
-		   double vertexX = centerX + hexCenter.x + hexSize * Math.cos((Math.PI / 6) + (4 * i * Math.PI / 6.0)) + hexSize * Math.cos((Math.PI / 2) - (direction * Math.PI / 3.0));
-	       double vertexY = centerY + hexCenter.y - hexSize * Math.sin((Math.PI / 6) + (4 * i * Math.PI / 6.0));
+		   double vertexX = centerVertice.getX() + hexSize * Math.cos((Math.PI / 6) + (4 * i * Math.PI / 6.0));
+	       double vertexY = centerVertice.getY() - hexSize * Math.sin((Math.PI / 6) + (4 * i * Math.PI / 6.0));
 	       RoundedPoint2D point = new RoundedPoint2D(vertexX, vertexY);
 	       if (!point.equals(comp1) && !point.equals(comp2)) {
 	    	   vertex = coordMap.get(point);
@@ -129,15 +130,14 @@ public class VertexCoordinate {
     } 
    
    //ist eigentlich wie parityodd nur mit anderem startwinkel
-   public VertexCoordinate calculateVerticeParityEven (double hexSize, double centerX, double centerY, VertexCoordinate vertex1, VertexCoordinate vertex2, Map<RoundedPoint2D, VertexCoordinate> coordMap) {
-	   HexCoordinate hexCoord = new HexCoordinate(x, y);
-       RoundedPoint2D hexCenter = hexCoord.toPixelCatan(hexSize);
+   public VertexCoordinate calculateVerticeParityEven (double hexSize, double centerX, double centerY, VertexCoordinate vertex0, VertexCoordinate vertex1, VertexCoordinate vertex2, Map<RoundedPoint2D, VertexCoordinate> coordMap) {
+	   RoundedPoint2D centerVertice = vertex0.toPixel(hexSize, centerX, centerY);
 	   RoundedPoint2D comp1 = vertex1.toPixel(hexSize, centerX, centerY);
 	   RoundedPoint2D comp2 = vertex2.toPixel(hexSize, centerX, centerY);
 	   VertexCoordinate vertex = null;
 	   for (int i = 0; i<3;i++) {
-		   double vertexX = centerX + hexCenter.x + hexSize * Math.cos((Math.PI / 2) + (4 * i * Math.PI / 6.0));
-	       double vertexY = centerY + hexCenter.y - hexSize * Math.sin((Math.PI / 2) + (4 * i * Math.PI / 6.0));
+		   double vertexX = centerVertice.getX() + hexSize * Math.cos((Math.PI / 2) + (4 * i * Math.PI / 6.0));
+	       double vertexY = centerVertice.getY() - hexSize * Math.sin((Math.PI / 2) + (4 * i * Math.PI / 6.0));
 	       RoundedPoint2D point = new RoundedPoint2D(vertexX, vertexY);
 	       if (!point.equals(comp1) && !point.equals(comp2)) {
 	    	   vertex = coordMap.get(point);
