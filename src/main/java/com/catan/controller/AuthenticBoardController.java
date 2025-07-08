@@ -126,7 +126,7 @@ public class AuthenticBoardController {
             // Style den Siedlungsspot basierend auf Zustand
             if (isOccupied) {
                 // Finde das Gebäude und zeige es mit Spielerfarbe
-            	System.out.println("Koordinaten: q=" + vertex.getX() + " r=" + vertex.getY() + "dir=" + vertex.getDirection());
+            	//System.out.println("Koordinaten: q=" + vertex.getX() + " r=" + vertex.getY() + "dir=" + vertex.getDirection());
                 Building building = board.getBuildings().stream()
                     .filter(b -> b.getVertexCoordinate() != null && b.getVertexCoordinate().equals(vertex))
                     .findFirst().orElse(null);
@@ -263,6 +263,9 @@ public class AuthenticBoardController {
             boolean success = board.placeBuilding(Building.Type.SETTLEMENT, vertex, currentPlayer);
             if (success) {
                 System.out.println("Siedlung platziert für " + currentPlayer.getName() + " bei " + vertex);
+                for (VertexCoordinate adjacentVertex : vertex.getAdjacentVertices(HEX_RADIUS, BOARD_CENTER_X, BOARD_CENTER_Y, board.getNormalizedCatanCoordMap())) {
+                	System.out.println("X wert:" + adjacentVertex.getX() + "Y wert:" + adjacentVertex.getY() + "dir wert:" + adjacentVertex.getDirection());
+                }
                 renderBoard(); // Re-render nach Änderung
             }
         }

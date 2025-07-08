@@ -2,6 +2,7 @@ package com.catan.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -76,29 +77,23 @@ public class VertexCoordinate {
     /**
      * Get the edges (for roads) that connect to this vertex.
      */
-    public List<EdgeCoordinate> getAdjacentEdges() {
-        List<EdgeCoordinate> edges = new ArrayList<>();
-        
-        // Each vertex connects to 3 edges
-        int prevDirection = (direction + 5) % 6; // Previous direction
-        int nextDirection = (direction + 1) % 6; // Next direction
-        int[] DIRECTION_Q_m2 = {0, 1, 0, -1, -1, 0}; //change Q_coordinate to unreasonable value, R can be ignored since field is off_limits
-        int[] DIRECTION_R_m2 = {0, -1, -1, 0, 1, 1};
-        int[] DIRECTION_Q_m1 = {1, 1, 0, -1, -1, 0};
-        int[] DIRECTION_R_m1 = {0, -1, -1, 0, 1, 1};
-        int[] DIRECTION_Q_0 = {1, 1, 0, -1, -1, 0};
-        int[] DIRECTION_R_0 = {0, -1, -1, 0, 1, 1};
-        int[] DIRECTION_Q_1 = {1, 1, 0, -1, -1, 0};
-        int[] DIRECTION_R_1 = {0, -1, -1, 0, 1, 1};
-        int[] DIRECTION_Q_2 = {1, 1, 0, -1, -1, 0};
-        int[] DIRECTION_R_2 = {0, -1, -1, 0, 1, 1};
-        // Edge to previous vertex of same hex
-        edges.add(new EdgeCoordinate(x, y, prevDirection));
-        edges.add(new EdgeCoordinate(x, y, nextDirection));
-        edges.add(new EdgeCoordinate(2, 2, 0));
-        // Edge to next vertex of same hex
-        
-        return edges;
+    public List<VertexCoordinate> getAdjacentVertices(double hexSize, double centerX, double centerY, Map<RoundedPoint2D, VertexCoordinate> coordMap) {
+        List<VertexCoordinate> vertices = new ArrayList<>();
+        //add current 
+        VertexCoordinate vertex1 = new VertexCoordinate(x, y, (direction+1) % 6);
+        VertexCoordinate vertex2 = new VertexCoordinate(x, y, (direction-1) % 6);
+        VertexCoordinate vertex3 = null;
+        vertices.add(new VertexCoordinate(x, y, direction));
+        vertices.add(vertex1);
+        vertices.add(vertex2);
+        if (direction == 1 || direction == 3 || direction == 5) {
+        	vertex3 = calculateVerticeParityOdd(hexSize, centerX, centerY, vertex1, vertex2, coordMap);
+        }
+        else if (direction == 0 || direction == 2 || direction == 4) {
+        	vertex3 = calculateVerticeParityEven(hexSize, centerX, centerY, vertex1, vertex2, coordMap);
+        }
+        vertices.add(vertex3);
+        return vertices;
     }
     
     /**
@@ -110,13 +105,47 @@ public class VertexCoordinate {
         RoundedPoint2D hexCenter = hexCoord.toPixelCatan(hexSize);
         
         // Calculate vertex offset from hex center
-        double angle = (Math.PI / 3.0 * direction) + (Math.PI / 6.0); // Pointy-top orientation
         double vertexRadius = hexSize;
         
         double vertexX = centerX + hexCenter.x + vertexRadius * Math.cos((Math.PI / 2) - (direction * Math.PI / 3.0));
         double vertexY = centerY + hexCenter.y - vertexRadius * Math.sin((Math.PI / 2) - (direction * Math.PI / 3.0));
         return new RoundedPoint2D(vertexX, vertexY);
     }
+   public VertexCoordinate calculateVerticeParityOdd (double hexSize, double centerX, double centerY, VertexCoordinate vertex1, VertexCoordinate vertex2, Map<RoundedPoint2D, VertexCoordinate> coordMap) {
+	   HexCoordinate hexCoord = new HexCoordinate(x, y);
+       RoundedPoint2D hexCenter = hexCoord.toPixelCatan(hexSize);
+	   RoundedPoint2D comp1 = vertex1.toPixel(hexSize, centerX, centerY);
+	   RoundedPoint2D comp2 = vertex2.toPixel(hexSize, centerX, centerY);
+	   VertexCoordinate vertex = null;
+	   for (int i = 0; i<3;i++) {
+		   double vertexX = centerX + hexCenter.x + hexSize * Math.cos((Math.PI / 6) + (4 * i * Math.PI / 6.0)) + hexSize * Math.cos((Math.PI / 2) - (direction * Math.PI / 3.0));
+	       double vertexY = centerY + hexCenter.y - hexSize * Math.sin((Math.PI / 6) + (4 * i * Math.PI / 6.0));
+	       RoundedPoint2D point = new RoundedPoint2D(vertexX, vertexY);
+	       if (!point.equals(comp1) && !point.equals(comp2)) {
+	    	   vertex = coordMap.get(point);
+	       }
+	       }
+	   return vertex;
+    } 
+   
+   //ist eigentlich wie parityodd nur mit anderem startwinkel
+   public VertexCoordinate calculateVerticeParityEven (double hexSize, double centerX, double centerY, VertexCoordinate vertex1, VertexCoordinate vertex2, Map<RoundedPoint2D, VertexCoordinate> coordMap) {
+	   HexCoordinate hexCoord = new HexCoordinate(x, y);
+       RoundedPoint2D hexCenter = hexCoord.toPixelCatan(hexSize);
+	   RoundedPoint2D comp1 = vertex1.toPixel(hexSize, centerX, centerY);
+	   RoundedPoint2D comp2 = vertex2.toPixel(hexSize, centerX, centerY);
+	   VertexCoordinate vertex = null;
+	   for (int i = 0; i<3;i++) {
+		   double vertexX = centerX + hexCenter.x + hexSize * Math.cos((Math.PI / 2) + (4 * i * Math.PI / 6.0));
+	       double vertexY = centerY + hexCenter.y - hexSize * Math.sin((Math.PI / 2) + (4 * i * Math.PI / 6.0));
+	       RoundedPoint2D point = new RoundedPoint2D(vertexX, vertexY);
+	       if (!point.equals(comp1) && !point.equals(comp2)) {
+	    	   vertex = coordMap.get(point);
+	       }
+	       }
+	   return vertex;
+    }
+   
     
    
 

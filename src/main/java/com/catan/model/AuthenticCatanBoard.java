@@ -42,6 +42,7 @@ public class AuthenticCatanBoard {
     // VerticeMap
     private final Map<RoundedPoint2D, List<VertexCoordinate>> coordVerticeMap;
     private final Map<VertexCoordinate, VertexCoordinate> normalizedVerticeMap;
+    private  final Map<RoundedPoint2D, VertexCoordinate> normalizedCatanCoordMap;
 
     // === Neuer Default-Konstruktor ===
     public AuthenticCatanBoard() {
@@ -58,8 +59,12 @@ public class AuthenticCatanBoard {
         this.buildings = new HashMap<>();
         this.roads = new HashMap<>();
         //maps
+        //54 rounded coords to 114 unnormalized catan coords
         this.coordVerticeMap = calculateAuthenticVertices();
+        //114 catan coords to 54 normalized catan coords
         this.normalizedVerticeMap = createNormalizeVertexMap(coordVerticeMap);
+        //54 rounded coords to 54 normalized catan coords
+        this.normalizedCatanCoordMap = getNormalizedCatanCoordsHelper(coordVerticeMap);
         
         this.coordEdgeMap = calculateAuthenticEdges();
         this.normalizedEdgeMap = createNormalizeEdgeMap(coordEdgeMap);
@@ -190,7 +195,7 @@ private Map<VertexCoordinate, VertexCoordinate> createNormalizeVertexMap(Map<Rou
 }
 	return verticeMap;
 }
-
+//creates normalizedEdgeMap, same as VerticeMap
 private Map<EdgeCoordinate, EdgeCoordinate> createNormalizeEdgeMap(Map<RoundedPoint2D, List<EdgeCoordinate>> oldMap) {
     Map<EdgeCoordinate, EdgeCoordinate> edgeMap = new HashMap<>();
     for (Map.Entry<RoundedPoint2D, List<EdgeCoordinate>> entry : oldMap.entrySet()) {
@@ -205,14 +210,34 @@ private Map<EdgeCoordinate, EdgeCoordinate> createNormalizeEdgeMap(Map<RoundedPo
     return edgeMap;
 }
 
+private Map<RoundedPoint2D, VertexCoordinate> getNormalizedCatanCoordsHelper(Map<RoundedPoint2D, List<VertexCoordinate>> oldMap) {
+    Map<RoundedPoint2D, VertexCoordinate> verticeMap = new HashMap<>();
+    for (Map.Entry<RoundedPoint2D, List<VertexCoordinate>> entry : oldMap.entrySet()) {
+            verticeMap.put(entry.getKey(), entry.getValue().get(0)); // nimmt immer das erste Element und mappt die anderen darauf
+            
+    }
+    return verticeMap;
+
+}
+
 public VertexCoordinate getNormalizedVertexCoordinate(VertexCoordinate vertex) {
 	VertexCoordinate normalizedVertex = this.normalizedVerticeMap.get(vertex);
 	return normalizedVertex;
 }
 
+public Map<RoundedPoint2D, VertexCoordinate> getNormalizedCatanCoordMap(){
+	return normalizedCatanCoordMap;
+}
+
 public EdgeCoordinate getNormalizedEdgeCoordinate(EdgeCoordinate edge) {
     EdgeCoordinate normalizedEdge = this.normalizedEdgeMap.get(edge);
     return normalizedEdge;
+}
+ //gibt für x und y wert die korrekten normalized catan coords an
+public VertexCoordinate getNormalizedCatanCoordinate(int x, int y) {
+	RoundedPoint2D point = new RoundedPoint2D(x, y);
+	VertexCoordinate normalizedVertex = normalizedCatanCoordMap.get(point);
+	return normalizedVertex;
 }
 
 
@@ -255,23 +280,6 @@ public EdgeCoordinate getNormalizedEdgeCoordinate(EdgeCoordinate edge) {
         }
         
         // Distanz-Regel: Keine Gebäude auf benachbarten Vertices
-        for (EdgeCoordinate adjacentEdge : vertex.getAdjacentEdges()) {
-        	//System.out.println("X wert:" + adjacentEdge.getX() + "Y wert:" + adjacentEdge.getY() + "dir wert:" + adjacentEdge.getDirection());
-            if (normalizedEdgeMap.containsValue(adjacentEdge)) {
-                VertexCoordinate[] connectedVertices = adjacentEdge.getConnectedVertices();
-                for (VertexCoordinate connectedVertex : connectedVertices) {
-                    if (!connectedVertex.equals(vertex) && buildings.containsKey(connectedVertex)) {
-                        return false;
-                    }
-                }
-            }
-        }
-        
-        // Nach der Anfangsphase: Spieler muss benachbarte Straße haben
-        if (getTotalBuildings() >= 8) {
-            return hasAdjacentRoad(vertex, player);
-        }
-        
         return true;
     }
     
@@ -313,11 +321,11 @@ public EdgeCoordinate getNormalizedEdgeCoordinate(EdgeCoordinate edge) {
             }
             
             // Prüfe benachbarte Straßen
-            for (VertexCoordinate vertex : connectedVertices) {
+       /*     for (VertexCoordinate vertex : connectedVertices) {
                 if (hasAdjacentRoad(vertex, player)) {
                     return true;
                 }
-            }
+            } */
             
             return false;
         }
@@ -339,15 +347,16 @@ public EdgeCoordinate getNormalizedEdgeCoordinate(EdgeCoordinate edge) {
     /**
      * Prüft ob ein Spieler eine benachbarte Straße zu einem Vertex hat.
      */
+   /*
     private boolean hasAdjacentRoad(VertexCoordinate vertex, Player player) {
-        for (EdgeCoordinate adjacentEdge : vertex.getAdjacentEdges()) {
+        for (VertexCoordinate adjacentEdge : vertex.getAdjacentEdges()) {
             Road road = roads.get(adjacentEdge);
             if (road != null && road.getOwner() == player) {
                 return true;
             }
         }
         return false;
-    }
+    } */
     
     /**
      * Erweitert eine Siedlung zu einer Stadt.
