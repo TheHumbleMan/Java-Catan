@@ -10,6 +10,7 @@ import com.catan.model.VertexCoordinate;
 /**
  * Demo für das authentische CATAN-Board mit exakt 54 Siedlungen und 72 Straßen.
  */
+/*
 public class AuthenticBoardDemo {
     
     public static void main(String[] args) {
@@ -81,3 +82,4 @@ public class AuthenticBoardDemo {
         }
     }
 }
+*/

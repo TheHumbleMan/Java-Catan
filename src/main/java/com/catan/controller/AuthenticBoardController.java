@@ -1,5 +1,8 @@
 package com.catan.controller;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.catan.model.AuthenticCatanBoard;
@@ -8,6 +11,7 @@ import com.catan.model.CatanGame;
 import com.catan.model.EdgeCoordinate;
 import com.catan.model.HexCoordinate;
 import com.catan.model.Player;
+import com.catan.model.RoundedPoint2D;
 import com.catan.model.TerrainTile;
 import com.catan.model.VertexCoordinate;
 import com.catan.view.UIComponents;
@@ -26,23 +30,22 @@ import javafx.scene.text.Text;
 public class AuthenticBoardController {
     
     // CATAN-authentische Board-Layout-Konstanten
-    private static final double HEX_RADIUS = 55.0;
-    private static final double HEX_SPACING = 95.0; // Optimaler Abstand für authentisches Layout
-    private static final double BOARD_CENTER_X = 400.0;
-    private static final double BOARD_CENTER_Y = 350.0;
+    private static final double HEX_RADIUS = 45; //davor 55
+    private static final double BOARD_CENTER_X = 300.0;   //ursprünglich 400 WENN MAN ÄNDERN WILL CatanApplication WINDOWS_HEIGHT etc
+    private static final double BOARD_CENTER_Y = 200.0;   //URSPRüNGLICH 350!!!
     
     // Siedlungs- und Straßen-Konstanten
     private static final double SETTLEMENT_SIZE = 8.0;
-    private static final double ROAD_LENGTH = 40.0;
-    private static final double ROAD_WIDTH = 6.0;
+    private static final double ROAD_LENGTH = 20.0;
+    private static final double ROAD_WIDTH = 4.0;
     
     private final CatanGame game;
-    private final AuthenticCatanBoard board;
+    private final AuthenticCatanBoard board = new AuthenticCatanBoard(HEX_RADIUS, BOARD_CENTER_X, BOARD_CENTER_Y);
     private final Pane boardPane;
     
     public AuthenticBoardController(CatanGame game, Pane boardPane) {
         this.game = game;
-        this.board = game.getBoard().authenticBoard;
+        //this.board = game.getBoard().authenticBoard;
         this.boardPane = boardPane;
         
         if (board == null) {
@@ -59,10 +62,11 @@ public class AuthenticBoardController {
         renderHexagonTiles();
         renderSettlementSpots();
         renderRoadSpots();
-        
+        int settlement_count = new HashSet<>(board.getValidVertices().values()).size();
+        //board.getValidVertices().size()
         System.out.println("✓ Authentisches CATAN-Board gerendert: " + 
-                         board.getValidVertices().size() + " Siedlungen, " + 
-                         board.getValidEdges().size() + " Straßen");
+        		settlement_count + " Siedlungsmöglichkeiten, " + 
+                         board.getValidVertices().size() + " Siedlungsoptionen");
     }
     
     /**
@@ -72,7 +76,7 @@ public class AuthenticBoardController {
         for (TerrainTile tile : board.getAllTiles()) {
             if (tile.getHexCoordinate() != null) {
                 HexCoordinate hexCoord = tile.getHexCoordinate();
-                HexCoordinate.Point2D hexCenter = hexCoord.toPixelCatan(HEX_SPACING);
+                RoundedPoint2D hexCenter = hexCoord.toPixelCatan(HEX_RADIUS);
                 
                 // Erstelle authentisches Hexagon
                 Polygon hexagon = UIComponents.createHexagon(HEX_RADIUS);
@@ -102,13 +106,16 @@ public class AuthenticBoardController {
     /**
      * Rendert die 54 authentischen Siedlungsplätze.
      */
+    //HIER IST AKTUELL DAS PROBLEM, DASS ES EINMAL DURCHLÄUFT, WENN ERST EIN SPOT GEPRÜFT WIRD, UND DANACH DANEBEN DIE SIEDLUNG 
+    //GERENDERT WIRD ÜBERSPRINGT ER DAS, ANDERER APPROACH NÖTIG
     private void renderSettlementSpots() {
         Player currentPlayer = game.getCurrentPlayer();
-        Set<VertexCoordinate> allVertices = board.getValidVertices();
-        
-        for (VertexCoordinate vertex : allVertices) {
-            HexCoordinate.Point2D vertexPos = vertex.toPixel(HEX_RADIUS, BOARD_CENTER_X, BOARD_CENTER_Y);
-            
+        Map<VertexCoordinate, VertexCoordinate> allVertices = board.getValidVertices();
+        Set<VertexCoordinate> uniqueVertices = new HashSet<>(allVertices.values()); //DIE SIND JETZT NORMALIZED
+        for (VertexCoordinate uniqueVertice : uniqueVertices) {
+            //System.out.println(uniqueVertice); nur überprüfung
+        	VertexCoordinate vertex = uniqueVertice;
+            RoundedPoint2D vertexPos = uniqueVertice.toPixel(HEX_RADIUS, BOARD_CENTER_X, BOARD_CENTER_Y);
             boolean canBuild = board.canPlaceBuilding(vertex, currentPlayer);
             boolean isOccupied = board.getBuildings().stream()
                     .anyMatch(b -> b.getVertexCoordinate() != null && b.getVertexCoordinate().equals(vertex));
@@ -175,10 +182,11 @@ public class AuthenticBoardController {
      */
     private void renderRoadSpots() {
         Player currentPlayer = game.getCurrentPlayer();
-        Set<EdgeCoordinate> allEdges = board.getValidEdges();
+        Map<EdgeCoordinate, EdgeCoordinate> allEdges = board.getValidEdges();
+        Set<EdgeCoordinate> uniqueEdges = new HashSet<>(allEdges.values());
         
-        for (EdgeCoordinate edge : allEdges) {
-            HexCoordinate.Point2D edgePos = edge.toPixel(HEX_RADIUS, BOARD_CENTER_X, BOARD_CENTER_Y);
+        for (EdgeCoordinate edge : uniqueEdges) {
+            RoundedPoint2D edgePos = edge.toPixel(HEX_RADIUS, BOARD_CENTER_X, BOARD_CENTER_Y);
             double rotation = edge.getRotationAngle(HEX_RADIUS, BOARD_CENTER_X, BOARD_CENTER_Y);
             
             boolean canBuildRoad = board.canPlaceRoad(edge, currentPlayer);
@@ -189,7 +197,7 @@ public class AuthenticBoardController {
             Rectangle roadSegment = new Rectangle(ROAD_LENGTH, ROAD_WIDTH);
             roadSegment.setX(edgePos.x - ROAD_LENGTH/2);
             roadSegment.setY(edgePos.y - ROAD_WIDTH/2);
-            roadSegment.setRotate(rotation);
+            roadSegment.setRotate(-rotation);
             
             // Style das Straßensegment
             if (isRoadOccupied) {
@@ -256,6 +264,9 @@ public class AuthenticBoardController {
             boolean success = board.placeBuilding(Building.Type.SETTLEMENT, vertex, currentPlayer);
             if (success) {
                 System.out.println("Siedlung platziert für " + currentPlayer.getName() + " bei " + vertex);
+                for (VertexCoordinate adjacentVertex : vertex.getAdjacentVertices(HEX_RADIUS, BOARD_CENTER_X, BOARD_CENTER_Y, board.getNormalizedCatanCoordMap())) {
+                	System.out.println("X wert:" + adjacentVertex.getX() + "Y wert:" + adjacentVertex.getY() + "dir wert:" + adjacentVertex.getDirection());
+                }
                 renderBoard(); // Re-render nach Änderung
             }
         }

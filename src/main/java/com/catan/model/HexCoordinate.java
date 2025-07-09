@@ -59,43 +59,44 @@ public class HexCoordinate {
      * Convert hex coordinates to pixel coordinates for authentic CATAN 5-row layout.
      * This method positions hexagons in straight rows (3-4-5-4-3) with vertical symmetry.
      */
-    public Point2D toPixelCatan(double hexSize) {
-        // CATAN uses straight rows with vertical axis symmetry
-        double x, y;
-        
-        // Vertical spacing between rows
-        double rowHeight = hexSize * Math.sqrt(3) * 0.75; // Proper row spacing for pointy-top hexes
-        
-        // Calculate Y based on row (r coordinate)
-        y = r * rowHeight;
-        
-        // Horizontal spacing between hexes in same row
-        double hexWidth = hexSize * 1.5;
-        
-        // For vertical symmetry, center each row around x=0
-        // Row structure: 3-4-5-4-3, centered around the middle hex
+    public RoundedPoint2D toPixelCatan(double hexSize) {
+        double hexWidth = Math.sqrt(3) * hexSize; // für pointy-top
+        double hexHeight = 2.0 * hexSize;
+
+        double vertSpacing = 0.75 * hexHeight;
+
+        double x;
+        double y = r * vertSpacing;
+
+        // 3-4-5-4-3 Layout
         switch (r) {
-            case -2: // Top row (3 hexes): q = {-1, 0, 1} -> center at q=0
-                x = q * hexWidth;
+            case -2: // 3 Hexes, mittig zentriert ➔ +2 * 0.5 * hexWidth Offset
+                x = (q + 0.0) * hexWidth;
                 break;
-            case -1: // Second row (4 hexes): q = {-2, -1, 0, 1} -> center between q=-0.5
+            case -1: // 4 Hexes, +0.5 Offset
                 x = (q + 0.5) * hexWidth;
                 break;
-            case 0:  // Center row (5 hexes): q = {-2, -1, 0, 1, 2} -> center at q=0
+            case 0: // 5 Hexes, kein Offset
                 x = q * hexWidth;
                 break;
-            case 1:  // Fourth row (4 hexes): q = {-2, -1, 0, 1} -> center between q=-0.5
+            case 1: // 4 Hexes, +0.5 Offset
                 x = (q + 0.5) * hexWidth;
                 break;
-            case 2:  // Bottom row (3 hexes): q = {-1, 0, 1} -> center at q=0
-                x = q * hexWidth;
+            case 2: // 3 Hexes, +1.0 Offset
+                x = (q + 0.0) * hexWidth;
                 break;
             default:
-                x = q * hexWidth;
+                x = q * hexWidth; // fallback
         }
-        
-        return new Point2D(x, y);
+
+        return new RoundedPoint2D(x, y);
     }
+
+
+
+
+
+
     
     @Override
     public boolean equals(Object obj) {

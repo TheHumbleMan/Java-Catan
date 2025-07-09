@@ -97,27 +97,62 @@ public class EdgeCoordinate {
     /**
      * Convert edge coordinate to pixel position for rendering.
      */
-    public HexCoordinate.Point2D toPixel(double hexSize, double centerX, double centerY) {
+    public RoundedPoint2D toPixel(double hexSize, double centerX, double centerY) {
         // Get the two vertices that this edge connects
         VertexCoordinate[] vertices = getConnectedVertices();
         
         // Calculate pixel positions for both vertices
-        HexCoordinate.Point2D vertex1Pos = vertices[0].toPixel(hexSize, centerX, centerY);
-        HexCoordinate.Point2D vertex2Pos = vertices[1].toPixel(hexSize, centerX, centerY);
+        RoundedPoint2D vertex1Pos = vertices[0].toPixel(hexSize, centerX, centerY);
+        RoundedPoint2D vertex2Pos = vertices[1].toPixel(hexSize, centerX, centerY);
         
         // Return the midpoint between the two vertices
         double midX = (vertex1Pos.x + vertex2Pos.x) / 2.0;
         double midY = (vertex1Pos.y + vertex2Pos.y) / 2.0;
         
-        return new HexCoordinate.Point2D(midX, midY);
+        return new RoundedPoint2D(midX, midY);
     }
+    /**
+     * Gibt die kanonische (normalisierte) Repräsentation dieser EdgeCoordinate zurück.
+     * Dadurch wird sichergestellt, dass dieselbe logische Kante, die von benachbarten Hex-Feldern erzeugt wird,
+     * immer konsistent dargestellt wird. Dies verhindert Duplikate in Sets oder Maps.
+     */
+    public EdgeCoordinate normalize() {
+        EdgeCoordinate canonical = this;
+
+        // Berechne Nachbarhex, das diese Kante ebenfalls erzeugt
+        HexCoordinate neighborHex = this.getNeighborHexCoordinate(direction);
+        int neighborDir = (direction + 3) % 6; // Gegenüberliegende Kante im Nachbarhex
+
+        EdgeCoordinate candidate = new EdgeCoordinate(neighborHex.getQ(), neighborHex.getR(), neighborDir);
+
+        // Wähle lexikografisch kleinste Repräsentation
+        if (candidate.compareTo(canonical) < 0) {
+            canonical = candidate;
+        }
+
+        return canonical;
+    }
+    private HexCoordinate getNeighborHexCoordinate(int dir) {
+        int[] DIRECTION_Q = {1, 1, 0, -1, -1, 0};
+        int[] DIRECTION_R = {0, -1, -1, 0, 1, 1};
+
+        int q = this.x + DIRECTION_Q[dir];
+        int r = this.y + DIRECTION_R[dir];
+        return new HexCoordinate(q, r);
+    }
+    public int compareTo(EdgeCoordinate other) {
+        if (this.x != other.x) return Integer.compare(this.x, other.x);
+        if (this.y != other.y) return Integer.compare(this.y, other.y);
+        return Integer.compare(this.direction, other.direction);
+    }
+
     
     /**
      * Get the rotation angle for rendering the road on this edge.
      */
     public double getRotationAngle(double hexSize, double centerX, double centerY) {
         // Calculate angle based on direction (each direction is 60 degrees apart)
-        return direction * 60.0; // Convert direction to degrees
+        return (direction * -60.0) - 30; // Convert direction to degrees
     }
     
     @Override
