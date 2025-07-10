@@ -261,7 +261,7 @@ public VertexCoordinate getNormalizedVertexCoordinate(int x, int y) {
         }
         
         //Distanzregel
-        for (VertexCoordinate vert : vertex.getAdjacentVertices(hexSize, centerX, centerY, normalizedCatanCoordMap)) {
+        for (VertexCoordinate vert : vertex.getAdjacentVertices(hexSize, centerX, centerY, normalizedCatanCoordMap, getValidVertices())) {
         	if (buildings.containsKey(vert)) {
         		return false;
         	}

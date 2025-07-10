@@ -77,15 +77,15 @@ public class VertexCoordinate {
     /**
      * Get the adjacent Vertices 
      */
-    public List<VertexCoordinate> getAdjacentVertices(double hexSize, double centerX, double centerY, Map<RoundedPoint2D, VertexCoordinate> coordMap) {
+    public List<VertexCoordinate> getAdjacentVertices(double hexSize, double centerX, double centerY, Map<RoundedPoint2D, VertexCoordinate> coordMap,  Map<VertexCoordinate, VertexCoordinate> validVertices) {
         List<VertexCoordinate> vertices = new ArrayList<>();
         //das Feld auf dem man steht wird nicht hinzugefügt
         VertexCoordinate vertex0 = new VertexCoordinate(x, y, direction);
         VertexCoordinate vertex1 = new VertexCoordinate(x, y, (direction+1) % 6);
-        VertexCoordinate vertex2 = new VertexCoordinate(x, y, (direction-1) % 6);
+        VertexCoordinate vertex2 = new VertexCoordinate(x, y, (direction+5) % 6);
         VertexCoordinate vertex3 = null;
-        vertices.add(vertex1);
-        vertices.add(vertex2);
+        vertices.add(validVertices.get(vertex1));
+        vertices.add(validVertices.get(vertex2));
         if (direction == 1 || direction == 3 || direction == 5) {
         	vertex3 = calculateVerticeParityOdd(hexSize, centerX, centerY, vertex0, vertex1, vertex2, coordMap);
         }
@@ -93,7 +93,7 @@ public class VertexCoordinate {
         	vertex3 = calculateVerticeParityEven(hexSize, centerX, centerY, vertex0, vertex1, vertex2, coordMap);
         }
         if (vertex3 != null) {
-        vertices.add(vertex3);
+        vertices.add(validVertices.get(vertex3));
         }
         return vertices;
     }

@@ -264,7 +264,7 @@ public class AuthenticBoardController {
             boolean success = board.placeBuilding(Building.Type.SETTLEMENT, vertex, currentPlayer);
             if (success) {
                 System.out.println("Siedlung platziert für " + currentPlayer.getName() + " bei " + vertex);
-                for (VertexCoordinate adjacentVertex : vertex.getAdjacentVertices(HEX_RADIUS, BOARD_CENTER_X, BOARD_CENTER_Y, board.getNormalizedCatanCoordMap())) {
+                for (VertexCoordinate adjacentVertex : vertex.getAdjacentVertices(HEX_RADIUS, BOARD_CENTER_X, BOARD_CENTER_Y, board.getNormalizedCatanCoordMap(), board.getValidVertices())) {
                 	System.out.println("X wert:" + adjacentVertex.getX() + "Y wert:" + adjacentVertex.getY() + "dir wert:" + adjacentVertex.getDirection());
                 }
                 renderBoard(); // Re-render nach Änderung
