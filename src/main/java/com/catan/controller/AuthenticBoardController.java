@@ -60,8 +60,8 @@ public class AuthenticBoardController {
         boardPane.getChildren().clear();
         
         renderHexagonTiles(game.isBeginning());
-        renderSettlementSpots();
-        renderRoadSpots();
+        renderSettlementSpots(game.isBeginning());
+        renderRoadSpots(game.isBeginning());
         int settlement_count = new HashSet<>(board.getValidVertices().values()).size();
         //board.getValidVertices().size()
         System.out.println("✓ Authentisches CATAN-Board gerendert: " + 
@@ -117,7 +117,7 @@ public class AuthenticBoardController {
         	VertexCoordinate vertex = uniqueVertice;
             RoundedPoint2D vertexPos = uniqueVertice.toPixel(HEX_RADIUS, BOARD_CENTER_X, BOARD_CENTER_Y);
             boolean canBuild = game.canPlaceBuilding(vertex, currentPlayer, isBeginning);
-            boolean isOccupied = board.getBuildings().stream()
+            boolean isOccupied = board.getBuildings().values().stream()
                     .anyMatch(b -> b.getVertexCoordinate() != null && b.getVertexCoordinate().equals(vertex));
             
             // Erstelle Siedlungsspot
@@ -128,7 +128,7 @@ public class AuthenticBoardController {
             // Style den Siedlungsspot basierend auf Zustand
             if (isOccupied) {
                 // Finde das Gebäude und zeige es mit Spielerfarbe
-                Building building = board.getBuildings().stream()
+                Building building = board.getBuildings().values().stream()
                     .filter(b -> b.getVertexCoordinate() != null && b.getVertexCoordinate().equals(vertex))
                     .findFirst().orElse(null);
                 
@@ -182,14 +182,13 @@ public class AuthenticBoardController {
      */
     private void renderRoadSpots(boolean isBeginning) {
         Player currentPlayer = game.getCurrentPlayer();
-        Map<EdgeCoordinate, EdgeCoordinate> allEdges = board.getValidEdges();
-        Set<EdgeCoordinate> uniqueEdges = new HashSet<>(allEdges.values());
-        
+        Set<EdgeCoordinate> uniqueEdges = board.getValidEdges();     
         for (EdgeCoordinate edge : uniqueEdges) {
             RoundedPoint2D edgePos = edge.toPixel(HEX_RADIUS, BOARD_CENTER_X, BOARD_CENTER_Y);
             double rotation = edge.getRotationAngle(HEX_RADIUS, BOARD_CENTER_X, BOARD_CENTER_Y);
             
-            boolean canBuildRoad = board.canPlaceRoad(edge, currentPlayer);
+            boolean canBuildRoad = game.canPlaceRoad(edge, currentPlayer);
+            canBuildRoad = true;
             boolean isRoadOccupied = board.getRoads().stream()
                     .anyMatch(r -> r.getEdgeCoordinate() != null && r.getEdgeCoordinate().equals(edge));
             
@@ -197,7 +196,7 @@ public class AuthenticBoardController {
             Rectangle roadSegment = new Rectangle(ROAD_LENGTH, ROAD_WIDTH);
             roadSegment.setX(edgePos.x - ROAD_LENGTH/2);
             roadSegment.setY(edgePos.y - ROAD_WIDTH/2);
-            roadSegment.setRotate(-rotation);
+            roadSegment.setRotate(rotation);
             
             // Style das Straßensegment
             if (isRoadOccupied) {
@@ -261,14 +260,13 @@ public class AuthenticBoardController {
         Player currentPlayer = game.getCurrentPlayer();
         
         if (game.canPlaceBuilding(vertex, currentPlayer, game.isBeginning())) {
-            boolean success = game.placeBuilding(Building.Type.SETTLEMENT, vertex, currentPlayer);
-            if (success) {
-                System.out.println("Siedlung platziert für " + currentPlayer.getName() + " bei " + vertex);
-                for (VertexCoordinate adjacentVertex : vertex.getAdjacentVertices(HEX_RADIUS, BOARD_CENTER_X, BOARD_CENTER_Y, board.getNormalizedCatanCoordMap(), board.getValidVertices())) {
-                	System.out.println("X wert:" + adjacentVertex.getX() + "Y wert:" + adjacentVertex.getY() + "dir wert:" + adjacentVertex.getDirection());
-                }
-                renderBoard(); // Re-render nach Änderung
+            game.placeBuilding(Building.Type.SETTLEMENT, vertex, currentPlayer);
+            System.out.println("Siedlung platziert für " + currentPlayer.getName() + " bei " + vertex);
+            for (VertexCoordinate adjacentVertex : vertex.getAdjacentVertices(HEX_RADIUS, BOARD_CENTER_X, BOARD_CENTER_Y, board.getNormalizedCatanCoordMap(), board.getValidVertices())) {
+            	System.out.println("X wert:" + adjacentVertex.getX() + "Y wert:" + adjacentVertex.getY() + "dir wert:" + adjacentVertex.getDirection());
             }
+            renderBoard(); // Re-render nach Änderung
+            
         }
     }
     
@@ -278,8 +276,8 @@ public class AuthenticBoardController {
     private void handleEdgeClick(EdgeCoordinate edge) {
         Player currentPlayer = game.getCurrentPlayer();
         
-        if (board.canPlaceRoad(edge, currentPlayer)) {
-            boolean success = board.placeRoad(edge, currentPlayer);
+        if (game.canPlaceRoad(edge, currentPlayer)) {
+            boolean success = game.placeRoad(edge, currentPlayer);
             if (success) {
                 System.out.println("Straße platziert für " + currentPlayer.getName() + " bei " + edge);
                 renderBoard(); // Re-render nach Änderung

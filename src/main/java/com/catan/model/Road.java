@@ -1,5 +1,7 @@
 package com.catan.model;
 
+import java.util.List;
+
 /**
  * Represents a road on the CATAN board.
  */
@@ -11,74 +13,31 @@ public class Road {
     );
     
     private final Player owner;
-    private final int startX;
-    private final int startY;
-    private final int endX;
-    private final int endY;
-    private final EdgeCoordinate edgeCoordinate; // New coordinate system
+    private final EdgeCoordinate edge; // New coordinate system
     
-    public Road(Player owner, int startX, int startY, int endX, int endY) {
+    public Road(Player owner, EdgeCoordinate edge) {
         this.owner = owner;
-        this.startX = startX;
-        this.startY = startY;
-        this.endX = endX;
-        this.endY = endY;
-        this.edgeCoordinate = null; // Legacy constructor
-    }
-    
-    public Road(Player owner, EdgeCoordinate edgeCoordinate) {
-        this.owner = owner;
-        this.edgeCoordinate = edgeCoordinate;
+        this.edge = edge;
         // Create legacy coordinates from edge coordinate
-        VertexCoordinate[] vertices = edgeCoordinate.getConnectedVertices();
-        this.startX = vertices[0].getX() * 6 + vertices[0].getDirection();
-        this.startY = vertices[0].getY();
-        this.endX = vertices[1].getX() * 6 + vertices[1].getDirection();
-        this.endY = vertices[1].getY();
+        List<VertexCoordinate> vertices = edge.getConnectedVertices();
     }
     
     public Player getOwner() {
         return owner;
     }
     
-    public int getStartX() {
-        return startX;
-    }
-    
-    public int getStartY() {
-        return startY;
-    }
-    
-    public int getEndX() {
-        return endX;
-    }
-    
-    public int getEndY() {
-        return endY;
-    }
-    
-    public boolean connectsTo(int x, int y) {
-        return (startX == x && startY == y) || (endX == x && endY == y);
-    }
     
     public EdgeCoordinate getEdgeCoordinate() {
-        return edgeCoordinate;
+        return edge;
     }
     
     public boolean connectsToVertex(VertexCoordinate vertex) {
-        if (edgeCoordinate == null) {
-            // Legacy check
-            int vertexLegacyCoord = vertex.getX() * 6 + vertex.getDirection();
-            return connectsTo(vertexLegacyCoord, vertex.getY());
-        }
-        
-        VertexCoordinate[] connectedVertices = edgeCoordinate.getConnectedVertices();
-        return vertex.equals(connectedVertices[0]) || vertex.equals(connectedVertices[1]);
+        return edge.getConnectedVertices().contains(vertex);
     }
     
-    @Override
     public String toString() {
-        return String.format("Road{owner=%s, from=(%d,%d), to=(%d,%d)}", 
-                            owner.getName(), startX, startY, endX, endY);
+        List<VertexCoordinate> vertices = edge.getConnectedVertices();
+        return String.format("Road{owner=%s, from=%s, to=%s}", 
+                             owner.getName(), vertices.get(0), vertices.get(1));
     }
 }

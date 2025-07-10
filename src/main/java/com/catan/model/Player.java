@@ -1,7 +1,9 @@
 package com.catan.model;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Represents a player in the CATAN game.
@@ -14,7 +16,9 @@ public class Player {
     private int victoryPoints;
     private int settlements;
     private int cities;
-    private int roads;
+    private int road_count;
+    private final Set<EdgeCoordinate> roads_set;
+    private final Set<Building> buildings;
     
     // Building costs
     public static final Map<ResourceType, Integer> SETTLEMENT_COST = Map.of(
@@ -35,6 +39,8 @@ public class Player {
     );
     
     public Player(String name, PlayerColor color) {
+    	this.buildings = new HashSet<>();
+    	this.roads_set = new HashSet<>();
         this.name = name;
         this.color = color;
         this.resources = new HashMap<>();
@@ -47,7 +53,7 @@ public class Player {
         this.victoryPoints = 0;
         this.settlements = 5; // Maximum settlements per player
         this.cities = 4; // Maximum cities per player
-        this.roads = 15; // Maximum roads per player
+        this.road_count = 15; // Maximum roads per player
     }
     
     public String getName() {
@@ -100,7 +106,7 @@ public class Player {
     }
     
     public boolean canBuildRoad() {
-        return roads > 0 && hasResources(ROAD_COST);
+        return road_count > 0 && hasResources(ROAD_COST);
     }
     
     private boolean hasResources(Map<ResourceType, Integer> cost) {
@@ -122,32 +128,41 @@ public class Player {
         }
         return true;
     }
+    public void placeBuilding(Building building) {
+    	buildings.add(building);
+    	if (building.getType() == Building.Type.SETTLEMENT) {
+    		buildSettlement();
+    	}
+    	else {
+    		buildCity();
+    	}
+    		
+    	}
+    	
     
-    public boolean buildSettlement() {
+    
+    public void buildSettlement() {
         if (canBuildSettlement() && spendResources(SETTLEMENT_COST)) {
             settlements--;
-            addVictoryPoints(1);
-            return true;
         }
-        return false;
-    }
+        }
     
-    public boolean buildCity() {
+    
+    public void buildCity() {
         if (canBuildCity() && spendResources(CITY_COST)) {
             cities--;
             settlements++; // Settlement is converted to city
             addVictoryPoints(1); // City gives 2 points total (1 from settlement + 1 from upgrade)
-            return true;
+            
         }
-        return false;
+       
     }
     
-    public boolean buildRoad() {
+    public void buildRoad(EdgeCoordinate edge) {
         if (canBuildRoad() && spendResources(ROAD_COST)) {
-            roads--;
-            return true;
+            road_count--;
+            roads_set.add(edge);
         }
-        return false;
     }
     
     public int getSettlementsLeft() {
@@ -159,6 +174,6 @@ public class Player {
     }
     
     public int getRoadsLeft() {
-        return roads;
+        return road_count;
     }
 }

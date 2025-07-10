@@ -48,9 +48,8 @@ public class AuthenticCatanBoard {
 
   //die obere sollte für euch nur wichtig sein, ist Ausgabe von validEdges()
     //gibt gibt map aus mit der man normalisieren kann validEdges.get(edge) -> normalisiert
-    private final Map<EdgeCoordinate, EdgeCoordinate> normalizedEdgeMap;
-    private final Map<RoundedPoint2D, List<EdgeCoordinate>> coordEdgeMap;
-    private  final Map<RoundedPoint2D, EdgeCoordinate> normalizedCatanCoordMapEdge;
+    private final Set<EdgeCoordinate> uniqueEdges;
+    
     
    //die obere sollte für euch nur wichtig sein, ist Ausgabe von validVertices()
     //gibt gibt map aus mit der man normalisieren kann validVertices.get(vertex) -> normalisiert
@@ -78,15 +77,13 @@ public class AuthenticCatanBoard {
         //54 rounded coords to 54 normalized catan coords
         this.normalizedCatanCoordMap = getNormalizedCatanCoordsHelper(coordVerticeMap);
         
-        this.coordEdgeMap = calculateAuthenticEdges();
-        this.normalizedEdgeMap = createNormalizeEdgeMap(coordEdgeMap);
-        this.normalizedCatanCoordMapEdge = getNormalizedCatanCoordsHelperEdge(coordEdgeMap);
+        this.uniqueEdges = calculateAuthenticEdges();
         
         initializeHexBoard();
 
         System.out.println("✓ Authentisches CATAN-Board initialisiert: " + 
                            normalizedVerticeMap.size() + " Siedlungen, " + 
-                           normalizedEdgeMap.size() + " Siedlungsoptionen"); //eigentlich unnötige Abfrage
+                           uniqueEdges.size() + " Siedlungsoptionen"); //eigentlich unnötige Abfrage
     }
     
     private void initializeHexBoard() {
@@ -169,34 +166,19 @@ public class AuthenticCatanBoard {
     }
     
     
-    private Map<RoundedPoint2D, List<EdgeCoordinate>> calculateAuthenticEdges() {
-        Map<RoundedPoint2D, List<EdgeCoordinate>> edgeMap = new HashMap<>();
-        for (HexCoordinate hex : STANDARD_HEX_SET) {
-            int q = hex.getQ();
-            int r = hex.getR();
-
-            for (int dir = 0; dir < 6; dir++) {
-            	
-                EdgeCoordinate edge = new EdgeCoordinate(q, r, dir);
-                RoundedPoint2D rounded = edge.toPixel(hexSize, centerX, centerY);
-
-                System.out.println("Vertex dir=" + dir + " q: " + q + " r: " + r +
-                        " x=" + rounded.getX() + " roundedX=" + rounded.x +
-                        " y=" + rounded.getY() + " roundedY=" + rounded.y);
-                edgeMap.computeIfAbsent(rounded, k -> new ArrayList<>()).add(edge);
-                                
-
-                
-            }
-        }
-        for (Map.Entry<RoundedPoint2D, List<EdgeCoordinate>> entry : edgeMap.entrySet()) {
-            RoundedPoint2D key = entry.getKey();
-            List<EdgeCoordinate> value = entry.getValue();
-            System.out.println("Key X: " + key.getX() + "Key Y: " + key.getY() + ", Value: " + value);
-        }
-
-        return edgeMap;
+    private Set<EdgeCoordinate> calculateAuthenticEdges() {
+    	Set<EdgeCoordinate> edgeSet = new HashSet<>();
+    	for (VertexCoordinate currentVertex : normalizedVerticeMap.values()) {
+    		for (VertexCoordinate vertex : currentVertex.getAdjacentVertices(hexSize, centerX, centerY, normalizedCatanCoordMap, normalizedVerticeMap)) {
+    			EdgeCoordinate currentEdge = new EdgeCoordinate(currentVertex, vertex);
+    			if (!edgeSet.contains(currentEdge)) {
+    				edgeSet.add(currentEdge);
+    			}
+    		}
+    	}
+    	return edgeSet;
     }
+        
 private Map<VertexCoordinate, VertexCoordinate> createNormalizeVertexMap(Map<RoundedPoint2D, List<VertexCoordinate>>oldMap){
 	Map<VertexCoordinate, VertexCoordinate> verticeMap = new HashMap<>();
 	for (Map.Entry<RoundedPoint2D, List<VertexCoordinate>> entry : oldMap.entrySet()) {
@@ -210,20 +192,7 @@ private Map<VertexCoordinate, VertexCoordinate> createNormalizeVertexMap(Map<Rou
 }
 	return verticeMap;
 }
-//creates normalizedEdgeMap, same as VerticeMap
-private Map<EdgeCoordinate, EdgeCoordinate> createNormalizeEdgeMap(Map<RoundedPoint2D, List<EdgeCoordinate>> oldMap) {
-    Map<EdgeCoordinate, EdgeCoordinate> edgeMap = new HashMap<>();
-    for (Map.Entry<RoundedPoint2D, List<EdgeCoordinate>> entry : oldMap.entrySet()) {
-        for (EdgeCoordinate element : entry.getValue()) {
-            edgeMap.put(element, entry.getValue().get(0)); // nimmt immer das erste Element und mappt die anderen darauf
-        }
-    }
-    for (Map.Entry<EdgeCoordinate, EdgeCoordinate> entry : edgeMap.entrySet()) {
-        System.out.println("Key: " + entry.getKey() + " -> Value: " + entry.getValue());
-        System.out.println("Size: " + edgeMap.size());
-    }
-    return edgeMap;
-}
+
 
 private Map<RoundedPoint2D, VertexCoordinate> getNormalizedCatanCoordsHelper(Map<RoundedPoint2D, List<VertexCoordinate>> oldMap) {
     Map<RoundedPoint2D, VertexCoordinate> verticeMap = new HashMap<>();
@@ -235,44 +204,26 @@ private Map<RoundedPoint2D, VertexCoordinate> getNormalizedCatanCoordsHelper(Map
 
 }
 
-private Map<RoundedPoint2D, EdgeCoordinate> getNormalizedCatanCoordsHelperEdge(Map<RoundedPoint2D, List<EdgeCoordinate>> oldMap) {
-    Map<RoundedPoint2D, EdgeCoordinate> edgeMap = new HashMap<>();
-    for (Map.Entry<RoundedPoint2D, List<EdgeCoordinate>> entry : oldMap.entrySet()) {
-        edgeMap.put(entry.getKey(), entry.getValue().get(0)); // nimmt immer das erste Element und mappt die anderen darauf
-    }
-    return edgeMap;
-}
-
-
 
 //ECHTE GETTER FÜR FUNKTIONEN
+
 public VertexCoordinate getNormalizedVertexCoordinate(VertexCoordinate vertex) {
 	VertexCoordinate normalizedVertex = this.normalizedVerticeMap.get(vertex);
 	return normalizedVertex;
 }
 
-public EdgeCoordinate getNormalizedEdgeCoordinate(EdgeCoordinate edge) {
-    EdgeCoordinate normalizedEdge = this.normalizedEdgeMap.get(edge);
-    return normalizedEdge;
-}
+
 
 public Map<RoundedPoint2D, VertexCoordinate> getNormalizedCatanCoordMap(){
 	return normalizedCatanCoordMap;
 }
-public Map<RoundedPoint2D, EdgeCoordinate> getNormalizedCatanCoordMapEdge(){
-	return normalizedCatanCoordMapEdge;
-}
+
 
  //gibt für x und y wert die korrekten normalized catan coords an
 public VertexCoordinate getNormalizedVertexCoordinate(int x, int y) {
 	RoundedPoint2D point = new RoundedPoint2D(x, y);
 	VertexCoordinate normalizedVertex = normalizedCatanCoordMap.get(point);
 	return normalizedVertex;
-}
-public EdgeCoordinate getNormalizedEdgeCoordinate(int x, int y) {
-	RoundedPoint2D point = new RoundedPoint2D(x, y);
-	EdgeCoordinate normalizedEdge = normalizedCatanCoordMapEdge.get(point);
-	return normalizedEdge;
 }
 
     
@@ -289,8 +240,8 @@ public EdgeCoordinate getNormalizedEdgeCoordinate(int x, int y) {
         return new HashMap<>(normalizedVerticeMap);
     }
     
-    public Map<EdgeCoordinate, EdgeCoordinate> getValidEdges() {
-        return new HashMap<>(normalizedEdgeMap);
+    public Set<EdgeCoordinate> getValidEdges() {
+        return new HashSet<>(uniqueEdges);
     }
     
     public Collection<TerrainTile> getAllTiles() {

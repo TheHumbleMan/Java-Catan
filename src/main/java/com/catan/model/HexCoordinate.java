@@ -32,28 +32,10 @@ public class HexCoordinate {
         return (Math.abs(q - other.q) + Math.abs(q + r - other.q - other.r) + Math.abs(r - other.r)) / 2;
     }
     
-    /**
-     * Get neighboring hex coordinates.
-     */
-    public HexCoordinate[] getNeighbors() {
-        return new HexCoordinate[] {
-            new HexCoordinate(q + 1, r),     // East
-            new HexCoordinate(q + 1, r - 1), // Northeast  
-            new HexCoordinate(q, r - 1),     // Northwest
-            new HexCoordinate(q - 1, r),     // West
-            new HexCoordinate(q - 1, r + 1), // Southwest
-            new HexCoordinate(q, r + 1)      // Southeast
-        };
-    }
-    
+  
     /**
      * Convert hex coordinates to pixel coordinates for display.
      */
-    public Point2D toPixel(double hexSize) {
-        double x = hexSize * (3.0/2 * q);
-        double y = hexSize * (Math.sqrt(3)/2 * q + Math.sqrt(3) * r);
-        return new Point2D(x, y);
-    }
     
     /**
      * Convert hex coordinates to pixel coordinates for authentic CATAN 5-row layout.
@@ -119,13 +101,5 @@ public class HexCoordinate {
     /**
      * Helper class for 2D points.
      */
-    public static class Point2D {
-        public final double x;
-        public final double y;
-        
-        public Point2D(double x, double y) {
-            this.x = x;
-            this.y = y;
-        }
-    }
+    
 }
