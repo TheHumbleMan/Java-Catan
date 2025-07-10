@@ -23,6 +23,16 @@ public class AuthenticCatanBoard {
         new HexCoordinate(-2, 1), new HexCoordinate(-1, 1), new HexCoordinate(0, 1), new HexCoordinate(1, 1),
         new HexCoordinate(-1, 2), new HexCoordinate(0, 2), new HexCoordinate(1, 2)
     );
+    
+ // CATAN-authentische Board-Layout-Konstanten
+    private static final double HEX_RADIUS = 45; //davor 55
+    private static final double BOARD_CENTER_X = 300.0;   //ursprünglich 400 WENN MAN ÄNDERN WILL CatanApplication WINDOWS_HEIGHT etc
+    private static final double BOARD_CENTER_Y = 200.0;   //URSPRüNGLICH 350!!!
+    
+    // Siedlungs- und Straßen-Konstanten
+    private static final double SETTLEMENT_SIZE = 8.0;
+    private static final double ROAD_LENGTH = 20.0;
+    private static final double ROAD_WIDTH = 4.0;
 
     private static final Set<HexCoordinate> STANDARD_HEX_SET = new HashSet<>(STANDARD_HEX_POSITIONS);
 
@@ -36,24 +46,26 @@ public class AuthenticCatanBoard {
     private final Map<EdgeCoordinate, Road> roads;
     private HexCoordinate robberPosition;
 
+  //die obere sollte für euch nur wichtig sein, ist Ausgabe von validEdges()
+    //gibt gibt map aus mit der man normalisieren kann validEdges.get(edge) -> normalisiert
     private final Map<EdgeCoordinate, EdgeCoordinate> normalizedEdgeMap;
     private final Map<RoundedPoint2D, List<EdgeCoordinate>> coordEdgeMap;
+    private  final Map<RoundedPoint2D, EdgeCoordinate> normalizedCatanCoordMapEdge;
     
-    // VerticeMap
-    private final Map<RoundedPoint2D, List<VertexCoordinate>> coordVerticeMap;
+   //die obere sollte für euch nur wichtig sein, ist Ausgabe von validVertices()
+    //gibt gibt map aus mit der man normalisieren kann validVertices.get(vertex) -> normalisiert
     private final Map<VertexCoordinate, VertexCoordinate> normalizedVerticeMap;
+    private final Map<RoundedPoint2D, List<VertexCoordinate>> coordVerticeMap;
     private  final Map<RoundedPoint2D, VertexCoordinate> normalizedCatanCoordMap;
 
     // === Neuer Default-Konstruktor ===
-    public AuthenticCatanBoard() {
-        this(80.0, 580.0, 400.0); // Standardwerte, falls nichts übergeben wird
-    }
+    
 
     // === Dein bisheriger Konstruktor bleibt bestehen ===
-    public AuthenticCatanBoard(double hexSize, double centerX, double centerY) {
-        this.hexSize = hexSize;
-        this.centerX = centerX;
-        this.centerY = centerY;
+    public AuthenticCatanBoard() {
+        hexSize = this.HEX_RADIUS;
+        centerX = this.BOARD_CENTER_X;
+        centerY = this.BOARD_CENTER_Y;
 
         this.hexTiles = new HashMap<>();
         this.buildings = new HashMap<>();
@@ -68,6 +80,7 @@ public class AuthenticCatanBoard {
         
         this.coordEdgeMap = calculateAuthenticEdges();
         this.normalizedEdgeMap = createNormalizeEdgeMap(coordEdgeMap);
+        this.normalizedCatanCoordMapEdge = getNormalizedCatanCoordsHelperEdge(coordEdgeMap);
         
         initializeHexBoard();
 
@@ -155,6 +168,7 @@ public class AuthenticCatanBoard {
         return verticeMap;
     }
     
+    
     private Map<RoundedPoint2D, List<EdgeCoordinate>> calculateAuthenticEdges() {
         Map<RoundedPoint2D, List<EdgeCoordinate>> edgeMap = new HashMap<>();
         for (HexCoordinate hex : STANDARD_HEX_SET) {
@@ -221,178 +235,46 @@ private Map<RoundedPoint2D, VertexCoordinate> getNormalizedCatanCoordsHelper(Map
 
 }
 
+private Map<RoundedPoint2D, EdgeCoordinate> getNormalizedCatanCoordsHelperEdge(Map<RoundedPoint2D, List<EdgeCoordinate>> oldMap) {
+    Map<RoundedPoint2D, EdgeCoordinate> edgeMap = new HashMap<>();
+    for (Map.Entry<RoundedPoint2D, List<EdgeCoordinate>> entry : oldMap.entrySet()) {
+        edgeMap.put(entry.getKey(), entry.getValue().get(0)); // nimmt immer das erste Element und mappt die anderen darauf
+    }
+    return edgeMap;
+}
+
+
+
+//ECHTE GETTER FÜR FUNKTIONEN
 public VertexCoordinate getNormalizedVertexCoordinate(VertexCoordinate vertex) {
 	VertexCoordinate normalizedVertex = this.normalizedVerticeMap.get(vertex);
 	return normalizedVertex;
-}
-
-public Map<RoundedPoint2D, VertexCoordinate> getNormalizedCatanCoordMap(){
-	return normalizedCatanCoordMap;
 }
 
 public EdgeCoordinate getNormalizedEdgeCoordinate(EdgeCoordinate edge) {
     EdgeCoordinate normalizedEdge = this.normalizedEdgeMap.get(edge);
     return normalizedEdge;
 }
+
+public Map<RoundedPoint2D, VertexCoordinate> getNormalizedCatanCoordMap(){
+	return normalizedCatanCoordMap;
+}
+public Map<RoundedPoint2D, EdgeCoordinate> getNormalizedCatanCoordMapEdge(){
+	return normalizedCatanCoordMapEdge;
+}
+
  //gibt für x und y wert die korrekten normalized catan coords an
 public VertexCoordinate getNormalizedVertexCoordinate(int x, int y) {
 	RoundedPoint2D point = new RoundedPoint2D(x, y);
 	VertexCoordinate normalizedVertex = normalizedCatanCoordMap.get(point);
 	return normalizedVertex;
 }
+public EdgeCoordinate getNormalizedEdgeCoordinate(int x, int y) {
+	RoundedPoint2D point = new RoundedPoint2D(x, y);
+	EdgeCoordinate normalizedEdge = normalizedCatanCoordMapEdge.get(point);
+	return normalizedEdge;
+}
 
-    
-    // === GAME LOGIC METHODS ===
-    
-    /**
-     * Prüft ob eine Siedlung an einem Vertex platziert werden kann.
-     */
-    public boolean canPlaceBuilding(VertexCoordinate vertex, Player player) {
-    	//ressourcenlimitierung fehlt noch!!
-    	
-        // Vertex muss valide sein
-        if (!getValidVertices().containsKey(vertex)) {
-            return false;
-        }
-        
-        // Position darf nicht besetzt sein
-        if (buildings.containsKey(vertex)) {
-            return false;
-        }
-        
-        //Distanzregel
-        for (VertexCoordinate vert : vertex.getAdjacentVertices(hexSize, centerX, centerY, normalizedCatanCoordMap, getValidVertices())) {
-        	if (buildings.containsKey(vert)) {
-        		return false;
-        	}
-        }
-        return true;
-    }
-    
-    /**
-     * Platziert ein Gebäude an einem Vertex.
-     */
-    public boolean placeBuilding(Building.Type type, VertexCoordinate vertex, Player player) {
-        if (canPlaceBuilding(vertex, player)) {
-            buildings.put(vertex, new Building(type, player, vertex));
-            return true;
-        }
-        return false;
-    }
-    
-    /**
-     * Prüft ob eine Straße an einer Edge platziert werden kann.
-     */
-    public boolean canPlaceRoad(EdgeCoordinate edge, Player player) {
-        // Edge muss valide sein
-        if (!normalizedEdgeMap.containsValue(edge)) {
-            return false;
-        }
-        
-        // Straße darf nicht bereits existieren
-        if (roads.containsKey(edge)) {
-            return false;
-        }
-        
-        // Nach der Anfangsphase: Spieler muss benachbartes Gebäude oder Straße haben
-        if (getTotalRoads() >= 8) {
-            VertexCoordinate[] connectedVertices = edge.getConnectedVertices();
-            
-            // Prüfe benachbarte Gebäude
-            for (VertexCoordinate vertex : connectedVertices) {
-                Building building = buildings.get(vertex);
-                if (building != null && building.getOwner() == player) {
-                    return true;
-                }
-            }
-            
-            // Prüfe benachbarte Straßen
-       /*     for (VertexCoordinate vertex : connectedVertices) {
-                if (hasAdjacentRoad(vertex, player)) {
-                    return true;
-                }
-            } */
-            
-            return false;
-        }
-        
-        return true;
-    }
-    
-    /**
-     * Platziert eine Straße an einer Edge.
-     */
-    public boolean placeRoad(EdgeCoordinate edge, Player player) {
-        if (canPlaceRoad(edge, player)) {
-            roads.put(edge, new Road(player, edge));
-            return true;
-        }
-        return false;
-    }
-    
-    /**
-     * Prüft ob ein Spieler eine benachbarte Straße zu einem Vertex hat.
-     */
-   /*
-    private boolean hasAdjacentRoad(VertexCoordinate vertex, Player player) {
-        for (VertexCoordinate adjacentEdge : vertex.getAdjacentEdges()) {
-            Road road = roads.get(adjacentEdge);
-            if (road != null && road.getOwner() == player) {
-                return true;
-            }
-        }
-        return false;
-    } */
-    
-    /**
-     * Erweitert eine Siedlung zu einer Stadt.
-     */
-    public boolean upgradeToCity(VertexCoordinate vertex, Player player) {
-        Building existing = buildings.get(vertex);
-        
-        if (existing != null && existing.getOwner() == player && 
-            existing.getType() == Building.Type.SETTLEMENT) {
-            buildings.put(vertex, new Building(Building.Type.CITY, player, vertex));
-            return true;
-        }
-        return false;
-    }
-    
-    /**
-     * Bewegt den Räuber zu einer neuen Position.
-     */
-    public void moveRobber(HexCoordinate newPosition) {
-        // Entferne Räuber von aktueller Position
-        TerrainTile currentTile = hexTiles.get(robberPosition);
-        if (currentTile != null) {
-            currentTile.setRobber(false);
-        }
-        
-        // Platziere Räuber auf neuer Position
-        TerrainTile newTile = hexTiles.get(newPosition);
-        if (newTile != null) {
-            newTile.setRobber(true);
-            robberPosition = newPosition;
-        }
-    }
-    
-    /**
-     * Gibt alle Gebäude zurück die an ein Tile angrenzen.
-     */
-    public List<Building> getBuildingsAdjacentToTile(HexCoordinate hexCoord) {
-        List<Building> adjacentBuildings = new ArrayList<>();
-        
-        // Prüfe alle Vertices dieses Hexagons
-        for (int direction = 0; direction < 6; direction++) {
-            VertexCoordinate vertex = new VertexCoordinate(hexCoord.getQ(), hexCoord.getR(), direction);
-            Building building = buildings.get(vertex);
-            if (building != null) {
-                adjacentBuildings.add(building);
-            }
-        }
-        
-        return adjacentBuildings;
-    }
     
     /**
      * Gibt das Gebäude an einem Vertex zurück.
@@ -419,8 +301,8 @@ public VertexCoordinate getNormalizedVertexCoordinate(int x, int y) {
         return hexTiles.get(hexCoord);
     }
     
-    public Collection<Building> getBuildings() {
-        return buildings.values();
+    public Map<VertexCoordinate, Building> getBuildings() {
+        return buildings;
     }
     
     public Collection<Road> getRoads() {
@@ -450,4 +332,28 @@ public VertexCoordinate getNormalizedVertexCoordinate(int x, int y) {
     public int getRobberY() {
         return robberPosition.getR();
     }
+    public static double getHexRadius() {
+        return HEX_RADIUS;
+    }
+
+    public static double getBoardCenterX() {
+        return BOARD_CENTER_X;
+    }
+
+    public static double getBoardCenterY() {
+        return BOARD_CENTER_Y;
+    }
+
+    public static double getSettlementSize() {
+        return SETTLEMENT_SIZE;
+    }
+
+    public static double getRoadLength() {
+        return ROAD_LENGTH;
+    }
+
+    public static double getRoadWidth() {
+        return ROAD_WIDTH;
+    }
 }
+

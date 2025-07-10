@@ -1,3 +1,10 @@
+
+
+//NOT USED; MIGHT BE DELETET SOON
+
+
+
+
 package com.catan.model;
 
 import java.util.ArrayList;
@@ -371,4 +378,4 @@ public class GameBoard {
     public TerrainTile[][] getTiles() {
         return tiles;
     }
-}
+} 

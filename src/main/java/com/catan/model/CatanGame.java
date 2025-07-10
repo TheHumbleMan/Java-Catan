@@ -15,7 +15,7 @@ public class CatanGame {
     public static final int MAX_HAND_SIZE_ON_SEVEN = 7;
     
     private final List<Player> players;
-    private final GameBoard board;
+    private final AuthenticCatanBoard board;
     private final Random random;
     private int currentPlayerIndex;
     private GamePhase currentPhase;
@@ -46,7 +46,7 @@ public class CatanGame {
         }
         
         // Initialize board
-        this.board = new GameBoard(useAuthentic);
+        this.board = new AuthenticCatanBoard();
         this.random = new Random();
         this.currentPlayerIndex = 0;
         this.currentPhase = GamePhase.INITIAL_PLACEMENT_1;
@@ -62,7 +62,7 @@ public class CatanGame {
         return new ArrayList<>(players);
     }
     
-    public GameBoard getBoard() {
+    public AuthenticCatanBoard getBoard() {
         return board;
     }
     
@@ -94,7 +94,7 @@ public class CatanGame {
         if (lastDiceRoll == 7) {
             handleSevenRolled();
         } else {
-            produceResources(lastDiceRoll);
+           // produceResources(lastDiceRoll);
         }
         
         return lastDiceRoll;
@@ -132,50 +132,6 @@ public class CatanGame {
         }
     }
     
-    private void produceResources(int diceRoll) {
-        for (int x = 0; x < GameBoard.BOARD_SIZE; x++) {
-            for (int y = 0; y < GameBoard.BOARD_SIZE; y++) {
-                TerrainTile tile = board.getTile(x, y);
-                if (tile != null && tile.producesResource(diceRoll)) {
-                    ResourceType resource = tile.getTerrainType().getResourceType();
-                    List<Building> adjacentBuildings = board.getBuildingsAdjacentToTile(x, y);
-                    
-                    for (Building building : adjacentBuildings) {
-                        int production = building.getResourceProduction();
-                        building.getOwner().addResource(resource, production);
-                    }
-                }
-            }
-        }
-    }
-    
-    public boolean buildSettlement(int x, int y) {
-        Player currentPlayer = getCurrentPlayer();
-        
-        if (currentPhase == GamePhase.PLAYING) {
-            if (currentPlayer.canBuildSettlement() && board.canPlaceBuilding(x, y, currentPlayer)) {
-                if (currentPlayer.buildSettlement() && board.placeBuilding(Building.Type.SETTLEMENT, x, y, currentPlayer)) {
-                    checkVictoryCondition();
-                    return true;
-                }
-            }
-        } else {
-            // Initial placement - free settlement
-            if (board.canPlaceBuilding(x, y, currentPlayer)) {
-                if (board.placeBuilding(Building.Type.SETTLEMENT, x, y, currentPlayer)) {
-                    currentPlayer.addVictoryPoints(1);
-                    
-                    // In second round, player gets resources from adjacent tiles
-                    if (currentPhase == GamePhase.INITIAL_PLACEMENT_2) {
-                        giveInitialResources(x, y, currentPlayer);
-                    }
-                    
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
     
     // New coordinate-based methods for authentic board support
     
@@ -183,16 +139,16 @@ public class CatanGame {
         Player currentPlayer = getCurrentPlayer();
         
         if (currentPhase == GamePhase.PLAYING) {
-            if (currentPlayer.canBuildSettlement() && board.canPlaceBuilding(coordinate, currentPlayer)) {
-                if (currentPlayer.buildSettlement() && board.placeBuilding(Building.Type.SETTLEMENT, coordinate, currentPlayer)) {
+            if (currentPlayer.canBuildSettlement() && canPlaceBuilding(coordinate, currentPlayer, isBeginning())) {
+                if (currentPlayer.buildSettlement() && placeBuilding(Building.Type.SETTLEMENT, coordinate, currentPlayer)) {
                     checkVictoryCondition();
                     return true;
                 }
             }
         } else {
             // Initial placement - free settlement
-            if (board.canPlaceBuilding(coordinate, currentPlayer)) {
-                if (board.placeBuilding(Building.Type.SETTLEMENT, coordinate, currentPlayer)) {
+            if (canPlaceBuilding(coordinate, currentPlayer, isBeginning())) {
+                if (placeBuilding(Building.Type.SETTLEMENT, coordinate, currentPlayer)) {
                     currentPlayer.addVictoryPoints(1);
                     
                     // In second round, player gets resources from adjacent tiles
@@ -209,7 +165,7 @@ public class CatanGame {
         return false;
     }
     
-    private void giveInitialResources(int x, int y, Player player) {
+    /*private void giveInitialResources(int x, int y, Player player) {
         // Give resources from adjacent tiles
         for (int dx = -1; dx <= 1; dx++) {
             for (int dy = -1; dy <= 1; dy++) {
@@ -219,84 +175,23 @@ public class CatanGame {
                 }
             }
         }
-    }
-    
-    public boolean buildCity(int x, int y) {
-        Player currentPlayer = getCurrentPlayer();
-        
-        if (currentPhase != GamePhase.PLAYING) {
-            return false;
-        }
-        
-        // Check if there's a settlement at this position owned by current player
-        Building existing = null;
-        for (Building building : board.getBuildings()) {
-            if (building.getX() == x && building.getY() == y && 
-                building.getOwner() == currentPlayer && 
-                building.getType() == Building.Type.SETTLEMENT) {
-                existing = building;
-                break;
-            }
-        }
-        
-        if (existing != null && currentPlayer.canBuildCity()) {
-            if (currentPlayer.buildCity() && board.upgradeToCity(x, y, currentPlayer)) {
-                checkVictoryCondition();
-                return true;
-            }
-        }
-        return false;
-    }
-    
-    public boolean buildCity(VertexCoordinate coordinate) {
-        Player currentPlayer = getCurrentPlayer();
-        
-        if (currentPhase == GamePhase.PLAYING && currentPlayer.canBuildCity()) {
-            Building existingBuilding = board.getBuildingAt(coordinate);
-            if (existingBuilding != null && existingBuilding.getType() == Building.Type.SETTLEMENT 
-                && existingBuilding.getOwner() == currentPlayer) {
-                
-                if (currentPlayer.buildCity()) {
-                    board.upgradeToCity(coordinate, currentPlayer);
-                    checkVictoryCondition();
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    
-    public boolean buildRoad(int startX, int startY, int endX, int endY) {
-        Player currentPlayer = getCurrentPlayer();
-        
-        if (currentPhase == GamePhase.PLAYING) {
-            if (currentPlayer.canBuildRoad() && board.canPlaceRoad(startX, startY, endX, endY, currentPlayer)) {
-                if (currentPlayer.buildRoad() && board.placeRoad(startX, startY, endX, endY, currentPlayer)) {
-                    return true;
-                }
-            }
-        } else {
-            // Initial placement - free road
-            if (board.canPlaceRoad(startX, startY, endX, endY, currentPlayer)) {
-                return board.placeRoad(startX, startY, endX, endY, currentPlayer);
-            }
-        }
-        return false;
-    }
+    } */
+
+
     
     public boolean buildRoad(EdgeCoordinate coordinate) {
         Player currentPlayer = getCurrentPlayer();
         
         if (currentPhase == GamePhase.PLAYING) {
-            if (currentPlayer.canBuildRoad() && board.canPlaceRoad(coordinate, currentPlayer)) {
-                if (currentPlayer.buildRoad() && board.placeRoad(coordinate, currentPlayer)) {
+            if (currentPlayer.canBuildRoad() && canPlaceRoad(coordinate, currentPlayer)) {
+                if (currentPlayer.buildRoad() && placeRoad(coordinate, currentPlayer)) {
                     return true;
                 }
             }
         } else {
             // Initial placement - free road
-            if (board.canPlaceRoad(coordinate, currentPlayer)) {
-                if (board.placeRoad(coordinate, currentPlayer)) {
+            if (canPlaceRoad(coordinate, currentPlayer)) {
+                if (placeRoad(coordinate, currentPlayer)) {
                     return true;
                 }
             }
@@ -340,19 +235,22 @@ public class CatanGame {
     
     public void endTurn() {
         if (currentPhase == GamePhase.INITIAL_PLACEMENT_1) {
-            currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
-            if (currentPlayerIndex == 0) {
+            currentPlayerIndex = (currentPlayerIndex + 1);
+            if (currentPlayerIndex == players.size() - 1) {
                 currentPhase = GamePhase.INITIAL_PLACEMENT_2;
                 currentPlayerIndex = players.size() - 1; // Reverse order
+                System.out.println("round1");
             }
         } else if (currentPhase == GamePhase.INITIAL_PLACEMENT_2) {
-            currentPlayerIndex = (currentPlayerIndex - 1 + players.size()) % players.size();
-            if (currentPlayerIndex == players.size() - 1) {
+            currentPlayerIndex = (currentPlayerIndex - 1);
+            if (currentPlayerIndex == 0) {
                 currentPhase = GamePhase.PLAYING;
                 currentPlayerIndex = 0;
+                System.out.println("round2");
             }
         } else {
             currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
+            System.out.println("normal round");
         }
     }
     
@@ -366,9 +264,156 @@ public class CatanGame {
         }
     }
     
-    public void moveRobber(int x, int y) {
-        if (currentPhase == GamePhase.PLAYING) {
-            board.moveRobber(x, y);
+    public boolean isBeginning() {
+        return currentPhase == GamePhase.INITIAL_PLACEMENT_1 || currentPhase == GamePhase.INITIAL_PLACEMENT_2;
+    }
+    public boolean canPlaceBuilding(VertexCoordinate vertex, Player player, boolean isBeginning) {
+    	//ressourcenlimitierung fehlt noch!!
+    	
+        // Vertex muss valide sein
+        if (!board.getValidVertices().containsKey(vertex)) {
+            return false;
         }
+        
+        // Position darf nicht besetzt sein
+        if (board.getBuildings().containsKey(vertex)) {
+            return false;
+        }
+        
+        //Distanzregel
+        for (VertexCoordinate vert : vertex.getAdjacentVertices(AuthenticCatanBoard.getHexRadius(), AuthenticCatanBoard.getBoardCenterX(), AuthenticCatanBoard.getBoardCenterY(), board.getNormalizedCatanCoordMap(), board.getValidVertices())) {
+        	if (board.getBuildings().containsKey(vert)) {
+        		return false;
+        	}
+        }
+        if (!isBeginning) { //hier dann noch ressourcenlimitierung rein
+        	return false;
+        }
+        return true;
+    }
+    
+    /**
+     * Platziert ein Gebäude an einem Vertex.
+     */
+    public boolean placeBuilding(Building.Type type, VertexCoordinate vertex, Player player) {
+        if (canPlaceBuilding(vertex, player, isBeginning())) {
+            board.getBuildings().put(vertex, new Building(type, player, vertex));
+            return true;
+        }
+        return false;
+    }
+    
+    /**
+     * Prüft ob eine Straße an einer Edge platziert werden kann.
+     */
+    public boolean canPlaceRoad(EdgeCoordinate edge, Player player) {
+        // Edge muss valide sein
+        if (!board.getNormalizedEdgeMap().containsValue(edge)) {
+            return false;
+        }
+        
+        // Straße darf nicht bereits existieren
+        if (!board.getForbiddenRoads.containsKey(edge)) {
+            return false;
+        }
+        
+        // Nach der Anfangsphase: Spieler muss benachbartes Gebäude oder Straße haben
+        if (getTotalRoads() >= 8) {
+            VertexCoordinate[] connectedVertices = edge.getConnectedVertices();
+            
+            // Prüfe benachbarte Gebäude
+            for (VertexCoordinate vertex : connectedVertices) {
+                Building building = buildings.get(vertex);
+                if (building != null && building.getOwner() == player) {
+                    return true;
+                }
+            }
+            
+            // Prüfe benachbarte Straßen
+       /*     for (VertexCoordinate vertex : connectedVertices) {
+                if (hasAdjacentRoad(vertex, player)) {
+                    return true;
+                }
+            } */
+            
+            return false;
+        }
+        
+        return true;
+    }
+    
+    /**
+     * Platziert eine Straße an einer Edge.
+     */
+    public boolean placeRoad(EdgeCoordinate edge, Player player) {
+        if (canPlaceRoad(edge, player)) {
+            roads.put(edge, new Road(player, edge));
+            return true;
+        }
+        return false;
+    }
+    
+    /**
+     * Prüft ob ein Spieler eine benachbarte Straße zu einem Vertex hat.
+     */
+   /*
+    private boolean hasAdjacentRoad(VertexCoordinate vertex, Player player) {
+        for (VertexCoordinate adjacentEdge : vertex.getAdjacentEdges()) {
+            Road road = roads.get(adjacentEdge);
+            if (road != null && road.getOwner() == player) {
+                return true;
+            }
+        }
+        return false;
+    } */
+    
+    /**
+     * Erweitert eine Siedlung zu einer Stadt.
+     */
+    public boolean upgradeToCity(VertexCoordinate vertex, Player player) {
+        Building existing = buildings.get(vertex);
+        
+        if (existing != null && existing.getOwner() == player && 
+            existing.getType() == Building.Type.SETTLEMENT) {
+            buildings.put(vertex, new Building(Building.Type.CITY, player, vertex));
+            return true;
+        }
+        return false;
+    }
+    
+    /**
+     * Bewegt den Räuber zu einer neuen Position.
+     */
+    public void moveRobber(HexCoordinate newPosition) {
+        // Entferne Räuber von aktueller Position
+        TerrainTile currentTile = hexTiles.get(robberPosition);
+        if (currentTile != null) {
+            currentTile.setRobber(false);
+        }
+        
+        // Platziere Räuber auf neuer Position
+        TerrainTile newTile = hexTiles.get(newPosition);
+        if (newTile != null) {
+            newTile.setRobber(true);
+            robberPosition = newPosition;
+        }
+    }
+    
+    /**
+     * Gibt alle Gebäude zurück die an ein Tile angrenzen.
+     */
+    public List<Building> getBuildingsAdjacentToTile(HexCoordinate hexCoord) {
+        List<Building> adjacentBuildings = new ArrayList<>();
+        
+        // Prüfe alle Vertices dieses Hexagons
+        for (int direction = 0; direction < 6; direction++) {
+            VertexCoordinate vertex = new VertexCoordinate(hexCoord.getQ(), hexCoord.getR(), direction);
+            Building building = buildings.get(vertex);
+            if (building != null) {
+                adjacentBuildings.add(building);
+            }
+        }
+        
+        return adjacentBuildings;
     }
 }

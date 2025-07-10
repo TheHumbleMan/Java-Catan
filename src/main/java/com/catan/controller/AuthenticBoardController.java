@@ -40,7 +40,7 @@ public class AuthenticBoardController {
     private static final double ROAD_WIDTH = 4.0;
     
     private final CatanGame game;
-    private final AuthenticCatanBoard board = new AuthenticCatanBoard(HEX_RADIUS, BOARD_CENTER_X, BOARD_CENTER_Y);
+    private final AuthenticCatanBoard board = new AuthenticCatanBoard();
     private final Pane boardPane;
     
     public AuthenticBoardController(CatanGame game, Pane boardPane) {
@@ -59,7 +59,7 @@ public class AuthenticBoardController {
     public void renderBoard() {
         boardPane.getChildren().clear();
         
-        renderHexagonTiles();
+        renderHexagonTiles(game.isBeginning());
         renderSettlementSpots();
         renderRoadSpots();
         int settlement_count = new HashSet<>(board.getValidVertices().values()).size();
@@ -72,14 +72,14 @@ public class AuthenticBoardController {
     /**
      * Rendert die 19 Hexagon-Tiles.
      */
-    private void renderHexagonTiles() {
+    private void renderHexagonTiles(boolean isBeginning) {
         for (TerrainTile tile : board.getAllTiles()) {
             if (tile.getHexCoordinate() != null) {
                 HexCoordinate hexCoord = tile.getHexCoordinate();
-                RoundedPoint2D hexCenter = hexCoord.toPixelCatan(HEX_RADIUS);
+                RoundedPoint2D hexCenter = hexCoord.toPixelCatan(AuthenticCatanBoard.getHexRadius());
                 
                 // Erstelle authentisches Hexagon
-                Polygon hexagon = UIComponents.createHexagon(HEX_RADIUS);
+                Polygon hexagon = UIComponents.createHexagon(AuthenticCatanBoard.getHexRadius());
                 hexagon.setLayoutX(BOARD_CENTER_X + hexCenter.x);
                 hexagon.setLayoutY(BOARD_CENTER_Y + hexCenter.y);
                 
@@ -108,7 +108,7 @@ public class AuthenticBoardController {
      */
     //HIER IST AKTUELL DAS PROBLEM, DASS ES EINMAL DURCHLÄUFT, WENN ERST EIN SPOT GEPRÜFT WIRD, UND DANACH DANEBEN DIE SIEDLUNG 
     //GERENDERT WIRD ÜBERSPRINGT ER DAS, ANDERER APPROACH NÖTIG
-    private void renderSettlementSpots() {
+    private void renderSettlementSpots(boolean isBeginning) {
         Player currentPlayer = game.getCurrentPlayer();
         Map<VertexCoordinate, VertexCoordinate> allVertices = board.getValidVertices();
         Set<VertexCoordinate> uniqueVertices = new HashSet<>(allVertices.values()); //DIE SIND JETZT NORMALIZED
@@ -116,7 +116,7 @@ public class AuthenticBoardController {
             //System.out.println(uniqueVertice); nur überprüfung
         	VertexCoordinate vertex = uniqueVertice;
             RoundedPoint2D vertexPos = uniqueVertice.toPixel(HEX_RADIUS, BOARD_CENTER_X, BOARD_CENTER_Y);
-            boolean canBuild = board.canPlaceBuilding(vertex, currentPlayer);
+            boolean canBuild = game.canPlaceBuilding(vertex, currentPlayer, isBeginning);
             boolean isOccupied = board.getBuildings().stream()
                     .anyMatch(b -> b.getVertexCoordinate() != null && b.getVertexCoordinate().equals(vertex));
             
@@ -180,7 +180,7 @@ public class AuthenticBoardController {
     /**
      * Rendert die 72 authentischen Straßenpositionen.
      */
-    private void renderRoadSpots() {
+    private void renderRoadSpots(boolean isBeginning) {
         Player currentPlayer = game.getCurrentPlayer();
         Map<EdgeCoordinate, EdgeCoordinate> allEdges = board.getValidEdges();
         Set<EdgeCoordinate> uniqueEdges = new HashSet<>(allEdges.values());
@@ -250,7 +250,7 @@ public class AuthenticBoardController {
      */
     private void handleTileClick(HexCoordinate hexCoord) {
         // Implementiere Räuber-Bewegung
-        board.moveRobber(hexCoord);
+        game.moveRobber(hexCoord);
         renderBoard(); // Re-render nach Änderung
     }
     
@@ -260,8 +260,8 @@ public class AuthenticBoardController {
     private void handleVertexClick(VertexCoordinate vertex) {
         Player currentPlayer = game.getCurrentPlayer();
         
-        if (board.canPlaceBuilding(vertex, currentPlayer)) {
-            boolean success = board.placeBuilding(Building.Type.SETTLEMENT, vertex, currentPlayer);
+        if (game.canPlaceBuilding(vertex, currentPlayer, game.isBeginning())) {
+            boolean success = game.placeBuilding(Building.Type.SETTLEMENT, vertex, currentPlayer);
             if (success) {
                 System.out.println("Siedlung platziert für " + currentPlayer.getName() + " bei " + vertex);
                 for (VertexCoordinate adjacentVertex : vertex.getAdjacentVertices(HEX_RADIUS, BOARD_CENTER_X, BOARD_CENTER_Y, board.getNormalizedCatanCoordMap(), board.getValidVertices())) {
