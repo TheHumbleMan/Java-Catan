@@ -19,7 +19,10 @@ public class Player {
     private int road_count;
     private final Set<EdgeCoordinate> roads_set;
     private final Set<Building> buildings;
+    private boolean initialSettlementPlaced = false;
+    private boolean initialRoadPlaced = false;
     
+
     // Building costs
     public static final Map<ResourceType, Integer> SETTLEMENT_COST = Map.of(
         ResourceType.LUMBER, 1,
@@ -145,6 +148,7 @@ public class Player {
             settlements--;
         }
         }
+
     
     
     public void buildCity() {
@@ -178,4 +182,18 @@ public class Player {
     public Set<Building> getBuildings() {
         return buildings;
     }
+    public boolean isInitialSettlementPlaced() {
+        return initialSettlementPlaced;
+    }
+
+    public boolean isInitialRoadPlaced() {
+        return initialRoadPlaced;
+    }
+    public void setInitialSettlementPlaced(boolean initialSettlementPlaced) {
+        this.initialSettlementPlaced = initialSettlementPlaced;
+    }
+    public void setInitialRoadPlaced(boolean initialRoadPlaced) {
+        this.initialRoadPlaced = initialRoadPlaced;
+    }
+
 }

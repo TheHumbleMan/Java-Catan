@@ -72,6 +72,9 @@ public class CatanGame {
     public GamePhase getCurrentPhase() {
         return currentPhase;
     }
+    public int getCurrentPlayerIndex() {
+    	return this.currentPlayerIndex;
+    }
     
     public boolean isGameFinished() {
         return gameFinished;
@@ -210,8 +213,10 @@ public class CatanGame {
     
     public void endTurn() {
         if (currentPhase == GamePhase.INITIAL_PLACEMENT_1) {
+        	this.getCurrentPlayer().setInitialSettlementPlaced(false);
+        	this.getCurrentPlayer().setInitialRoadPlaced(false);
             currentPlayerIndex = (currentPlayerIndex + 1);
-            if (currentPlayerIndex == players.size() - 1) {
+            if (currentPlayerIndex == players.size()) {
                 currentPhase = GamePhase.INITIAL_PLACEMENT_2;
                 currentPlayerIndex = players.size() - 1; // Reverse order
                 System.out.println("round1");
@@ -272,6 +277,10 @@ public class CatanGame {
      */
     public void placeBuilding(Building.Type type, VertexCoordinate vertex, Player player) {
             board.getBuildings().put(vertex, new Building(type, player, vertex));
+            if ((getCurrentPlayerIndex() != getPlayers().size() - 1) && isBeginning()) {
+            	player.setInitialSettlementPlaced(true);
+            }
+            
     }
     
     /**
@@ -290,15 +299,15 @@ public class CatanGame {
         	return false;
         }
         //prüft ob Anbindung besteht
+        int c = 0; //dienst nur für die ersten zwei Game Phasen
         List<Building> ownedBuildings = board.getBuildings().values().stream()
         	    .filter(b -> b.getOwner().equals(player))
         	    .collect(Collectors.toList());
         for (Building building : ownedBuildings) {
 			if (building.getVertexCoordinate().equals(edge.getVertexA()) || building.getVertexCoordinate().equals(edge.getVertexB()))
-			{
+			{	
 				return true;
 			}
-		
         }
         List<Road> ownedRoads = board.getRoads().values().stream()
         	    .filter(b -> b.getOwner().equals(player))
@@ -307,7 +316,7 @@ public class CatanGame {
             List<VertexCoordinate> roadVertices = road.getEdgeCoordinate().getConnectedVertices();
 
             for (VertexCoordinate roadVertex : roadVertices) {
-                if (roadVertex.equals(edge.getVertexA()) || roadVertex.equals(edge.getVertexB())) {
+                if ((roadVertex.equals(edge.getVertexA()) || roadVertex.equals(edge.getVertexB())) && !isBeginning()) {
                     return true;
                 }
             }
@@ -326,6 +335,9 @@ public class CatanGame {
     public boolean placeRoad(EdgeCoordinate edge, Player player) {
         if (canPlaceRoad(edge, player)) {
             board.getRoads().put(edge, new Road(player, edge));
+            if ((getCurrentPlayerIndex() != getPlayers().size() - 1) && isBeginning()) {
+            	player.setInitialRoadPlaced(true);
+            }
             return true;
         }
         return false;

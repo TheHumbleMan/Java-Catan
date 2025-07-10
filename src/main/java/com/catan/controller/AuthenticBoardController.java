@@ -40,10 +40,11 @@ public class AuthenticBoardController {
     private static final double ROAD_WIDTH = 4.0;
     
     private final CatanGame game;
-    private final AuthenticCatanBoard board = new AuthenticCatanBoard();
+    private final AuthenticCatanBoard board;
     private final Pane boardPane;
     
     public AuthenticBoardController(CatanGame game, Pane boardPane) {
+    	this.board = game.getBoard();
         this.game = game;
         //this.board = game.getBoard().authenticBoard;
         this.boardPane = boardPane;
@@ -58,7 +59,6 @@ public class AuthenticBoardController {
      */
     public void renderBoard() {
         boardPane.getChildren().clear();
-        
         renderHexagonTiles(game.isBeginning());
         renderSettlementSpots(game.isBeginning());
         renderRoadSpots(game.isBeginning());
@@ -67,6 +67,7 @@ public class AuthenticBoardController {
         System.out.println("✓ Authentisches CATAN-Board gerendert: " + 
         		settlement_count + " Siedlungsmöglichkeiten, " + 
                          board.getValidVertices().size() + " Siedlungsoptionen");
+        				
     }
     
     /**
@@ -117,8 +118,8 @@ public class AuthenticBoardController {
         	VertexCoordinate vertex = uniqueVertice;
             RoundedPoint2D vertexPos = uniqueVertice.toPixel(HEX_RADIUS, BOARD_CENTER_X, BOARD_CENTER_Y);
             boolean canBuild = game.canPlaceBuilding(vertex, currentPlayer, isBeginning);
-            boolean isOccupied = board.getBuildings().values().stream()
-                    .anyMatch(b -> b.getVertexCoordinate() != null && b.getVertexCoordinate().equals(vertex));
+            boolean isInitialSettlementPlaced = currentPlayer.isInitialSettlementPlaced();
+            boolean isOccupied = board.getBuildings().containsKey(vertex);
             
             // Erstelle Siedlungsspot
             Circle settlementSpot = new Circle(SETTLEMENT_SIZE);
@@ -142,7 +143,8 @@ public class AuthenticBoardController {
                         settlementSpot.setRadius(SETTLEMENT_SIZE * 1.5);
                     }
                 }
-            } else if (canBuild) {
+            }
+            else if (canBuild && !isInitialSettlementPlaced) {
                 // Bebaubare Position - grün
                 settlementSpot.setFill(Color.LIGHTGREEN);
                 settlementSpot.setStroke(Color.DARKGREEN);
@@ -158,7 +160,8 @@ public class AuthenticBoardController {
                     settlementSpot.setScaleX(1.0);
                     settlementSpot.setScaleY(1.0);
                 });
-            } else {
+            } 
+             else {
                 // Nicht bebaubare Position - grau für Referenz
                 settlementSpot.setFill(Color.LIGHTGRAY);
                 settlementSpot.setStroke(Color.GRAY);
@@ -188,6 +191,7 @@ public class AuthenticBoardController {
             double rotation = edge.getRotationAngle(HEX_RADIUS, BOARD_CENTER_X, BOARD_CENTER_Y);
             
             boolean canBuildRoad = game.canPlaceRoad(edge, currentPlayer);
+            boolean isInitialRoadPlaced = currentPlayer.isInitialRoadPlaced();
             boolean isRoadOccupied = board.getRoads().values().stream()
                     .anyMatch(r -> r.getEdgeCoordinate() != null && r.getEdgeCoordinate().equals(edge));
             
@@ -208,7 +212,7 @@ public class AuthenticBoardController {
                     roadSegment.setStroke(Color.BLACK);
                     roadSegment.setStrokeWidth(2.0);
                 }
-            } else if (canBuildRoad) {
+            } else if (canBuildRoad && !isInitialRoadPlaced) {
                 // Bebaubare Straße - blau
                 roadSegment.setFill(Color.LIGHTBLUE);
                 roadSegment.setStroke(Color.DARKBLUE);
@@ -257,7 +261,6 @@ public class AuthenticBoardController {
      */
     private void handleVertexClick(VertexCoordinate vertex) {
         Player currentPlayer = game.getCurrentPlayer();
-        
         if (game.canPlaceBuilding(vertex, currentPlayer, game.isBeginning())) {
             game.placeBuilding(Building.Type.SETTLEMENT, vertex, currentPlayer);
             System.out.println("Siedlung platziert für " + currentPlayer.getName() + " bei " + vertex);

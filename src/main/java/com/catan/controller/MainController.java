@@ -118,6 +118,7 @@ public class MainController implements Initializable {
     private void endTurn() {
         if (game != null) {
             game.endTurn();
+            boardController.renderBoard();
             updateGameStatus();
             
             // Clear dice roll for new turn
