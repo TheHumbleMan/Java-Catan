@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 /**
  * Main game class that manages the CATAN game state and rules.
@@ -18,8 +19,6 @@ public class CatanGame {
     
     private final List<Player> players;
     private final AuthenticCatanBoard board;
-    private final Map<VertexCoordinate, Building> buildings; 
-    private final Map<EdgeCoordinate, Road> roads;
     private final Random random;
     private int currentPlayerIndex;
     private GamePhase currentPhase;
@@ -50,8 +49,6 @@ public class CatanGame {
         
         // Initialize board
         this.robberPosition = new HexCoordinate(0, 0); //MUSS MAN NOCH ÄNDERN, STARTET JETZT IMMER IN DER MITTE
-        this.buildings = new HashMap<>();
-        this.roads = new HashMap<>();
         this.board = new AuthenticCatanBoard();
         this.random = new Random();
         this.currentPlayerIndex = 0;
@@ -275,31 +272,52 @@ public class CatanGame {
      */
     public void placeBuilding(Building.Type type, VertexCoordinate vertex, Player player) {
             board.getBuildings().put(vertex, new Building(type, player, vertex));
-            player.placeBuilding(new Building(type, player, vertex));
     }
     
     /**
      * Prüft ob eine Straße an einer Edge platziert werden kann.
      */
+    
     public boolean canPlaceRoad(EdgeCoordinate edge, Player player) {
+    	
         // Edge muss valide sein
         if (!board.getValidEdges().contains(edge)) {
             return false;
-        }
-        
-        // Straße darf nicht bereits existieren
-        if (!roads.containsKey(edge)) {
-            return false;
-        }
-        
-        // Nach der Anfangsphase: Spieler muss benachbartes Gebäude oder Straße haben
-        
             
-      
+        }    
+        // Straße darf nicht bereits existieren
+        if (board.getRoads().containsKey(edge)){
+        	return false;
+        }
+        //prüft ob Anbindung besteht
+        List<Building> ownedBuildings = board.getBuildings().values().stream()
+        	    .filter(b -> b.getOwner().equals(player))
+        	    .collect(Collectors.toList());
+        for (Building building : ownedBuildings) {
+			if (building.getVertexCoordinate().equals(edge.getVertexA()) || building.getVertexCoordinate().equals(edge.getVertexB()))
+			{
+				return true;
+			}
+		
+        }
+        List<Road> ownedRoads = board.getRoads().values().stream()
+        	    .filter(b -> b.getOwner().equals(player))
+        	    .collect(Collectors.toList());
+        for (Road road : ownedRoads) {
+            List<VertexCoordinate> roadVertices = road.getEdgeCoordinate().getConnectedVertices();
 
+            for (VertexCoordinate roadVertex : roadVertices) {
+                if (roadVertex.equals(edge.getVertexA()) || roadVertex.equals(edge.getVertexB())) {
+                    return true;
+                }
+            }
+        }
+        if (!isBeginning()) {
+        	//hier dann noch ressourcentest sobald implementiert
+        }
         
         
-        return true;
+        return false;
     }
     
     /**
@@ -307,7 +325,7 @@ public class CatanGame {
      */
     public boolean placeRoad(EdgeCoordinate edge, Player player) {
         if (canPlaceRoad(edge, player)) {
-            roads.put(edge, new Road(player, edge));
+            board.getRoads().put(edge, new Road(player, edge));
             return true;
         }
         return false;
@@ -332,11 +350,11 @@ public class CatanGame {
      * Erweitert eine Siedlung zu einer Stadt.
      */
     public boolean upgradeToCity(VertexCoordinate vertex, Player player) {
-        Building existing = buildings.get(vertex);
+        Building existing = board.getBuildings().get(vertex);
         
         if (existing != null && existing.getOwner() == player && 
             existing.getType() == Building.Type.SETTLEMENT) {
-            buildings.put(vertex, new Building(Building.Type.CITY, player, vertex));
+            board.getBuildings().put(vertex, new Building(Building.Type.CITY, player, vertex));
             return true;
         }
         return false;
@@ -369,7 +387,7 @@ public class CatanGame {
         // Prüfe alle Vertices dieses Hexagons
         for (int direction = 0; direction < 6; direction++) {
             VertexCoordinate vertex = new VertexCoordinate(hexCoord.getQ(), hexCoord.getR(), direction);
-            Building building = buildings.get(vertex);
+            Building building = board.getBuildings().get(vertex);
             if (building != null) {
                 adjacentBuildings.add(building);
             }

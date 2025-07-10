@@ -83,7 +83,7 @@ public class AuthenticCatanBoard {
 
         System.out.println("✓ Authentisches CATAN-Board initialisiert: " + 
                            normalizedVerticeMap.size() + " Siedlungen, " + 
-                           uniqueEdges.size() + " Siedlungsoptionen"); //eigentlich unnötige Abfrage
+                           uniqueEdges.size() + " Straßen"); //eigentlich unnötige Abfrage
     }
     
     private void initializeHexBoard() {
@@ -256,15 +256,15 @@ public VertexCoordinate getNormalizedVertexCoordinate(int x, int y) {
         return buildings;
     }
     
-    public Collection<Road> getRoads() {
-        return roads.values();
+    public Map<EdgeCoordinate,Road> getRoads() {
+        return roads;
     }
     
     public int getTotalBuildings() {
         return buildings.size();
     }
     
-    public int getTotalRoads() {
+    public int getRoadsCount() {
         return roads.size();
     }
     

@@ -182,14 +182,13 @@ public class AuthenticBoardController {
      */
     private void renderRoadSpots(boolean isBeginning) {
         Player currentPlayer = game.getCurrentPlayer();
-        Set<EdgeCoordinate> uniqueEdges = board.getValidEdges();     
+        Set<EdgeCoordinate> uniqueEdges = board.getValidEdges(); 
         for (EdgeCoordinate edge : uniqueEdges) {
             RoundedPoint2D edgePos = edge.toPixel(HEX_RADIUS, BOARD_CENTER_X, BOARD_CENTER_Y);
             double rotation = edge.getRotationAngle(HEX_RADIUS, BOARD_CENTER_X, BOARD_CENTER_Y);
             
             boolean canBuildRoad = game.canPlaceRoad(edge, currentPlayer);
-            canBuildRoad = true;
-            boolean isRoadOccupied = board.getRoads().stream()
+            boolean isRoadOccupied = board.getRoads().values().stream()
                     .anyMatch(r -> r.getEdgeCoordinate() != null && r.getEdgeCoordinate().equals(edge));
             
             // Erstelle Straßensegment
@@ -201,7 +200,7 @@ public class AuthenticBoardController {
             // Style das Straßensegment
             if (isRoadOccupied) {
                 // Finde die Straße und zeige sie mit Spielerfarbe
-                com.catan.model.Road road = board.getRoads().stream()
+                com.catan.model.Road road = board.getRoads().values().stream()
                     .filter(r -> r.getEdgeCoordinate() != null && r.getEdgeCoordinate().equals(edge))
                     .findFirst().orElse(null);
                 if (road != null) {

@@ -128,8 +128,7 @@ public class Player {
         }
         return true;
     }
-    public void placeBuilding(Building building) {
-    	buildings.add(building);
+    public void addBuilding(Building building) {
     	if (building.getType() == Building.Type.SETTLEMENT) {
     		buildSettlement();
     	}
@@ -175,5 +174,8 @@ public class Player {
     
     public int getRoadsLeft() {
         return road_count;
+    }
+    public Set<Building> getBuildings() {
+        return buildings;
     }
 }
