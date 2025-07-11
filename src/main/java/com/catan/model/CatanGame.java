@@ -27,6 +27,7 @@ public class CatanGame {
     private boolean gameFinished;
     private Player winner;
     private int lastDiceRoll;
+    private boolean hasRolledDice;
     private HexCoordinate robberPosition;
     
     public enum GamePhase {
@@ -56,6 +57,7 @@ public class CatanGame {
         this.currentPlayerIndex = 0;
         this.currentPhase = GamePhase.INITIAL_PLACEMENT_1;
         this.gameFinished = false;
+        this.hasRolledDice = true;
         this.lastDiceRoll = 0;
     }
     
@@ -89,6 +91,12 @@ public class CatanGame {
     public int getLastDiceRoll() {
         return lastDiceRoll;
     }
+    public boolean hasRolledDice() {
+    	return hasRolledDice;
+    }
+    public void setHasRolledDice(boolean hasRolledDice) {
+        this.hasRolledDice = hasRolledDice;
+    }
     
     public int rollDice() {
         if (currentPhase != GamePhase.PLAYING) {
@@ -97,6 +105,7 @@ public class CatanGame {
         
         int die1 = random.nextInt(6) + 1;
         int die2 = random.nextInt(6) + 1;
+        setHasRolledDice(true);
         lastDiceRoll = die1 + die2;
         
         if (lastDiceRoll == 7) {
@@ -263,17 +272,18 @@ public class CatanGame {
                 player.getResources().forEach((type, amount) -> {
                     System.out.println(type + ": " + amount);
                 });
-                }
-                
+                }                   
                 System.out.println("geht jetzt in normale 'Spielphase'");
+                setHasRolledDice(false);
             }
         } else {
         	if (!skipInkrement) {
         	    currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
+        	    setHasRolledDice(false); //für nächste Phase
+            }
         	}
         	skipInkrement = false;
         }
-    }
     
     private void checkVictoryCondition() {
         for (Player player : players) {
@@ -283,6 +293,21 @@ public class CatanGame {
                 break;
             }
         }
+    }
+    public boolean hasSufficientResourcesForRoad() {
+    	Player currentPlayer = getCurrentPlayer();
+    	return currentPlayer.hasSufficientResources(Player.ROAD_COST);
+    	
+    }
+    public boolean hasSufficientResourcesForSettlement() {
+    	Player currentPlayer = getCurrentPlayer();
+    	return currentPlayer.hasSufficientResources(Player.SETTLEMENT_COST);
+    	
+    }
+    public boolean hasSufficientResourcesForCity() {
+    	Player currentPlayer = getCurrentPlayer();
+    	return currentPlayer.hasSufficientResources(Player.CITY_COST);
+    	
     }
     
     public boolean isBeginning() {
@@ -311,26 +336,27 @@ public class CatanGame {
         return true;
     }
     public boolean canPlaceSpecificBuilding(VertexCoordinate vertex, Player player, boolean isBeginning, Building.Type type) {
+    	boolean canBuildCity = hasSufficientResourcesForCity();
+    	boolean canBuildSettlement = hasSufficientResourcesForCity() || isBeginning;
+    	
     	if (isBeginning && type == Building.Type.CITY) {
     		return false;
     	}
-    	//ressourcenlimitierung fehlt noch!!
-    	
         // Vertex muss valide sein
-        if (!board.getValidVertices().containsKey(vertex)) {
+        if (!board.getValidVertices().containsKey(vertex) || board.getBuildings().containsKey(vertex)) {
             return false;
-        }
-        
-        // Position darf nicht besetzt sein
-        if (board.getBuildings().containsKey(vertex)) {
-            return false;
-        }
-        
+        }  
         //Distanzregel
         for (VertexCoordinate vert : vertex.getAdjacentVertices(AuthenticCatanBoard.getHexRadius(), AuthenticCatanBoard.getBoardCenterX(), AuthenticCatanBoard.getBoardCenterY(), board.getNormalizedCatanCoordMap(), board.getValidVertices())) {
         	if (board.getBuildings().containsKey(vert)) {
         		return false;
         	}
+        }
+        if (type == Building.Type.CITY && !canBuildCity) {
+        	return false;
+        }
+        else if (type == Building.Type.SETTLEMENT && !canBuildSettlement) {
+        	return false;
         }
         
         return true;

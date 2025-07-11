@@ -145,8 +145,6 @@ public class AuthenticBoardController {
                     settlementSpot.setFill(getPlayerColor(building.getOwner()));
                     settlementSpot.setStroke(Color.BLACK);
                     settlementSpot.setStrokeWidth(2.0);
-                    System.out.println("EINS DAVOR KOMMT AN");
-                    System.out.println("Type is: " + building.getType());
 
                     // Städte sind größer
                     if (building.getType() == Building.Type.CITY) {
@@ -154,7 +152,7 @@ public class AuthenticBoardController {
                     }
                 }
             }
-            else if (canBuild && !isInitialSettlementPlaced) {
+            else if (canBuild && !isInitialSettlementPlaced && game.hasRolledDice() && (game.hasSufficientResourcesForCity() || game.hasSufficientResourcesForSettlement() || isBeginning)) {
                 // Bebaubare Position - grün
                 settlementSpot.setFill(Color.LIGHTGREEN);
                 settlementSpot.setStroke(Color.DARKGREEN);
@@ -217,12 +215,24 @@ public class AuthenticBoardController {
                 com.catan.model.Road road = board.getRoads().values().stream()
                     .filter(r -> r.getEdgeCoordinate() != null && r.getEdgeCoordinate().equals(edge))
                     .findFirst().orElse(null);
+                
+                System.out.println("Build Road Conditions:");
+                System.out.println("canBuildRoad: " + canBuildRoad);
+                System.out.println("!isInitialRoadPlaced: " + !isInitialRoadPlaced);
+                System.out.println("game.hasRolledDice(): " + game.hasRolledDice());
+                System.out.println("game.hasSufficientResourcesForRoad(): " + game.hasSufficientResourcesForRoad());
+                System.out.println("isBeginning: " + isBeginning);
+                System.out.println("(game.hasSufficientResourcesForRoad() || isBeginning): " + (game.hasSufficientResourcesForRoad() || isBeginning));
+
+                boolean result = canBuildRoad && !isInitialRoadPlaced && game.hasRolledDice() && (game.hasSufficientResourcesForRoad() || isBeginning);
+                System.out.println("Overall result: " + result);
+                
                 if (road != null) {
                     roadSegment.setFill(getPlayerColor(road.getOwner()));
                     roadSegment.setStroke(Color.BLACK);
                     roadSegment.setStrokeWidth(2.0);
                 }
-            } else if (canBuildRoad && !isInitialRoadPlaced) {
+            } else if (canBuildRoad && !isInitialRoadPlaced && game.hasRolledDice() && (game.hasSufficientResourcesForRoad() || isBeginning)) {
                 // Bebaubare Straße - blau
                 roadSegment.setFill(Color.LIGHTBLUE);
                 roadSegment.setStroke(Color.DARKBLUE);
@@ -293,7 +303,6 @@ public class AuthenticBoardController {
     
     private Building.Type buildingType(VertexCoordinate vertex) {
     	Building.Type type = null;
-        System.out.println("AUFRUF");
 
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Build Menu");
@@ -337,7 +346,6 @@ public class AuthenticBoardController {
                 	currentPlayer.setInitialRoadPlaced(true);
                 }
                 if (game.isBeginning() && board.getRoads().size() == game.getPlayers().size() && game.getCurrentPlayerIndex() == game.getPlayers().size() - 1) {
-                	System.out.println("Innerhalb bei placeroad");
                 	currentPlayer.setInitialSettlementPlaced(false);
                 }
                 System.out.println("Straße platziert für " + currentPlayer.getName() + " bei " + edge);

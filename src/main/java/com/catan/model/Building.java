@@ -1,5 +1,7 @@
 package com.catan.model;
 
+import java.util.Map;
+
 /**
  * Represents a building (settlement or city) on the CATAN board.
  */

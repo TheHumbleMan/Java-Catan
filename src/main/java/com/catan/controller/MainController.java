@@ -112,12 +112,14 @@ public class MainController implements Initializable {
             diceRollLabel.setText("Dice Roll: " + roll);
             game.ingameResourceDistribution(roll);
             updateGameStatus();
+            rollDiceButton.setDisable(true);
+
         }
     }
     
     @FXML
     private void endTurn() {
-        if (game != null && game.hasCompletedPlacementForCurrentPhase()) {
+        if (game != null && game.hasCompletedPlacementForCurrentPhase() && game.hasRolledDice()) {
             game.endTurn();
             boardController.renderBoard();
             updateGameStatus();
@@ -125,7 +127,10 @@ public class MainController implements Initializable {
             // Clear dice roll for new turn
             if (game.getCurrentPhase() == CatanGame.GamePhase.PLAYING) {
                 diceRollLabel.setText("Dice Roll: -");
+                rollDiceButton.setDisable(false);
+                game.setHasRolledDice(false); //für nächste Phase
             }
+            
         }
     }
     

@@ -80,20 +80,30 @@ public class Player {
     }
     
     public int getResourceCount(ResourceType type) {
-        return resources.getOrDefault(type, 0);
+        return resources.get(type);
     }
     
+    public void addResources(Map<ResourceType, Integer> resourcesToAdd) {
+        for (Map.Entry<ResourceType, Integer> entry : resourcesToAdd.entrySet()) {
+            ResourceType type = entry.getKey();
+            int amount = entry.getValue();
+            resources.put(type, resources.get(type) + amount);
+        }
+    } 
     public void addResource(ResourceType type, int amount) {
         resources.put(type, resources.getOrDefault(type, 0) + amount);
     }
     
-    public boolean removeResource(ResourceType type, int amount) {
-        int current = resources.getOrDefault(type, 0);
-        if (current >= amount) {
-            resources.put(type, current - amount);
-            return true;
-        }
-        return false;
+    public void removeResource(Map<ResourceType, Integer> resourcesToSubtract) {
+    	for (Map.Entry<ResourceType, Integer> entry : resourcesToSubtract.entrySet()) {
+            ResourceType type = entry.getKey();
+            int amount = entry.getValue();
+        resources.put(type, resources.get(type) - amount);                          
+    	}
+    }
+    //evtl obsolet
+    public boolean canRemoveResource(ResourceType type, int amount) {
+        return resources.get(type) >= amount;
     }
     
     public int getTotalResourceCount() {
@@ -101,18 +111,18 @@ public class Player {
     }
     
     public boolean canBuildSettlement() {
-        return settlements > 0 && hasResources(SETTLEMENT_COST);
+        return settlements > 0 && hasSufficientResources(SETTLEMENT_COST);
     }
     
     public boolean canBuildCity() {
-        return cities > 0 && hasResources(CITY_COST);
+        return cities > 0 && hasSufficientResources(CITY_COST);
     }
     
     public boolean canBuildRoad() {
-        return road_count > 0 && hasResources(ROAD_COST);
+        return road_count > 0 && hasSufficientResources(ROAD_COST);
     }
     
-    private boolean hasResources(Map<ResourceType, Integer> cost) {
+    public boolean hasSufficientResources(Map<ResourceType, Integer> cost) {
         for (Map.Entry<ResourceType, Integer> entry : cost.entrySet()) {
             if (getResourceCount(entry.getKey()) < entry.getValue()) {
                 return false;
@@ -122,7 +132,7 @@ public class Player {
     }
     
     public boolean spendResources(Map<ResourceType, Integer> cost) {
-        if (!hasResources(cost)) {
+        if (!hasSufficientResources(cost)) {
             return false;
         }
         
@@ -130,6 +140,10 @@ public class Player {
             removeResource(entry.getKey(), entry.getValue());
         }
         return true;
+    }
+    public void removeResource(ResourceType type, int amount) {
+        int current = resources.getOrDefault(type, 0);
+        resources.put(type, current - amount);
     }
     public void addBuilding(Building building) {
     	if (building.getType() == Building.Type.SETTLEMENT) {
