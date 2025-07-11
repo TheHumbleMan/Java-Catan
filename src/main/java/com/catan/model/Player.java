@@ -195,5 +195,8 @@ public class Player {
     public void setInitialRoadPlaced(boolean initialRoadPlaced) {
         this.initialRoadPlaced = initialRoadPlaced;
     }
+    public void setResources(ResourceType type, int multiplicity) {
+    	resources.merge(type, multiplicity, Integer::sum);
+    }
 
 }

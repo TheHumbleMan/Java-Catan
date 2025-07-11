@@ -37,43 +37,6 @@ public class VertexCoordinate {
     /**
      * Get the hexagon tiles that share this vertex.
      */
-    public List<HexCoordinate> getAdjacentHexes() {
-        List<HexCoordinate> hexes = new ArrayList<>();
-        
-        // Add the primary hex that this vertex belongs to
-        hexes.add(new HexCoordinate(x, y));
-        
-        // Add neighboring hexes based on vertex direction
-        switch (direction) {
-            case 0: // Top vertex
-                hexes.add(new HexCoordinate(x, y - 1));
-                hexes.add(new HexCoordinate(x - 1, y));
-                break;
-            case 1: // Top-right vertex
-                hexes.add(new HexCoordinate(x + 1, y - 1));
-                hexes.add(new HexCoordinate(x + 1, y));
-                break;
-            case 2: // Bottom-right vertex
-                hexes.add(new HexCoordinate(x + 1, y));
-                hexes.add(new HexCoordinate(x, y + 1));
-                break;
-            case 3: // Bottom vertex
-                hexes.add(new HexCoordinate(x, y + 1));
-                hexes.add(new HexCoordinate(x - 1, y + 1));
-                break;
-            case 4: // Bottom-left vertex
-                hexes.add(new HexCoordinate(x - 1, y + 1));
-                hexes.add(new HexCoordinate(x - 1, y));
-                break;
-            case 5: // Top-left vertex
-                hexes.add(new HexCoordinate(x - 1, y));
-                hexes.add(new HexCoordinate(x, y - 1));
-                break;
-        }
-        
-        return hexes;
-    }
-    
     /**
      * Get the adjacent Vertices 
      */

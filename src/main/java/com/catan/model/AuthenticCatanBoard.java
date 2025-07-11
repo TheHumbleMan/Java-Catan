@@ -56,6 +56,7 @@ public class AuthenticCatanBoard {
     private final Map<VertexCoordinate, VertexCoordinate> normalizedVerticeMap;
     private final Map<RoundedPoint2D, List<VertexCoordinate>> coordVerticeMap;
     private  final Map<RoundedPoint2D, VertexCoordinate> normalizedCatanCoordMap;
+    private final Map<VertexCoordinate, List<VertexCoordinate>> normalizedToUnnormalized;
 
     // === Neuer Default-Konstruktor ===
     
@@ -76,6 +77,8 @@ public class AuthenticCatanBoard {
         this.normalizedVerticeMap = createNormalizeVertexMap(coordVerticeMap);
         //54 rounded coords to 54 normalized catan coords
         this.normalizedCatanCoordMap = getNormalizedCatanCoordsHelper(coordVerticeMap);
+        //54 normalized auf die 114 unnormalized
+        this.normalizedToUnnormalized = mapNormalizedToUnnormalized();
         
         this.uniqueEdges = calculateAuthenticEdges();
         
@@ -203,9 +206,39 @@ private Map<RoundedPoint2D, VertexCoordinate> getNormalizedCatanCoordsHelper(Map
     return verticeMap;
 
 }
+public List<HexCoordinate> getHexNeighbours(VertexCoordinate vertex) {
+	int q = vertex.getX();
+	int r = vertex.getY();
+	List<HexCoordinate> HexCoordinates = new ArrayList<>();
+	List<VertexCoordinate> Vertices = getNormalizedToUnnormalized().get(vertex);
+	for (VertexCoordinate current_vertex : Vertices) {
+		HexCoordinates.add(new HexCoordinate(current_vertex.getX(), current_vertex.getY())); 
+	}
+	return HexCoordinates;
+} 
+
+public Map<VertexCoordinate, List<VertexCoordinate>> mapNormalizedToUnnormalized() {
+    Map<VertexCoordinate, List<VertexCoordinate>> normalizedToUnnormalized = new HashMap<>();
+
+    for (Map.Entry<RoundedPoint2D, List<VertexCoordinate>> entry : coordVerticeMap.entrySet()) {
+        RoundedPoint2D roundedPoint = entry.getKey();   
+        List<VertexCoordinate> unnormalizedVertices  = entry.getValue();      
+
+        VertexCoordinate normalized = normalizedCatanCoordMap.get(roundedPoint);
+
+       
+        normalizedToUnnormalized.computeIfAbsent(normalized, k -> new ArrayList<>())
+                                .addAll(unnormalizedVertices);
+    }
+
+    return normalizedToUnnormalized;
+}
 
 
 //ECHTE GETTER FÜR FUNKTIONEN
+public Map<VertexCoordinate, List<VertexCoordinate>> getNormalizedToUnnormalized(){
+	return normalizedToUnnormalized;
+}
 
 public VertexCoordinate getNormalizedVertexCoordinate(VertexCoordinate vertex) {
 	VertexCoordinate normalizedVertex = this.normalizedVerticeMap.get(vertex);
@@ -244,8 +277,8 @@ public VertexCoordinate getNormalizedVertexCoordinate(int x, int y) {
         return new HashSet<>(uniqueEdges);
     }
     
-    public Collection<TerrainTile> getAllTiles() {
-        return hexTiles.values();
+    public Map<HexCoordinate, TerrainTile> getAllTiles() {
+        return hexTiles;
     }
     
     public TerrainTile getHexTile(HexCoordinate hexCoord) {

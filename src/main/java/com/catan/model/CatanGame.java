@@ -1,6 +1,7 @@
 package com.catan.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -153,31 +154,25 @@ public class CatanGame {
         }
     } */
 
-
-    
-    public boolean buildRoad(EdgeCoordinate edge) {
-        Player currentPlayer = getCurrentPlayer();
-        
-        if (currentPhase == GamePhase.PLAYING) {
-            if (currentPlayer.canBuildRoad() && canPlaceRoad(edge, currentPlayer)) {
-            	placeRoad(edge, currentPlayer);
-                currentPlayer.buildRoad(edge);
-             
-            }
-                    return true;
-                
-            
-        } else {
-            // Initial placement - free road
-            if (canPlaceRoad(edge, currentPlayer)) {
-                if (placeRoad(edge, currentPlayer)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+    private void initialResourceDistribution() {
+    	for (Player player : getPlayers()) {
+    	Map<VertexCoordinate, Building> playerBuildings = board.getBuildings().entrySet().stream()
+    		    .filter(entry -> entry.getValue().getOwner().equals(player))
+    		    .collect(Collectors.toMap(
+    		        Map.Entry::getKey,
+    		        Map.Entry::getValue
+    		    ));
+    	Map<HexCoordinate, TerrainTile> tiles = board.getAllTiles();
+    	for (Building building : playerBuildings.values()) {
+    		List<HexCoordinate> neighbourHexes = board.getHexNeighbours(building.getVertexCoordinate());
+    		for (HexCoordinate neighbourHex : neighbourHexes) {
+    			TerrainTile tile = tiles.get(neighbourHex);
+    			player.setResources(tile.getTerrainType().getResourceType(), 1);
+    		}
+    	}
     }
-    
+ }
+    	
     public boolean offerTrade(Player otherPlayer, Map<ResourceType, Integer> give, Map<ResourceType, Integer> receive) {
         Player currentPlayer = getCurrentPlayer();
         
@@ -230,6 +225,14 @@ public class CatanGame {
                 currentPhase = GamePhase.PLAYING;
                 currentPlayerIndex = 0;
                 skipInkrement = true;
+                initialResourceDistribution();
+                for (Player player : getPlayers()) {
+                System.out.println("=== Ressourcen des Spielers ===");
+                player.getResources().forEach((type, amount) -> {
+                    System.out.println(type + ": " + amount);
+                });
+                }
+                
                 System.out.println("geht jetzt in normale 'Spielphase'");
             }
         } else {
@@ -445,21 +448,5 @@ public class CatanGame {
         }
     } 
     
-    /**
-     * Gibt alle Gebäude zurück die an ein Tile angrenzen.
-     */
-    public List<Building> getBuildingsAdjacentToTile(HexCoordinate hexCoord) {
-        List<Building> adjacentBuildings = new ArrayList<>();
-        
-        // Prüfe alle Vertices dieses Hexagons
-        for (int direction = 0; direction < 6; direction++) {
-            VertexCoordinate vertex = new VertexCoordinate(hexCoord.getQ(), hexCoord.getR(), direction);
-            Building building = board.getBuildings().get(vertex);
-            if (building != null) {
-                adjacentBuildings.add(building);
-            }
-        }
-        
-        return adjacentBuildings;
-    }
+    
 }

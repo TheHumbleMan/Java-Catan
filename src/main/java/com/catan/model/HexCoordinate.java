@@ -30,8 +30,7 @@ public class HexCoordinate {
      */
     public int distanceTo(HexCoordinate other) {
         return (Math.abs(q - other.q) + Math.abs(q + r - other.q - other.r) + Math.abs(r - other.r)) / 2;
-    }
-    
+    }   
   
     /**
      * Convert hex coordinates to pixel coordinates for display.

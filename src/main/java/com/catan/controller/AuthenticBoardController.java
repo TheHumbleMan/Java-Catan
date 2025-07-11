@@ -74,7 +74,7 @@ public class AuthenticBoardController {
      * Rendert die 19 Hexagon-Tiles.
      */
     private void renderHexagonTiles(boolean isBeginning) {
-        for (TerrainTile tile : board.getAllTiles()) {
+        for (TerrainTile tile : board.getAllTiles().values()) {
             if (tile.getHexCoordinate() != null) {
                 HexCoordinate hexCoord = tile.getHexCoordinate();
                 RoundedPoint2D hexCenter = hexCoord.toPixelCatan(AuthenticCatanBoard.getHexRadius());
