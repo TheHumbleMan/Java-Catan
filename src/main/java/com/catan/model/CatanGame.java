@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -277,8 +278,12 @@ public class CatanGame {
      */
     public void placeBuilding(Building.Type type, VertexCoordinate vertex, Player player) {
             board.getBuildings().put(vertex, new Building(type, player, vertex));
-            if ((getCurrentPlayerIndex() != getPlayers().size() - 1) && isBeginning()) {
+            if (isBeginning()) {
             	player.setInitialSettlementPlaced(true);
+            }
+            //prüft ob es sich um zweites Plazieren beim letzten Spieler der Anfangsrunde handelt
+            if (isBeginning() && board.getBuildings().size() == getPlayers().size() + 1 && getCurrentPlayerIndex() == getPlayers().size() - 1) {
+            	player.setInitialRoadPlaced(false);
             }
             
     }
@@ -298,17 +303,16 @@ public class CatanGame {
         if (board.getRoads().containsKey(edge)){
         	return false;
         }
-        //prüft ob Anbindung besteht
-        int c = 0; //dienst nur für die ersten zwei Game Phasen
-        List<Building> ownedBuildings = board.getBuildings().values().stream()
-        	    .filter(b -> b.getOwner().equals(player))
-        	    .collect(Collectors.toList());
-        for (Building building : ownedBuildings) {
-			if (building.getVertexCoordinate().equals(edge.getVertexA()) || building.getVertexCoordinate().equals(edge.getVertexB()))
-			{	
-				return true;
-			}
+        //also falls es sich um letzten turn handelt
+        if (isBuildingClose(edge, player) && isBeginning() && board.getRoads().size() == getPlayers().size() && getCurrentPlayerIndex() == getPlayers().size() - 1) {
+        	return !isAdjacentRoad(edge, player);
         }
+        //prüft ob Anbindung zu Siedlung besteht
+        if (isBuildingClose(edge, player)) {
+        	return true;
+        }
+        
+        //prüft ob Anbindung zu Straße besteht
         List<Road> ownedRoads = board.getRoads().values().stream()
         	    .filter(b -> b.getOwner().equals(player))
         	    .collect(Collectors.toList());
@@ -335,14 +339,51 @@ public class CatanGame {
     public boolean placeRoad(EdgeCoordinate edge, Player player) {
         if (canPlaceRoad(edge, player)) {
             board.getRoads().put(edge, new Road(player, edge));
-            if ((getCurrentPlayerIndex() != getPlayers().size() - 1) && isBeginning()) {
+            if (isBeginning()) {
             	player.setInitialRoadPlaced(true);
+            }
+            if (isBeginning() && board.getRoads().size() == getPlayers().size() && getCurrentPlayerIndex() == getPlayers().size() - 1) {
+            	System.out.println("Innerhalb bei placeroad");
+            	player.setInitialSettlementPlaced(false);
             }
             return true;
         }
         return false;
     }
-  
+    
+    boolean isBuildingClose(EdgeCoordinate edge, Player player) {
+    	List<Building> ownedBuildings = board.getBuildings().values().stream()
+        	    .filter(b -> b.getOwner().equals(player))
+        	    .collect(Collectors.toList());
+        for (Building building : ownedBuildings) {
+			if (building.getVertexCoordinate().equals(edge.getVertexA()) || building.getVertexCoordinate().equals(edge.getVertexB())) 
+			{	
+				return true;
+			}
+        }
+        return false;
+    	
+    }
+    
+    boolean isAdjacentRoad(EdgeCoordinate edge, Player player) {
+    	List<Road> ownedRoads = board.getRoads().values().stream()
+        	    .filter(b -> b.getOwner().equals(player))
+        	    .collect(Collectors.toList());
+    	Optional<Building> building = board.getBuildings().values().stream()
+    		    .filter(b -> b.getVertexCoordinate().equals(edge.getVertexA()) || b.getVertexCoordinate().equals(edge.getVertexB()))
+    		    .findFirst();
+    	if (building.isPresent()){
+    		Building b = building.get();
+    		for (Road road : ownedRoads) {
+    			if (b.getVertexCoordinate() == road.getEdgeCoordinate().getVertexA() || b.getVertexCoordinate() == road.getEdgeCoordinate().getVertexB()) {
+    				return true;
+    			}
+    		}
+    	}
+    	return false;
+    }
+    
+
     
     /**
      * Prüft ob ein Spieler eine benachbarte Straße zu einem Vertex hat.
