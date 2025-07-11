@@ -37,6 +37,13 @@ public class TerrainTile {
         return numberToken;
     }
     
+    public TerrainType compareTokens(int compare_number) {
+    	if (compare_number == this.numberToken) {
+    		return this.terrainType;
+    	}
+    	return null;
+    }
+    
     public HexCoordinate getHexCoordinate() {
         return hexCoordinate;
     }

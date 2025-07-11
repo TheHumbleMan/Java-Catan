@@ -172,6 +172,38 @@ public class CatanGame {
     	}
     }
  }
+    
+    public void ingameResourceDistribution(int roll){
+    	for (Player player : getPlayers()) {
+        	Map<VertexCoordinate, Building> playerBuildings = board.getBuildings().entrySet().stream()
+        		    .filter(entry -> entry.getValue().getOwner().equals(player))
+        		    .collect(Collectors.toMap(
+        		        Map.Entry::getKey,
+        		        Map.Entry::getValue
+        		    ));
+        	Map<HexCoordinate, TerrainTile> tiles = board.getAllTiles();
+        	for (Building building : playerBuildings.values()) {
+        		List<HexCoordinate> neighbourHexes = board.getHexNeighbours(building.getVertexCoordinate());
+        		for (HexCoordinate neighbourHex : neighbourHexes) {
+        			TerrainTile tile = tiles.get(neighbourHex);
+        			//System.out.println("Checking tile at " + neighbourHex + " with numberToken " + tile.getNumberToken() +
+        	                 //  " for roll " + roll);
+
+        			TerrainType type = tile.compareTokens(roll);
+        			if (type != null) {
+        			player.setResources(type.getResourceType(), 1);
+        			Map<ResourceType, Integer> playerResources = player.getResources();
+        			System.out.println("Resources for player " + player.getName() + ":");
+        			playerResources.forEach((resource, amount) -> 
+        			    System.out.println(" - " + resource + ": " + amount));
+        			
+        			
+
+        			}
+    }
+        	}
+    	}
+    }
     	
     public boolean offerTrade(Player otherPlayer, Map<ResourceType, Integer> give, Map<ResourceType, Integer> receive) {
         Player currentPlayer = getCurrentPlayer();
@@ -227,7 +259,7 @@ public class CatanGame {
                 skipInkrement = true;
                 initialResourceDistribution();
                 for (Player player : getPlayers()) {
-                System.out.println("=== Ressourcen des Spielers ===");
+                System.out.println("=== Ressourcen des Spielers ===" + player.getName());
                 player.getResources().forEach((type, amount) -> {
                     System.out.println(type + ": " + amount);
                 });

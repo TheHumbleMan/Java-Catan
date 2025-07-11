@@ -110,6 +110,7 @@ public class MainController implements Initializable {
         if (game != null && game.getCurrentPhase() == CatanGame.GamePhase.PLAYING) {
             int roll = game.rollDice();
             diceRollLabel.setText("Dice Roll: " + roll);
+            game.ingameResourceDistribution(roll);
             updateGameStatus();
         }
     }
