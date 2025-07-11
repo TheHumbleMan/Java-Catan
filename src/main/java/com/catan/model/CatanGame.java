@@ -213,6 +213,7 @@ public class CatanGame {
     }
     
     public void endTurn() {
+    	boolean skipInkrement = false;
         if (currentPhase == GamePhase.INITIAL_PLACEMENT_1) {
         	this.getCurrentPlayer().setInitialSettlementPlaced(false);
         	this.getCurrentPlayer().setInitialRoadPlaced(false);
@@ -227,11 +228,15 @@ public class CatanGame {
             currentPlayerIndex = (currentPlayerIndex - 1);
             if (currentPlayerIndex == -1) {
                 currentPhase = GamePhase.PLAYING;
-                currentPlayerIndex = -1;
+                currentPlayerIndex = 0;
+                skipInkrement = true;
                 System.out.println("geht jetzt in normale 'Spielphase'");
             }
         } else {
-            currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
+        	if (!skipInkrement) {
+        	    currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
+        	}
+        	skipInkrement = false;
         }
     }
     
