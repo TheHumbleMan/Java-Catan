@@ -219,19 +219,18 @@ public class CatanGame {
             currentPlayerIndex = (currentPlayerIndex + 1);
             if (currentPlayerIndex == players.size()) {
                 currentPhase = GamePhase.INITIAL_PLACEMENT_2;
-                currentPlayerIndex = players.size() - 1; // Reverse order
-                System.out.println("round1");
+                currentPlayerIndex = players.size() - 2; // Reverse order
+                System.out.println("Geht jetzt in Phase 2");
             }
         } else if (currentPhase == GamePhase.INITIAL_PLACEMENT_2) {
             currentPlayerIndex = (currentPlayerIndex - 1);
-            if (currentPlayerIndex == 0) {
+            if (currentPlayerIndex == -1) {
                 currentPhase = GamePhase.PLAYING;
                 currentPlayerIndex = 0;
-                System.out.println("round2");
+                System.out.println("geht jetzt in normale 'Spielphase'");
             }
         } else {
             currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
-            System.out.println("normal round");
         }
     }
     
@@ -304,7 +303,7 @@ public class CatanGame {
         	return false;
         }
         //also falls es sich um letzten turn handelt
-        if (isBuildingClose(edge, player) && isBeginning() && board.getRoads().size() == getPlayers().size() && getCurrentPlayerIndex() == getPlayers().size() - 1) {
+        if (isBuildingClose(edge, player) && isBeginning()) {
         	return !isAdjacentRoad(edge, player);
         }
         //prüft ob Anbindung zu Siedlung besteht
