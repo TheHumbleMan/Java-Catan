@@ -226,7 +226,7 @@ public class CatanGame {
             currentPlayerIndex = (currentPlayerIndex - 1);
             if (currentPlayerIndex == -1) {
                 currentPhase = GamePhase.PLAYING;
-                currentPlayerIndex = 0;
+                currentPlayerIndex = -1;
                 System.out.println("geht jetzt in normale 'Spielphase'");
             }
         } else {
