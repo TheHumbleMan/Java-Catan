@@ -25,7 +25,7 @@ public class Building {
         }
     }
     
-    private final Type type;
+    private Type type;
     private final Player owner;
     private final VertexCoordinate vertexCoordinate; // New coordinate system
     
@@ -38,6 +38,9 @@ public class Building {
     
     public Type getType() {
         return type;
+    }
+    public void setType(Type type) {
+        this.type = type;
     }
     
     public Player getOwner() {

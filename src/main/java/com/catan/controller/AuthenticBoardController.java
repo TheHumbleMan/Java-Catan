@@ -1,8 +1,10 @@
 package com.catan.controller;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import com.catan.model.AuthenticCatanBoard;
@@ -16,7 +18,15 @@ import com.catan.model.TerrainTile;
 import com.catan.model.VertexCoordinate;
 import com.catan.view.UIComponents;
 
+import javafx.scene.Node;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ChoiceDialog;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tooltip;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -107,8 +117,6 @@ public class AuthenticBoardController {
     /**
      * Rendert die 54 authentischen Siedlungsplätze.
      */
-    //HIER IST AKTUELL DAS PROBLEM, DASS ES EINMAL DURCHLÄUFT, WENN ERST EIN SPOT GEPRÜFT WIRD, UND DANACH DANEBEN DIE SIEDLUNG 
-    //GERENDERT WIRD ÜBERSPRINGT ER DAS, ANDERER APPROACH NÖTIG
     private void renderSettlementSpots(boolean isBeginning) {
         Player currentPlayer = game.getCurrentPlayer();
         Map<VertexCoordinate, VertexCoordinate> allVertices = board.getValidVertices();
@@ -117,15 +125,15 @@ public class AuthenticBoardController {
             //System.out.println(uniqueVertice); nur überprüfung
         	VertexCoordinate vertex = uniqueVertice;
             RoundedPoint2D vertexPos = uniqueVertice.toPixel(HEX_RADIUS, BOARD_CENTER_X, BOARD_CENTER_Y);
-            boolean canBuild = game.canPlaceBuilding(vertex, currentPlayer, isBeginning);
-            boolean isInitialSettlementPlaced = currentPlayer.isInitialSettlementPlaced();
+            boolean canBuild = game.canPlaceAnyBuilding(vertex, currentPlayer, isBeginning);
+            boolean isInitialSettlementPlaced = currentPlayer.isInitialSettlementPlaced() && game.isBeginning();
             boolean isOccupied = board.getBuildings().containsKey(vertex);
             
             // Erstelle Siedlungsspot
             Circle settlementSpot = new Circle(SETTLEMENT_SIZE);
             settlementSpot.setLayoutX(vertexPos.x);
             settlementSpot.setLayoutY(vertexPos.y);
-            
+
             // Style den Siedlungsspot basierend auf Zustand
             if (isOccupied) {
                 // Finde das Gebäude und zeige es mit Spielerfarbe
@@ -137,7 +145,9 @@ public class AuthenticBoardController {
                     settlementSpot.setFill(getPlayerColor(building.getOwner()));
                     settlementSpot.setStroke(Color.BLACK);
                     settlementSpot.setStrokeWidth(2.0);
-                    
+                    System.out.println("EINS DAVOR KOMMT AN");
+                    System.out.println("Type is: " + building.getType());
+
                     // Städte sind größer
                     if (building.getType() == Building.Type.CITY) {
                         settlementSpot.setRadius(SETTLEMENT_SIZE * 1.5);
@@ -191,7 +201,7 @@ public class AuthenticBoardController {
             double rotation = edge.getRotationAngle(HEX_RADIUS, BOARD_CENTER_X, BOARD_CENTER_Y);
             
             boolean canBuildRoad = game.canPlaceRoad(edge, currentPlayer);
-            boolean isInitialRoadPlaced = currentPlayer.isInitialRoadPlaced();
+            boolean isInitialRoadPlaced = currentPlayer.isInitialRoadPlaced() && game.isBeginning();
             boolean isRoadOccupied = board.getRoads().values().stream()
                     .anyMatch(r -> r.getEdgeCoordinate() != null && r.getEdgeCoordinate().equals(edge));
             
@@ -260,9 +270,10 @@ public class AuthenticBoardController {
      * Behandelt Klicks auf Siedlungsplätze.
      */
     private void handleVertexClick(VertexCoordinate vertex) {
+    	Building.Type type = buildingType(vertex);
         Player currentPlayer = game.getCurrentPlayer();
-        if (game.canPlaceBuilding(vertex, currentPlayer, game.isBeginning())) {
-            game.placeBuilding(Building.Type.SETTLEMENT, vertex, currentPlayer);
+        if (game.canPlaceSpecificBuilding(vertex, currentPlayer, game.isBeginning(), type) && type != null) {
+            game.placeBuilding(type, vertex, currentPlayer);
             //DIE ZWEI IFS SIND PUR FÜR DIE STARTPHASE!!!
             if (game.isBeginning()) {
             	currentPlayer.setInitialSettlementPlaced(true);
@@ -278,6 +289,39 @@ public class AuthenticBoardController {
             renderBoard(); // Re-render nach Änderung
             
         }
+    }
+    
+    private Building.Type buildingType(VertexCoordinate vertex) {
+    	Building.Type type = null;
+        System.out.println("AUFRUF");
+
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Build Menu");
+        alert.setHeaderText("Choose what to build here:");
+
+        ButtonType settlementBtn = new ButtonType("Build Settlement");
+        ButtonType cityBtn = new ButtonType("Build City");
+        ButtonType cancelBtn = ButtonType.CANCEL;
+
+        alert.getButtonTypes().setAll(settlementBtn, cityBtn, cancelBtn);
+
+        Optional<ButtonType> result = alert.showAndWait();
+
+        if (result.isPresent()) {
+            if (result.get() == settlementBtn) {
+            	type = Building.Type.SETTLEMENT;
+                System.out.println("Settlement selected.");
+                // game.placeSettlement(vertex, currentPlayer);
+            } else if (result.get() == cityBtn) {
+            	type = Building.Type.CITY;
+                System.out.println("City selected.");
+                // game.placeCity(vertex, currentPlayer);
+            } else {
+                System.out.println("Cancelled.");
+            }
+            
+        }
+        return type;
     }
     
     /**

@@ -288,7 +288,7 @@ public class CatanGame {
     public boolean isBeginning() {
         return currentPhase == GamePhase.INITIAL_PLACEMENT_1 || currentPhase == GamePhase.INITIAL_PLACEMENT_2;
     }
-    public boolean canPlaceBuilding(VertexCoordinate vertex, Player player, boolean isBeginning) {
+    public boolean canPlaceAnyBuilding(VertexCoordinate vertex, Player player, boolean isBeginning) {
     	//ressourcenlimitierung fehlt noch!!
     	
         // Vertex muss valide sein
@@ -307,17 +307,42 @@ public class CatanGame {
         		return false;
         	}
         }
-        if (!isBeginning) { //hier dann noch ressourcenlimitierung rein
-        	return false;
-        }
+        
         return true;
     }
+    public boolean canPlaceSpecificBuilding(VertexCoordinate vertex, Player player, boolean isBeginning, Building.Type type) {
+    	if (isBeginning && type == Building.Type.CITY) {
+    		return false;
+    	}
+    	//ressourcenlimitierung fehlt noch!!
+    	
+        // Vertex muss valide sein
+        if (!board.getValidVertices().containsKey(vertex)) {
+            return false;
+        }
+        
+        // Position darf nicht besetzt sein
+        if (board.getBuildings().containsKey(vertex)) {
+            return false;
+        }
+        
+        //Distanzregel
+        for (VertexCoordinate vert : vertex.getAdjacentVertices(AuthenticCatanBoard.getHexRadius(), AuthenticCatanBoard.getBoardCenterX(), AuthenticCatanBoard.getBoardCenterY(), board.getNormalizedCatanCoordMap(), board.getValidVertices())) {
+        	if (board.getBuildings().containsKey(vert)) {
+        		return false;
+        	}
+        }
+        
+        return true;
+    }
+    
     
     /**
      * Platziert ein Gebäude an einem Vertex.
      */
     public void placeBuilding(Building.Type type, VertexCoordinate vertex, Player player) {
             board.getBuildings().put(vertex, new Building(type, player, vertex));
+
             
     }
     
@@ -456,7 +481,7 @@ public class CatanGame {
         
         if (existing != null && existing.getOwner() == player && 
             existing.getType() == Building.Type.SETTLEMENT) {
-            board.getBuildings().put(vertex, new Building(Building.Type.CITY, player, vertex));
+            existing.setType(Building.Type.CITY);
             return true;
         }
         return false;
