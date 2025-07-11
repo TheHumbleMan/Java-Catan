@@ -217,6 +217,7 @@ public class CatanGame {
         	this.getCurrentPlayer().setInitialSettlementPlaced(false);
         	this.getCurrentPlayer().setInitialRoadPlaced(false);
             currentPlayerIndex = (currentPlayerIndex + 1);
+            System.out.println("index: " + getCurrentPlayerIndex());
             if (currentPlayerIndex == players.size()) {
                 currentPhase = GamePhase.INITIAL_PLACEMENT_2;
                 currentPlayerIndex = players.size() - 2; // Reverse order
@@ -277,13 +278,6 @@ public class CatanGame {
      */
     public void placeBuilding(Building.Type type, VertexCoordinate vertex, Player player) {
             board.getBuildings().put(vertex, new Building(type, player, vertex));
-            if (isBeginning()) {
-            	player.setInitialSettlementPlaced(true);
-            }
-            //prüft ob es sich um zweites Plazieren beim letzten Spieler der Anfangsrunde handelt
-            if (isBeginning() && board.getBuildings().size() == getPlayers().size() + 1 && getCurrentPlayerIndex() == getPlayers().size() - 1) {
-            	player.setInitialRoadPlaced(false);
-            }
             
     }
     
@@ -338,13 +332,6 @@ public class CatanGame {
     public boolean placeRoad(EdgeCoordinate edge, Player player) {
         if (canPlaceRoad(edge, player)) {
             board.getRoads().put(edge, new Road(player, edge));
-            if (isBeginning()) {
-            	player.setInitialRoadPlaced(true);
-            }
-            if (isBeginning() && board.getRoads().size() == getPlayers().size() && getCurrentPlayerIndex() == getPlayers().size() - 1) {
-            	System.out.println("Innerhalb bei placeroad");
-            	player.setInitialSettlementPlaced(false);
-            }
             return true;
         }
         return false;
@@ -380,6 +367,29 @@ public class CatanGame {
     		}
     	}
     	return false;
+    }
+    
+    public boolean hasCompletedPlacementForCurrentPhase() {
+    	Player player = getCurrentPlayer();
+        long settlementCount = board.getBuildings().values().stream()
+            .filter(b -> b.getOwner().equals(player))
+            .count();
+
+        long roadCount = board.getRoads().values().stream()
+            .filter(r -> r.getOwner().equals(player))
+            .count();
+        
+        if (currentPhase == GamePhase.INITIAL_PLACEMENT_1 && getCurrentPlayerIndex() == getPlayers().size() - 1) {
+            return settlementCount >= 2 && roadCount >= 2;
+        } else if (currentPhase == GamePhase.INITIAL_PLACEMENT_1) {
+            return settlementCount >= 1 && roadCount >= 1; 
+        } else if (currentPhase == GamePhase.INITIAL_PLACEMENT_2) {
+            return settlementCount >= 2 && roadCount >= 2;
+        } 
+        
+
+        // Falls keine Initialphase, Standard = true (z.B. PlayPhase)
+        return true;
     }
     
 

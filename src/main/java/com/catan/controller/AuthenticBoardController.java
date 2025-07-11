@@ -263,6 +263,14 @@ public class AuthenticBoardController {
         Player currentPlayer = game.getCurrentPlayer();
         if (game.canPlaceBuilding(vertex, currentPlayer, game.isBeginning())) {
             game.placeBuilding(Building.Type.SETTLEMENT, vertex, currentPlayer);
+            //DIE ZWEI IFS SIND PUR FÜR DIE STARTPHASE!!!
+            if (game.isBeginning()) {
+            	currentPlayer.setInitialSettlementPlaced(true);
+            }
+            //prüft ob es sich um zweites Plazieren beim letzten Spieler der Anfangsrunde handelt
+            if (game.isBeginning() && board.getBuildings().size() == game.getPlayers().size() + 1 && game.getCurrentPlayerIndex() == game.getPlayers().size() - 1) {
+            	currentPlayer.setInitialRoadPlaced(false);
+            }
             System.out.println("Siedlung platziert für " + currentPlayer.getName() + " bei " + vertex);
             for (VertexCoordinate adjacentVertex : vertex.getAdjacentVertices(HEX_RADIUS, BOARD_CENTER_X, BOARD_CENTER_Y, board.getNormalizedCatanCoordMap(), board.getValidVertices())) {
             	System.out.println("X wert:" + adjacentVertex.getX() + "Y wert:" + adjacentVertex.getY() + "dir wert:" + adjacentVertex.getDirection());
@@ -281,6 +289,13 @@ public class AuthenticBoardController {
         if (game.canPlaceRoad(edge, currentPlayer)) {
             boolean success = game.placeRoad(edge, currentPlayer);
             if (success) {
+            	if (game.isBeginning()) {
+                	currentPlayer.setInitialRoadPlaced(true);
+                }
+                if (game.isBeginning() && board.getRoads().size() == game.getPlayers().size() && game.getCurrentPlayerIndex() == game.getPlayers().size() - 1) {
+                	System.out.println("Innerhalb bei placeroad");
+                	currentPlayer.setInitialSettlementPlaced(false);
+                }
                 System.out.println("Straße platziert für " + currentPlayer.getName() + " bei " + edge);
                 renderBoard(); // Re-render nach Änderung
             }
