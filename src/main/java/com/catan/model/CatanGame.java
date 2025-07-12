@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javafx.scene.control.Alert;
@@ -590,7 +592,7 @@ public class CatanGame {
             newTile.setRobber(true);
             setHasMovedRobber(true);
             board.setRobberPosition(newPosition);
-            List<Player> adjacentPlayers = determinePlayers(newPosition);
+            Set<Player> adjacentPlayers = determinePlayers(newPosition);
             System.out.println("es kommt an, size: " + adjacentPlayers.size());
             Player selectedPlayer = choosePlayer(adjacentPlayers);
             if (selectedPlayer != null) {
@@ -599,8 +601,8 @@ public class CatanGame {
         }
     } 
     //sorgt für erkennung aller spieler der hexes
-    private List<Player> determinePlayers(HexCoordinate position) {
-    	List<Player> adjacentPlayers = new ArrayList<>();
+    private Set<Player> determinePlayers(HexCoordinate position) {
+    	Set<Player> adjacentPlayers = new HashSet<>();
     	for (Building building : board.getBuildings().values()) {
     		VertexCoordinate normalizedVertex = building.getVertexCoordinate();
     		List<VertexCoordinate> unnormalizedVertices = board.getNormalizedToUnnormalized().get(normalizedVertex);
@@ -614,13 +616,20 @@ public class CatanGame {
     	
     }
     
-    private Player choosePlayer(List<Player> adjacentPlayers) {
+    private Player choosePlayer(Set<Player> adjacentPlayers) {
     	 if (adjacentPlayers == null || adjacentPlayers.isEmpty()) return null;
-
+    	 
+    	 if (adjacentPlayers.size() == 1) {
+    	        Player onlyPlayer = adjacentPlayers.iterator().next();
+    	        System.out.println("Nur ein Spieler verfügbar: " + onlyPlayer.getName());
+    	        return onlyPlayer;
+    	    }
+    	 	
+    	 List<Player> playerList = new ArrayList<>(adjacentPlayers);
     	    Optional<Player> result = Optional.empty();
 
     	    while (result.isEmpty()) {
-    	        ChoiceDialog<Player> dialog = new ChoiceDialog<>(adjacentPlayers.get(0), adjacentPlayers);
+    	        ChoiceDialog<Player> dialog = new ChoiceDialog<>(playerList.get(0), playerList);
     	        dialog.setTitle("Spieler auswählen");
     	        dialog.setHeaderText("Wähle einen Spieler aus, von dem du klauen willst:");
     	        dialog.setContentText("Spieler:");
