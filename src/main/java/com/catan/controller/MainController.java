@@ -35,6 +35,8 @@ public class MainController implements Initializable {
     @FXML private Label currentPlayerLabel;
     @FXML private Label diceRollLabel;
     @FXML private Button rollDiceButton;
+    @FXML private Button tradeButton;
+    @FXML private Button tradeWithBankButton;
     @FXML private Button endTurnButton;
     @FXML private VBox gameControlsBox;
     @FXML private ScrollPane boardScrollPane;
@@ -108,6 +110,8 @@ public class MainController implements Initializable {
     @FXML
     private void rollDice() {
         if (game != null && game.getCurrentPhase() == CatanGame.GamePhase.PLAYING) {
+            tradeButton.setDisable(true);
+            tradeWithBankButton.setDisable(true);
             int roll = game.rollDice();
             game.setHasRolledDice(true);
             endTurnButton.setDisable(false);
@@ -118,6 +122,8 @@ public class MainController implements Initializable {
             game.listPlayersVictoryPoints();
             updateGameStatus();
             rollDiceButton.setDisable(true);
+            tradeButton.setDisable(false);
+            tradeWithBankButton.setDisable(false);
 
         }
     }
@@ -127,6 +133,8 @@ public class MainController implements Initializable {
         if (game != null && game.getCurrentPhase() == CatanGame.GamePhase.PLAYING) {
             // Implement trade logic here
             // For now, just a placeholder action
+            tradeButton.setDisable(true);
+            tradeWithBankButton.setDisable(true);
             System.out.println("Trade action triggered. Implement trade logic here.");
             // You can open a trade dialog or perform other actions as needed
 
@@ -138,6 +146,8 @@ public class MainController implements Initializable {
         if (game != null && game.getCurrentPhase() == CatanGame.GamePhase.PLAYING) {
             // Implement trade with bank logic here
             // For now, just a placeholder action
+            tradeButton.setDisable(true);
+            tradeWithBankButton.setDisable(true);
             System.out.println("Trade with bank action triggered. Implement trade logic here.");
             // You can open a trade dialog or perform other actions as needed
 
@@ -180,10 +190,14 @@ public class MainController implements Initializable {
         if (game.isGameFinished()) {
             gameStatusLabel.setText("Game Over! Winner: " + game.getWinner().getName());
             rollDiceButton.setDisable(true);
+            tradeButton.setDisable(true);
+            tradeWithBankButton.setDisable(true);
             endTurnButton.setDisable(true);
         } else {
             gameStatusLabel.setText("Phase: " + phase);
             rollDiceButton.setDisable(game.getCurrentPhase() != CatanGame.GamePhase.PLAYING);
+            tradeButton.setDisable(game.getCurrentPhase() != CatanGame.GamePhase.PLAYING);
+            tradeWithBankButton.setDisable(game.getCurrentPhase() != CatanGame.GamePhase.PLAYING);
             endTurnButton.setDisable(false);
         }
     }
