@@ -18,7 +18,7 @@ import javafx.scene.control.ChoiceDialog;
  * Handles turn management, dice rolling, resource production, and victory conditions.
  */
 public class CatanGame {
-    public static final int VICTORY_POINTS_TO_WIN = 10;
+    public static final int VICTORY_POINTS_TO_WIN = 7; //TESTZWECKE
     public static final int MAX_HAND_SIZE_ON_SEVEN = 7;
     
     
@@ -27,6 +27,7 @@ public class CatanGame {
     private final Random random;
     private int currentPlayerIndex;
     private GamePhase currentPhase;
+    private boolean firstNormalRound;
     private boolean gameFinished;
     private Player winner;
     private int lastDiceRoll;
@@ -60,6 +61,7 @@ public class CatanGame {
         this.currentPlayerIndex = 0;
         this.currentPhase = GamePhase.INITIAL_PLACEMENT_1;
         this.gameFinished = false;
+        this.firstNormalRound = false;
         this.hasRolledDice = true;
         this.hasMovedRobber = true;
         this.lastDiceRoll = 0;
@@ -83,6 +85,13 @@ public class CatanGame {
     public AuthenticCatanBoard getBoard() {
         return board;
     }
+    public boolean getIsFirstNormalRound() {
+        return firstNormalRound;
+    }
+
+    public void setIsFirstNormalRound(boolean firstNormalRound) {
+        this.firstNormalRound = firstNormalRound;
+    }
     
     public GamePhase getCurrentPhase() {
         return currentPhase;
@@ -90,7 +99,6 @@ public class CatanGame {
     public int getCurrentPlayerIndex() {
     	return this.currentPlayerIndex;
     }
-    
     public boolean isGameFinished() {
         return gameFinished;
     }
@@ -146,9 +154,16 @@ public class CatanGame {
         }
         hasMovedRobber = false;
         System.out.println("7 GEÜWRFELT (in handleSevenRolled aktuell)");
+        robberAlert();
         
         // Current player must move the robber
         // In a real implementation, this would trigger UI for robber placement
+    }
+    private void robberAlert() {
+    	Alert alert = new Alert(Alert.AlertType.INFORMATION);
+    	alert.setTitle("7 gewürfelt");
+        alert.setContentText("Räuber muss versetzt werden vor weiteren Handlungen!\nKlicke dafür auf ein gewünschtes fehlt und verschiebe somit den Räuber");
+        alert.showAndWait();
     }
     
     private void discardRandomCards(Player player, int count) {
@@ -313,6 +328,7 @@ public class CatanGame {
                 });
                 }                   
                 System.out.println("geht jetzt in normale 'Spielphase'");
+                firstNormalRound = true;
                 setHasRolledDice(false);
             }
         } else {
@@ -324,7 +340,7 @@ public class CatanGame {
         	skipInkrement = false;
         }
     
-    private void checkVictoryCondition() {
+    public void checkVictoryCondition() {
         for (Player player : players) {
             if (player.getVictoryPoints() >= VICTORY_POINTS_TO_WIN) {
                 gameFinished = true;
@@ -410,13 +426,13 @@ public class CatanGame {
     		        entry.getValue().getType() == Building.Type.SETTLEMENT
     		    );
 
-    	if (!ownsSettlementAt || !hasSufficientResourcesForCity() || isBeginning) {
+    	if (!ownsSettlementAt || !hasSufficientResourcesForCity() || isBeginning || player.getCityCount() <= 0) {
     		return false;
     	}
     	return true;
     }
     public boolean canPlaceSettlement(VertexCoordinate vertex, Player player, boolean isBeginning) {
-    	if (!canPlaceAnyBuilding(vertex, player, isBeginning) || (!hasSufficientResourcesForSettlement() && !isBeginning)) {
+    	if (!canPlaceAnyBuilding(vertex, player, isBeginning) || (!hasSufficientResourcesForSettlement() && !isBeginning) || player.getSettlementCount() <= 0) {
     		return false;
     	}
     	return true;
@@ -431,9 +447,17 @@ public class CatanGame {
             player.addVictoryPoints(1); //bei beiden Aktionen, da bei city ja bereits siedlung besteht
             if (type == Building.Type.SETTLEMENT && !isBeginning()) {
             	player.removeResource(Player.SETTLEMENT_COST);
+            	player.setSettlementCount(player.getSettlementCount() - 1);
+            	System.out.println("Settlement count: " + player.getSettlementCount());
+            	
+            }
+            else if (type == Building.Type.SETTLEMENT && isBeginning()) {
+            	player.setSettlementCount(player.getSettlementCount() - 1);
+            	System.out.println("Settlement count: " + player.getSettlementCount());
             }
             else if (type == Building.Type.CITY && !isBeginning()) {
             	player.removeResource(Player.CITY_COST);
+            	player.setCityCount(player.getCityCount() - 1);
             	//da ja bereits durch siedlung einer geaddet wurde
             }
 
@@ -450,7 +474,10 @@ public class CatanGame {
         if (!board.getValidEdges().contains(edge)) {
             return false;
             
-        }    
+        }
+        if (player.getRoadCount() <= 0) {
+        	return false;
+        }
         // Straße darf nicht bereits existieren
         if (board.getRoads().containsKey(edge)){
         	return false;
@@ -489,6 +516,7 @@ public class CatanGame {
     public boolean placeRoad(EdgeCoordinate edge, Player player) {
         if (canPlaceRoad(edge, player)) {
             board.getRoads().put(edge, new Road(player, edge));
+            player.setRoadCount(player.getRoadCount() - 1);
             if (!isBeginning()) {
             player.removeResource(Player.ROAD_COST);
             }

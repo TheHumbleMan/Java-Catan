@@ -72,9 +72,8 @@ public class AuthenticBoardController {
         boardPane.getChildren().clear();
         boardPane.setStyle("-fx-background-color: #87CEFA;"); // Hellblau (SkyBlue)
         System.out.println("robber position: " + board.getRobberPosition());
-        renderHexagonTiles(game.isBeginning());
-        //renderRobberPosition();  Rausgenommen, da jetzt in renderHexagonTiles()
-        renderSettlementSpots(game.isBeginning());
+        renderHexagonTiles();
+        renderSettlementSpots();
         renderRoadSpots(game.isBeginning());
         int settlement_count = new HashSet<>(board.getValidVertices().values()).size();
         //board.getValidVertices().size()
@@ -91,7 +90,7 @@ public class AuthenticBoardController {
     /**
      * Rendert die 19 Hexagon-Tiles.
      */
-    private void renderHexagonTiles(boolean isBeginning) {
+    private void renderHexagonTiles() {
         for (TerrainTile tile : board.getAllTiles().values()) {
             if (tile.getHexCoordinate() != null) {
                 HexCoordinate hexCoord = tile.getHexCoordinate();
@@ -150,7 +149,7 @@ public class AuthenticBoardController {
     /**
      * Rendert die 54 authentischen Siedlungsplätze.
      */
-    private void renderSettlementSpots(boolean isBeginning) {
+    private void renderSettlementSpots() {
         Player currentPlayer = game.getCurrentPlayer();
         Map<VertexCoordinate, VertexCoordinate> allVertices = board.getValidVertices();
         Set<VertexCoordinate> uniqueVertices = new HashSet<>(allVertices.values()); //DIE SIND JETZT NORMALIZED
@@ -158,9 +157,9 @@ public class AuthenticBoardController {
             //System.out.println(uniqueVertice); nur überprüfung
         	VertexCoordinate vertex = uniqueVertice;
             RoundedPoint2D vertexPos = uniqueVertice.toPixel(HEX_RADIUS, BOARD_CENTER_X, BOARD_CENTER_Y);
-            boolean canBuildSettlement = game.canPlaceSettlement(vertex, currentPlayer, isBeginning);
-            boolean canBuildCity = game.canPlaceCity(vertex, currentPlayer, isBeginning);
-            boolean canBuildAnything = game.canPlaceAnyBuilding(vertex, currentPlayer, isBeginning); //ob überhaupt eins gesetzt werden kann
+            boolean canBuildSettlement = game.canPlaceSettlement(vertex, currentPlayer, game.isBeginning());
+            boolean canBuildCity = game.canPlaceCity(vertex, currentPlayer, game.isBeginning());
+            boolean canBuildAnything = game.canPlaceAnyBuilding(vertex, currentPlayer, game.isBeginning()); //ob überhaupt eins gesetzt werden kann
             boolean isInitialSettlementPlaced = currentPlayer.isInitialSettlementPlaced() && game.isBeginning();
             boolean isOccupied = board.getBuildings().containsKey(vertex);
             
@@ -168,13 +167,16 @@ public class AuthenticBoardController {
             Circle settlementSpot = new Circle(SETTLEMENT_SIZE);
             settlementSpot.setLayoutX(vertexPos.x);
             settlementSpot.setLayoutY(vertexPos.y);
-           /* 
+            
+            System.out.println("== Bedingungen für Siedlungsbau ==");
             System.out.println("canBuildSettlement: " + canBuildSettlement);
-            System.out.println("isInitialSettlementPlaced: " + isInitialSettlementPlaced);
+            System.out.println("!isInitialSettlementPlaced: " + !isInitialSettlementPlaced);
             System.out.println("game.hasRolledDice(): " + game.hasRolledDice());
-            */
-            // Style den Siedlungsspot basierend auf Zustand
+            System.out.println("isOccupied: " + isOccupied);
+
+            
             if (isOccupied) {
+            	
                 // Finde das Gebäude und zeige es mit Spielerfarbe
                 Building building = board.getBuildings().values().stream()
                     .filter(b -> b.getVertexCoordinate() != null && b.getVertexCoordinate().equals(vertex))
@@ -203,12 +205,13 @@ public class AuthenticBoardController {
                     // Städte sind größer
                     if (building.getType() == Building.Type.CITY) {
                         settlementSpot.setRadius(SETTLEMENT_SIZE * 1.5);
-                        settlementSpot.setFill(getPlayerColor(game.getCurrentPlayer()).darker());
+                        settlementSpot.setFill(getPlayerColor(building.getOwner()).darker());
                         
                     }
                 }
             }
             else if (canBuildSettlement && !isInitialSettlementPlaced && game.hasRolledDice()) {
+            	System.out.println("wird aufgerufen");
                 // Bebaubare Position - grün
                 settlementSpot.setFill(Color.LIGHTGREEN);
                 settlementSpot.setStroke(Color.DARKGREEN);
@@ -243,6 +246,7 @@ public class AuthenticBoardController {
             settlementSpot.toFront();
         }
     }
+    
     
     /**
      * Rendert die 72 authentischen Straßenpositionen.

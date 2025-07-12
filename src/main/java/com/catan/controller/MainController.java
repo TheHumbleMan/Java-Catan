@@ -14,6 +14,7 @@ import com.catan.model.ResourceType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -245,10 +246,10 @@ public class MainController implements Initializable {
 
     
     @FXML
-    private void endTurn() {
-        if (game != null && game.hasCompletedPlacementForCurrentPhase() && game.hasRolledDice() && game.hasMovedRobber()) {
+    private void endTurn() {    	
+    	if (game != null && game.hasCompletedPlacementForCurrentPhase() && game.hasRolledDice() && game.hasMovedRobber()) { 
+    		boolean isBeginning = game.isBeginning(); //wichtig vor endturn abzufragen
             game.endTurn();
-            boardController.renderBoard();
             updateGameStatus();
             /*            // Update player info header and log area
             playerInfoHeader.setText("Spieler-Info: " + game.getCurrentPlayer().getName());
@@ -264,7 +265,9 @@ public class MainController implements Initializable {
             if (game.getStolenResourcesLog() != null) {
             	gameLogArea.appendText(game.getStolenResourcesLog() + "\n");
             }
-            
+            if (isBeginning) {
+            	boardController.renderBoard();
+            }
             // Clear dice roll for new turn
             if (game.getCurrentPhase() == CatanGame.GamePhase.PLAYING) {
                 diceRollLabel.setText("Dice Roll: -");
@@ -274,15 +277,18 @@ public class MainController implements Initializable {
                 endTurnButton.setDisable(true);
                 System.out.println("MEIN ENDTURN STATEMENT");
                 game.setHasRolledDice(false); //für nächste Phase
-                boardController.renderBoard();
+        		boardController.renderBoard();
+               // boardController.renderBoard();                
             }
             
         }
-    }
+        
+        }
+    
     
     private void updateGameStatus() {
         if (game == null) return;
-        
+        game.checkVictoryCondition();
         Player currentPlayer = game.getCurrentPlayer();
         currentPlayerLabel.setText("Current Player: " + currentPlayer.getName() + 
                                    " (VP: " + currentPlayer.getVictoryPoints() + ")");
@@ -299,6 +305,12 @@ public class MainController implements Initializable {
             tradeButton.setDisable(true);
             tradeWithBankButton.setDisable(true);
             endTurnButton.setDisable(true);
+            
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Spiel beendet");
+            alert.setHeaderText("🎉 " + game.getWinner().getName() + " hat gewonnen!");
+            alert.setContentText("Herzlichen Glückwunsch zum Sieg!\nDas Spiel ist beendet.");
+            alert.showAndWait();
         } else {
             gameStatusLabel.setText("Phase: " + phase);
             rollDiceButton.setDisable(game.getCurrentPhase() != CatanGame.GamePhase.PLAYING);

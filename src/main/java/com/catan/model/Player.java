@@ -113,17 +113,29 @@ public class Player {
         return resources.values().stream().mapToInt(Integer::intValue).sum();
     }
     
-    public boolean canBuildSettlement() {
-        return settlements > 0 && hasSufficientResources(SETTLEMENT_COST);
+    public int getSettlementCount() {
+        return settlements;
     }
     
-    public boolean canBuildCity() {
-        return cities > 0 && hasSufficientResources(CITY_COST);
+    public int getCityCount() {
+        return cities;
     }
     
-    public boolean canBuildRoad() {
-        return road_count > 0 && hasSufficientResources(ROAD_COST);
+    public int getRoadCount() {
+        return road_count;
     }
+    public void setSettlementCount(int settlements) {
+        this.settlements = settlements;
+    }
+
+    public void setCityCount(int cities) {
+        this.cities = cities;
+    }
+
+    public void setRoadCount(int road_count) {
+        this.road_count = road_count;
+    }
+
     
     public boolean hasSufficientResources(Map<ResourceType, Integer> cost) {
         for (Map.Entry<ResourceType, Integer> entry : cost.entrySet()) {
@@ -173,43 +185,7 @@ public class Player {
 
         return stolenMap;
     }
-    
-    public void addBuilding(Building building) {
-    	if (building.getType() == Building.Type.SETTLEMENT) {
-    		buildSettlement();
-    	}
-    	else {
-    		buildCity();
-    	}
-    		
-    	}
-    	
-    
-    
-    public void buildSettlement() {
-        if (canBuildSettlement() && spendResources(SETTLEMENT_COST)) {
-            settlements--;
-        }
-        }
 
-    
-    
-    public void buildCity() {
-        if (canBuildCity() && spendResources(CITY_COST)) {
-            cities--;
-            settlements++; // Settlement is converted to city
-            addVictoryPoints(1); // City gives 2 points total (1 from settlement + 1 from upgrade)
-            
-        }
-       
-    }
-    
-    public void buildRoad(EdgeCoordinate edge) {
-        if (canBuildRoad() && spendResources(ROAD_COST)) {
-            road_count--;
-            roads_set.add(edge);
-        }
-    }
     
     public int getSettlementsLeft() {
         return settlements;
