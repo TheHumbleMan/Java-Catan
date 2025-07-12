@@ -1,5 +1,6 @@
 package com.catan.controller;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +12,10 @@ import com.catan.model.Player;
 import com.catan.model.ResourceType;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -19,6 +23,8 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 
 /**
@@ -131,7 +137,15 @@ public class MainController implements Initializable {
             rollDiceButton.setDisable(true);
             tradeButton.setDisable(false);
             tradeWithBankButton.setDisable(false);
-            gameLogArea.appendText(game.getCurrentPlayer()+": hat "+roll+ " gewürfelt.\n");
+            gameLogArea.appendText(game.getCurrentPlayer()+" hat "+roll+ " gewürfelt.\n");
+
+             playerLogArea.setText("   \n");
+            Map<ResourceType, Integer> resources = game.getCurrentPlayer().getResources();
+            for (Map.Entry<ResourceType, Integer> entry : resources.entrySet()) {
+                if(entry.getKey() != null){
+                    playerLogArea.appendText(entry.getKey() + ": " + entry.getValue() + "\n");
+            }
+            }
 
         }
     }
@@ -142,15 +156,29 @@ public class MainController implements Initializable {
             // Implement trade logic here
             // For now, just a placeholder action
             tradeButton.setDisable(true);
-            gameLogArea.appendText(game.getCurrentPlayer()+": handelt.\n");
+            gameLogArea.appendText(game.getCurrentPlayer()+" handelt.\n");
+
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("PopupView.fxml"));
+                Parent popupRoot = loader.load();
+
+                Stage popupStage = new Stage();
+                popupStage.setTitle("Handelsfenster");
+                popupStage.initModality(Modality.APPLICATION_MODAL); // blockiert Hauptfenster
+                popupStage.setScene(new Scene(popupRoot));
+                popupStage.showAndWait(); // Popup bleibt offen, bis es geschlossen wird
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
             playerLogArea.setText(" \n");
             Map<ResourceType, Integer> resources = game.getCurrentPlayer().getResources();
             for (Map.Entry<ResourceType, Integer> entry : resources.entrySet()) {
                 if(entry.getKey() != null){
-                    playerLogArea.appendText(entry.getKey() + ": " + entry.getValue() + "\n");
+                    playerLogArea.appendText(entry.getKey() + " " + entry.getValue() + "\n");
                 }
             }
-            // You can open a trade dialog or perform other actions as needed
+            // offerTrade nach Fenster zum Auswählen der Person und ressourcen
 
         }
     }
@@ -159,7 +187,9 @@ public class MainController implements Initializable {
     private void tradeWithBank() {
         if (game != null && game.getCurrentPhase() == CatanGame.GamePhase.PLAYING) {
             tradeWithBankButton.setDisable(true);
-            gameLogArea.appendText(game.getCurrentPlayer()+": handelt am Hafen.\n");
+            gameLogArea.appendText(game.getCurrentPlayer()+" handelt am Hafen.\n");
+
+            //vorher:tradeLogik
             playerLogArea.setText("   \n");
             Map<ResourceType, Integer> resources = game.getCurrentPlayer().getResources();
             for (Map.Entry<ResourceType, Integer> entry : resources.entrySet()) {
@@ -170,6 +200,23 @@ public class MainController implements Initializable {
 
         }
     }
+
+        @FXML
+    private void handleOpenPopupTrade() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("PopupView.fxml"));
+            Parent popupRoot = loader.load();
+
+            Stage popupStage = new Stage();
+            popupStage.setTitle("Popup Fenster");
+            popupStage.initModality(Modality.APPLICATION_MODAL); // blockiert Hauptfenster
+            popupStage.setScene(new Scene(popupRoot));
+            //popupStage.showAndWait(); // oder show() für nicht-blockierend
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     
     @FXML
     private void endTurn() {

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.deinpaket.PopupController">
+    <children>
+        <Label text="Trade-Fenster" layoutX="20" layoutY="20"/>
+        <Button text="Schließen" layoutX="20" layoutY="60" onAction="#handleClose"/>
+    </children>
+</AnchorPane>
