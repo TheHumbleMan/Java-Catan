@@ -3,16 +3,19 @@ package com.catan.controller;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import com.catan.model.CatanGame;
 import com.catan.model.Player;
+import com.catan.model.ResourceType;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -23,7 +26,7 @@ import javafx.scene.layout.VBox;
  * Automatically detects and uses the appropriate board controller.
  */
 public class MainController implements Initializable {
-    
+        
     @FXML private VBox playerSetupBox;
     @FXML private TextField player1Field;
     @FXML private TextField player2Field;
@@ -39,7 +42,11 @@ public class MainController implements Initializable {
     @FXML private Button tradeWithBankButton;
     @FXML private Button endTurnButton;
     @FXML private VBox gameControlsBox;
+    @FXML private TextArea gameLogArea;
+    @FXML private TextArea playerLogArea;
     @FXML private ScrollPane boardScrollPane;
+    @FXML private VBox playerInfoArea; 
+
     
 
     
@@ -124,6 +131,7 @@ public class MainController implements Initializable {
             rollDiceButton.setDisable(true);
             tradeButton.setDisable(false);
             tradeWithBankButton.setDisable(false);
+            gameLogArea.appendText(game.getCurrentPlayer()+": hat gewürfelt.\n");
 
         }
     }
@@ -134,7 +142,11 @@ public class MainController implements Initializable {
             // Implement trade logic here
             // For now, just a placeholder action
             tradeButton.setDisable(true);
-            tradeWithBankButton.setDisable(true);
+            gameLogArea.appendText(game.getCurrentPlayer()+": handelt.\n");
+            Map<ResourceType, Integer> resources = game.getCurrentPlayer().getResources();
+            for (Map.Entry<ResourceType, Integer> entry : resources.entrySet()) {
+                playerLogArea.setText(entry.getKey() + ": " + entry.getValue() + "\n");
+            }
             System.out.println("Trade action triggered. Implement trade logic here.");
             // You can open a trade dialog or perform other actions as needed
 
@@ -146,8 +158,12 @@ public class MainController implements Initializable {
         if (game != null && game.getCurrentPhase() == CatanGame.GamePhase.PLAYING) {
             // Implement trade with bank logic here
             // For now, just a placeholder action
-            tradeButton.setDisable(true);
             tradeWithBankButton.setDisable(true);
+            gameLogArea.appendText(game.getCurrentPlayer()+": handelt am Hafen.\n");
+            Map<ResourceType, Integer> resources = game.getCurrentPlayer().getResources();
+            for (Map.Entry<ResourceType, Integer> entry : resources.entrySet()) {
+                playerLogArea.setText(entry.getKey() + ": " + entry.getValue() + "\n");
+            }
             System.out.println("Trade with bank action triggered. Implement trade logic here.");
             // You can open a trade dialog or perform other actions as needed
 
