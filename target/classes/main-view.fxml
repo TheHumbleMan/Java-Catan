@@ -84,22 +84,23 @@
 			  </children>
 			</VBox>
             <Separator />
-            <ScrollPane fitToWidth="true" prefHeight="200.0">
+            <ScrollPane fitToWidth="true" prefHeight="250.0">
                 <content>
                    <VBox fx:id="playerInfoArea" spacing="5.0">
                      <children>
 
                    <!-- Label MIT Margin außerhalb -->
-                        <Label text="Spieler-Info:" style="-fx-font-weight: bold;" >
+                        <Label fx:id="playerInfoHeader" text="Spieler-Info:" style="-fx-font-weight: bold;" >
+                        
                            <VBox.margin>
                               <Insets top="10.0" left="10.0" />
                            </VBox.margin>
                         </Label>
 
             <!-- TextArea MIT Margin -->
-                        <TextArea fx:id="playerLogArea" editable="false" prefHeight="100.0" wrapText="true">
+                        <TextArea fx:id="playerLogArea" editable="false" prefHeight="130.0" wrapText="true">
                            <VBox.margin>
-                              <Insets top="5.0" left="10.0" right="10.0" bottom="10.0" />
+                              <Insets top="5.0" left="10.0" right="10.0" bottom="5.0" />
                            </VBox.margin>
                         </TextArea>
 

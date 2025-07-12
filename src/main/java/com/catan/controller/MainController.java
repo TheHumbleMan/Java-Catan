@@ -50,10 +50,9 @@ public class MainController implements Initializable {
     @FXML private VBox gameControlsBox;
     @FXML private TextArea gameLogArea;
     @FXML private TextArea playerLogArea;
+    @FXML private Label playerInfoHeader;
     @FXML private ScrollPane boardScrollPane;
-    @FXML private VBox playerInfoArea; 
-
-    
+    @FXML private VBox playerInfoArea;
 
     
     private CatanGame game;
@@ -118,6 +117,17 @@ public class MainController implements Initializable {
             gameStatusLabel.setText("Error starting game: " + e.getMessage());
             e.printStackTrace();
         }
+
+        /*        // Update player info header and log area
+        playerInfoHeader.setText("Spieler-Info: " + game.getCurrentPlayer().getName());
+        playerLogArea.setText("Resourcen:\n"); //Resourcen anzeigen
+            Map<ResourceType, Integer> resources = game.getCurrentPlayer().getResources();
+            for (Map.Entry<ResourceType, Integer> entry : resources.entrySet()) {
+                if(entry.getKey() != null){
+                    playerLogArea.appendText(entry.getKey() + ": " + entry.getValue() + "\n");
+            }
+        }*/
+        printPlayerInfo();
     }
     
     @FXML
@@ -139,13 +149,16 @@ public class MainController implements Initializable {
             tradeWithBankButton.setDisable(false);
             gameLogArea.appendText(game.getCurrentPlayer()+" hat "+roll+ " gewürfelt.\n");
 
-             playerLogArea.setText("   \n");
+            /*            // Update player info header and log area
+             //playerInfoHeader.setText("Spieler-Info: " + game.getCurrentPlayer().getName());
+            playerLogArea.setText("Resourcen:\n"); //Resourcen anzeigen
             Map<ResourceType, Integer> resources = game.getCurrentPlayer().getResources();
             for (Map.Entry<ResourceType, Integer> entry : resources.entrySet()) {
                 if(entry.getKey() != null){
                     playerLogArea.appendText(entry.getKey() + ": " + entry.getValue() + "\n");
-            }
-            }
+                }
+            }*/
+            printPlayerInfo();
 
         }
     }
@@ -237,6 +250,17 @@ public class MainController implements Initializable {
             game.endTurn();
             boardController.renderBoard();
             updateGameStatus();
+            /*            // Update player info header and log area
+            playerInfoHeader.setText("Spieler-Info: " + game.getCurrentPlayer().getName());
+            playerLogArea.setText("Resourcen:\n"); //Resourcen anzeigen
+            Map<ResourceType, Integer> resources = game.getCurrentPlayer().getResources();
+            for (Map.Entry<ResourceType, Integer> entry : resources.entrySet()) {
+                if(entry.getKey() != null){
+                    playerLogArea.appendText(entry.getKey() + ": " + entry.getValue() + "\n");
+            }
+            }*/
+            printPlayerInfo();
+
             if (game.getStolenResourcesLog() != null) {
             	gameLogArea.appendText(game.getStolenResourcesLog() + "\n");
             }
@@ -283,6 +307,19 @@ public class MainController implements Initializable {
             endTurnButton.setDisable(false);
         }
     }
+
+    @FXML
+    private void printPlayerInfo(){
+        playerInfoHeader.setText("Spieler-Info: " + game.getCurrentPlayer().getName());
+        playerLogArea.setText("Resourcen:\n"); //Resourcen anzeigen
+        Map<ResourceType, Integer> resources = game.getCurrentPlayer().getResources();
+        for (Map.Entry<ResourceType, Integer> entry : resources.entrySet()) {
+            if(entry.getKey() != null){
+                playerLogArea.appendText(entry.getKey() + ": " + entry.getValue() + "\n");
+            }
+        }
+    }
+
     @FXML
 	private void handleNewGame() {
 	    System.out.println("Neues Spiel gestartet!");
