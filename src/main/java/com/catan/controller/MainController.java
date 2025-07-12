@@ -12,10 +12,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import javafx.scene.control.ScrollPane;
 
 
 /**
@@ -116,6 +116,28 @@ public class MainController implements Initializable {
             game.ingameResourceDistribution(roll);
             updateGameStatus();
             rollDiceButton.setDisable(true);
+
+        }
+    }
+     
+    @FXML
+    private void trade() {
+        if (game != null && game.getCurrentPhase() == CatanGame.GamePhase.PLAYING) {
+            // Implement trade logic here
+            // For now, just a placeholder action
+            System.out.println("Trade action triggered. Implement trade logic here.");
+            // You can open a trade dialog or perform other actions as needed
+
+        }
+    }
+     
+    @FXML
+    private void tradeWithBank() {
+        if (game != null && game.getCurrentPhase() == CatanGame.GamePhase.PLAYING) {
+            // Implement trade with bank logic here
+            // For now, just a placeholder action
+            System.out.println("Trade with bank action triggered. Implement trade logic here.");
+            // You can open a trade dialog or perform other actions as needed
 
         }
     }
