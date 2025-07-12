@@ -135,11 +135,11 @@ public class AuthenticBoardController {
             Circle settlementSpot = new Circle(SETTLEMENT_SIZE);
             settlementSpot.setLayoutX(vertexPos.x);
             settlementSpot.setLayoutY(vertexPos.y);
-            
+           /* 
             System.out.println("canBuildSettlement: " + canBuildSettlement);
             System.out.println("isInitialSettlementPlaced: " + isInitialSettlementPlaced);
             System.out.println("game.hasRolledDice(): " + game.hasRolledDice());
-            
+            */
             // Style den Siedlungsspot basierend auf Zustand
             if (isOccupied) {
                 // Finde das Gebäude und zeige es mit Spielerfarbe
@@ -222,14 +222,14 @@ public class AuthenticBoardController {
                 com.catan.model.Road road = board.getRoads().values().stream()
                     .filter(r -> r.getEdgeCoordinate() != null && r.getEdgeCoordinate().equals(edge))
                     .findFirst().orElse(null);
-                
+                /*
                 System.out.println("Build Road Conditions:");
                 System.out.println("game.hasRolledDice(): " + game.hasRolledDice());
                 System.out.println("game.hasSufficientResourcesForRoad(): " + game.hasSufficientResourcesForRoad());
 
                 boolean result = canBuildRoad && !isInitialRoadPlaced && game.hasRolledDice() && (game.hasSufficientResourcesForRoad() || isBeginning);
                 System.out.println("Overall result: " + result);
-                
+                */
                 if (road != null) {
                     roadSegment.setFill(getPlayerColor(road.getOwner()));
                     roadSegment.setStroke(Color.BLACK);
@@ -303,7 +303,36 @@ public class AuthenticBoardController {
         }
     }
     private void handleSettlementClick(VertexCoordinate vertex) {
-    	
+    	Player currentPlayer = game.getCurrentPlayer();
+    	//die prints nur zur überprüfung
+    	System.out.println("In canPlaceCity, boolean ownsBuilding: " + board.getBuildings().entrySet().stream()
+    		    .anyMatch(entry ->
+		        entry.getKey().equals(vertex) &&
+		        entry.getValue().getOwner().equals(game.getCurrentPlayer()) &&
+		        entry.getValue().getType() == Building.Type.SETTLEMENT
+		        )
+		    );
+    	System.out.println("In canPlaceCity, boolean !hasSufficientResourcesForCity(): " + !game.hasSufficientResourcesForCity());
+    	System.out.println("In canPlaceCity, boolean isBeginning: " + game.isBeginning());
+    	System.out.println("in handleSettlementClick vor canPlaceCity");
+        if (game.canPlaceCity(vertex, currentPlayer, game.isBeginning())) {
+        	System.out.println("in handleSettlementClick nach canPlaceCity");
+            game.placeBuilding(Building.Type.CITY, vertex, currentPlayer);
+            //DIE ZWEI IFS SIND PUR FÜR DIE STARTPHASE!!!
+            if (game.isBeginning()) {
+            	currentPlayer.setInitialSettlementPlaced(true);
+            }
+            //prüft ob es sich um zweites Plazieren beim letzten Spieler der Anfangsrunde handelt
+            if (game.isBeginning() && board.getBuildings().size() == game.getPlayers().size() + 1 && game.getCurrentPlayerIndex() == game.getPlayers().size() - 1) {
+            	currentPlayer.setInitialRoadPlaced(false);
+            }
+            System.out.println("City platziert für " + currentPlayer.getName() + " bei " + vertex);
+            for (VertexCoordinate adjacentVertex : vertex.getAdjacentVertices(HEX_RADIUS, BOARD_CENTER_X, BOARD_CENTER_Y, board.getNormalizedCatanCoordMap(), board.getValidVertices())) {
+            	System.out.println("X wert:" + adjacentVertex.getX() + "Y wert:" + adjacentVertex.getY() + "dir wert:" + adjacentVertex.getDirection());
+            }
+            renderBoard(); // Re-render nach Änderung
+            
+        }
     }
     
     //wird aktuell nicht benutzt, aber mal drin gelassen falls ich es brauche

@@ -334,6 +334,8 @@ public class CatanGame {
         
         return true;
     }
+    
+    //legacy, behalten für den fall der fälle
     public boolean canPlaceSpecificBuilding(VertexCoordinate vertex, Player player, boolean isBeginning, Building.Type type) {
     	boolean canBuildCity = hasSufficientResourcesForCity();
     	boolean canBuildSettlement = hasSufficientResourcesForCity() || isBeginning;
@@ -361,7 +363,14 @@ public class CatanGame {
         return true;
     }
     public boolean canPlaceCity(VertexCoordinate vertex, Player player, boolean isBeginning) {
-    	if (!canPlaceAnyBuilding(vertex, player, isBeginning) || !hasSufficientResourcesForCity() || isBeginning) {
+    	boolean ownsSettlementAt = board.getBuildings().entrySet().stream()
+    		    .anyMatch(entry ->
+    		        entry.getKey().equals(vertex) &&
+    		        entry.getValue().getOwner().equals(player) &&
+    		        entry.getValue().getType() == Building.Type.SETTLEMENT
+    		    );
+
+    	if (!ownsSettlementAt || !hasSufficientResourcesForCity() || isBeginning) {
     		return false;
     	}
     	return true;
@@ -380,10 +389,13 @@ public class CatanGame {
     public void placeBuilding(Building.Type type, VertexCoordinate vertex, Player player) {
             board.getBuildings().put(vertex, new Building(type, player, vertex));
             if (type == Building.Type.SETTLEMENT && !isBeginning()) {
+            	player.addVictoryPoints(1);
             	player.removeResource(Player.SETTLEMENT_COST);
             }
             else if (type == Building.Type.CITY && !isBeginning()) {
             	player.removeResource(Player.CITY_COST);
+            	//da ja bereits durch siedlung einer geaddet wurde
+            	player.addVictoryPoints(1);
             }
 
             
