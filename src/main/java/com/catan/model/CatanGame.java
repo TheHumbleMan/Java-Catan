@@ -361,13 +361,13 @@ public class CatanGame {
         return true;
     }
     public boolean canPlaceCity(VertexCoordinate vertex, Player player, boolean isBeginning) {
-    	if (!canPlaceAnyBuilding(vertex, player, isBeginning) || !hasSufficientResourcesForCity()) {
+    	if (!canPlaceAnyBuilding(vertex, player, isBeginning) || !hasSufficientResourcesForCity() || isBeginning) {
     		return false;
     	}
     	return true;
     }
     public boolean canPlaceSettlement(VertexCoordinate vertex, Player player, boolean isBeginning) {
-    	if (!canPlaceAnyBuilding(vertex, player, isBeginning) || !hasSufficientResourcesForSettlement()) {
+    	if (!canPlaceAnyBuilding(vertex, player, isBeginning) || (!hasSufficientResourcesForSettlement() && !isBeginning)) {
     		return false;
     	}
     	return true;
@@ -408,11 +408,13 @@ public class CatanGame {
         if (isBuildingClose(edge, player) && isBeginning()) {
         	return !isAdjacentRoad(edge, player);
         }
-        //prüft ob Anbindung zu Siedlung besteht
+        if (!hasSufficientResourcesForRoad()) {
+        	return false;
+        }
+      //prüft ob Anbindung zu Siedlung besteht
         if (isBuildingClose(edge, player)) {
         	return true;
         }
-        
         //prüft ob Anbindung zu Straße besteht
         List<Road> ownedRoads = board.getRoads().values().stream()
         	    .filter(b -> b.getOwner().equals(player))
@@ -425,11 +427,7 @@ public class CatanGame {
                     return true;
                 }
             }
-        }
-        if (!isBeginning()) {
-        	//hier dann noch ressourcentest sobald implementiert
-        }
-        
+        }       
         
         return false;
     }

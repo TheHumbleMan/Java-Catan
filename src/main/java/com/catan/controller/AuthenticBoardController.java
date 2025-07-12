@@ -125,7 +125,9 @@ public class AuthenticBoardController {
             //System.out.println(uniqueVertice); nur überprüfung
         	VertexCoordinate vertex = uniqueVertice;
             RoundedPoint2D vertexPos = uniqueVertice.toPixel(HEX_RADIUS, BOARD_CENTER_X, BOARD_CENTER_Y);
-            boolean canBuild = game.canPlaceAnyBuilding(vertex, currentPlayer, isBeginning);
+            boolean canBuildSettlement = game.canPlaceSettlement(vertex, currentPlayer, isBeginning);
+            boolean canBuildCity = game.canPlaceCity(vertex, currentPlayer, isBeginning);
+            boolean canBuildAnything = game.canPlaceAnyBuilding(vertex, currentPlayer, isBeginning); //ob überhaupt eins gesetzt werden kann
             boolean isInitialSettlementPlaced = currentPlayer.isInitialSettlementPlaced() && game.isBeginning();
             boolean isOccupied = board.getBuildings().containsKey(vertex);
             
@@ -133,7 +135,11 @@ public class AuthenticBoardController {
             Circle settlementSpot = new Circle(SETTLEMENT_SIZE);
             settlementSpot.setLayoutX(vertexPos.x);
             settlementSpot.setLayoutY(vertexPos.y);
-
+            
+            System.out.println("canBuildSettlement: " + canBuildSettlement);
+            System.out.println("isInitialSettlementPlaced: " + isInitialSettlementPlaced);
+            System.out.println("game.hasRolledDice(): " + game.hasRolledDice());
+            
             // Style den Siedlungsspot basierend auf Zustand
             if (isOccupied) {
                 // Finde das Gebäude und zeige es mit Spielerfarbe
@@ -153,7 +159,7 @@ public class AuthenticBoardController {
                     }
                 }
             }
-            else if (canBuild && !isInitialSettlementPlaced && game.hasRolledDice() && (game.hasSufficientResourcesForCity() || game.hasSufficientResourcesForSettlement() || isBeginning)) {
+            else if (canBuildSettlement && !isInitialSettlementPlaced && game.hasRolledDice()) {
                 // Bebaubare Position - grün
                 settlementSpot.setFill(Color.LIGHTGREEN);
                 settlementSpot.setStroke(Color.DARKGREEN);
@@ -180,7 +186,7 @@ public class AuthenticBoardController {
             
             // Tooltip
             String tooltipText = isOccupied ? "Gebäude vorhanden" : 
-                                (canBuild ? "Klicken für Siedlung" : "Nicht bebaubar");
+                                (canBuildAnything ? "Klicken für Siedlung" : "Nicht bebaubar");
             Tooltip tooltip = new Tooltip(tooltipText);
             Tooltip.install(settlementSpot, tooltip);
             
@@ -229,7 +235,7 @@ public class AuthenticBoardController {
                     roadSegment.setStroke(Color.BLACK);
                     roadSegment.setStrokeWidth(2.0);
                 }
-            } else if (canBuildRoad && !isInitialRoadPlaced && game.hasRolledDice() && (game.hasSufficientResourcesForRoad() || isBeginning)) {
+            } else if (canBuildRoad && !isInitialRoadPlaced && game.hasRolledDice()) {
                 // Bebaubare Straße - blau
                 roadSegment.setFill(Color.LIGHTBLUE);
                 roadSegment.setStroke(Color.DARKBLUE);
@@ -277,9 +283,8 @@ public class AuthenticBoardController {
      * Behandelt Klicks auf Siedlungsplätze.
      */
     private void handleVertexClick(VertexCoordinate vertex) {
-    	Building.Type type = buildingType(vertex);
         Player currentPlayer = game.getCurrentPlayer();
-        if (game.canPlaceSettlement(vertex, currentPlayer, game.isBeginning()) && type != null) {
+        if (game.canPlaceSettlement(vertex, currentPlayer, game.isBeginning())) {
             game.placeBuilding(Building.Type.SETTLEMENT, vertex, currentPlayer);
             //DIE ZWEI IFS SIND PUR FÜR DIE STARTPHASE!!!
             if (game.isBeginning()) {
@@ -301,6 +306,7 @@ public class AuthenticBoardController {
     	
     }
     
+    //wird aktuell nicht benutzt, aber mal drin gelassen falls ich es brauche
     private Building.Type buildingType(VertexCoordinate vertex) {
     	Building.Type type = null;
 
