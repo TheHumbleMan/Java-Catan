@@ -146,9 +146,10 @@ public class MainController implements Initializable {
             playerLogArea.setText(" \n");
             Map<ResourceType, Integer> resources = game.getCurrentPlayer().getResources();
             for (Map.Entry<ResourceType, Integer> entry : resources.entrySet()) {
-                playerLogArea.appendText(entry.getKey() + ": " + entry.getValue() + "\n");
+                if(entry.getKey() != null){
+                    playerLogArea.appendText(entry.getKey() + ": " + entry.getValue() + "\n");
+                }
             }
-            System.out.println("Trade action triggered. Implement trade logic here.");
             // You can open a trade dialog or perform other actions as needed
 
         }
@@ -157,17 +158,15 @@ public class MainController implements Initializable {
     @FXML
     private void tradeWithBank() {
         if (game != null && game.getCurrentPhase() == CatanGame.GamePhase.PLAYING) {
-            // Implement trade with bank logic here
-            // For now, just a placeholder action
             tradeWithBankButton.setDisable(true);
             gameLogArea.appendText(game.getCurrentPlayer()+": handelt am Hafen.\n");
-            playerLogArea.appendText("   \n");
+            playerLogArea.setText("   \n");
             Map<ResourceType, Integer> resources = game.getCurrentPlayer().getResources();
             for (Map.Entry<ResourceType, Integer> entry : resources.entrySet()) {
-                playerLogArea.appendText(entry.getKey() + ": " + entry.getValue() + "\n");
+                if(entry.getKey() != null){
+                    playerLogArea.appendText(entry.getKey() + ": " + entry.getValue() + "\n");
             }
-            System.out.println("Trade with bank action triggered. Implement trade logic here.");
-            // You can open a trade dialog or perform other actions as needed
+            }
 
         }
     }
