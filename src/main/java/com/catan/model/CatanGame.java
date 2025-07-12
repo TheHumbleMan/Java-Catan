@@ -360,6 +360,18 @@ public class CatanGame {
         
         return true;
     }
+    public boolean canPlaceCity(VertexCoordinate vertex, Player player, boolean isBeginning) {
+    	if (!canPlaceAnyBuilding(vertex, player, isBeginning) || !hasSufficientResourcesForCity()) {
+    		return false;
+    	}
+    	return true;
+    }
+    public boolean canPlaceSettlement(VertexCoordinate vertex, Player player, boolean isBeginning) {
+    	if (!canPlaceAnyBuilding(vertex, player, isBeginning) || !hasSufficientResourcesForSettlement()) {
+    		return false;
+    	}
+    	return true;
+    }
     
     
     /**
@@ -367,6 +379,12 @@ public class CatanGame {
      */
     public void placeBuilding(Building.Type type, VertexCoordinate vertex, Player player) {
             board.getBuildings().put(vertex, new Building(type, player, vertex));
+            if (type == Building.Type.SETTLEMENT && !isBeginning()) {
+            	player.removeResource(Player.SETTLEMENT_COST);
+            }
+            else if (type == Building.Type.CITY && !isBeginning()) {
+            	player.removeResource(Player.CITY_COST);
+            }
 
             
     }

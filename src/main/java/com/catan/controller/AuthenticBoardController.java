@@ -145,6 +145,7 @@ public class AuthenticBoardController {
                     settlementSpot.setFill(getPlayerColor(building.getOwner()));
                     settlementSpot.setStroke(Color.BLACK);
                     settlementSpot.setStrokeWidth(2.0);
+                    settlementSpot.setOnMouseClicked(e -> handleSettlementClick(vertex));
 
                     // Städte sind größer
                     if (building.getType() == Building.Type.CITY) {
@@ -217,12 +218,8 @@ public class AuthenticBoardController {
                     .findFirst().orElse(null);
                 
                 System.out.println("Build Road Conditions:");
-                System.out.println("canBuildRoad: " + canBuildRoad);
-                System.out.println("!isInitialRoadPlaced: " + !isInitialRoadPlaced);
                 System.out.println("game.hasRolledDice(): " + game.hasRolledDice());
                 System.out.println("game.hasSufficientResourcesForRoad(): " + game.hasSufficientResourcesForRoad());
-                System.out.println("isBeginning: " + isBeginning);
-                System.out.println("(game.hasSufficientResourcesForRoad() || isBeginning): " + (game.hasSufficientResourcesForRoad() || isBeginning));
 
                 boolean result = canBuildRoad && !isInitialRoadPlaced && game.hasRolledDice() && (game.hasSufficientResourcesForRoad() || isBeginning);
                 System.out.println("Overall result: " + result);
@@ -282,8 +279,8 @@ public class AuthenticBoardController {
     private void handleVertexClick(VertexCoordinate vertex) {
     	Building.Type type = buildingType(vertex);
         Player currentPlayer = game.getCurrentPlayer();
-        if (game.canPlaceSpecificBuilding(vertex, currentPlayer, game.isBeginning(), type) && type != null) {
-            game.placeBuilding(type, vertex, currentPlayer);
+        if (game.canPlaceSettlement(vertex, currentPlayer, game.isBeginning()) && type != null) {
+            game.placeBuilding(Building.Type.SETTLEMENT, vertex, currentPlayer);
             //DIE ZWEI IFS SIND PUR FÜR DIE STARTPHASE!!!
             if (game.isBeginning()) {
             	currentPlayer.setInitialSettlementPlaced(true);
@@ -299,6 +296,9 @@ public class AuthenticBoardController {
             renderBoard(); // Re-render nach Änderung
             
         }
+    }
+    private void handleSettlementClick(VertexCoordinate vertex) {
+    	
     }
     
     private Building.Type buildingType(VertexCoordinate vertex) {
