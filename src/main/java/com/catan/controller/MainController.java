@@ -123,10 +123,10 @@ public class MainController implements Initializable {
     @FXML
     private void rollDice() {
         if (game != null && game.getCurrentPhase() == CatanGame.GamePhase.PLAYING) {
-            tradeButton.setDisable(true);
-            tradeWithBankButton.setDisable(true);
             int roll = game.rollDice();
             game.setHasRolledDice(true);
+            tradeButton.setDisable(false);
+            tradeWithBankButton.setDisable(false);
             endTurnButton.setDisable(false);
             boardController.renderBoard();
             diceRollLabel.setText("Dice Roll: " + roll);
@@ -152,7 +152,7 @@ public class MainController implements Initializable {
      
     @FXML
     private void trade() {
-        if (game != null && game.getCurrentPhase() == CatanGame.GamePhase.PLAYING) {
+        if (game != null && game.getCurrentPhase() == CatanGame.GamePhase.PLAYING && game.hasRolledDice() && game.hasMovedRobber()) {
             // Implement trade logic here
             // For now, just a placeholder action
             tradeButton.setDisable(true);
@@ -185,7 +185,7 @@ public class MainController implements Initializable {
      
     @FXML
     private void tradeWithBank() {
-        if (game != null && game.getCurrentPhase() == CatanGame.GamePhase.PLAYING) {
+        if (game != null && game.getCurrentPhase() == CatanGame.GamePhase.PLAYING && game.hasRolledDice() && game.hasMovedRobber()) {
             tradeWithBankButton.setDisable(true);
             gameLogArea.appendText(game.getCurrentPlayer()+" handelt am Hafen.\n");
 
@@ -232,6 +232,8 @@ public class MainController implements Initializable {
             if (game.getCurrentPhase() == CatanGame.GamePhase.PLAYING) {
                 diceRollLabel.setText("Dice Roll: -");
                 rollDiceButton.setDisable(false);
+                tradeWithBankButton.setDisable(true);
+                tradeButton.setDisable(true);
                 endTurnButton.setDisable(true);
                 System.out.println("MEIN ENDTURN STATEMENT");
                 game.setHasRolledDice(false); //für nächste Phase

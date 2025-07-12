@@ -130,13 +130,13 @@ public class UIComponents {
      */
     public static Text createNumberToken(int number) {
         Text text = new Text(String.valueOf(number));
-        text.setFont(Font.font("Arial", FontWeight.BOLD, 16));
+        text.setFont(Font.font("Arial", FontWeight.BOLD, 20));
         text.setFill(Color.BLACK);
         
         // Highlight high-probability numbers
         if (number == 6 || number == 8) {
             text.setFill(Color.RED);
-            text.setFont(Font.font("Arial", FontWeight.BOLD, 18));
+            text.setFont(Font.font("Arial", FontWeight.BOLD, 20));
         }
         
         // Center the text using TextOrigin

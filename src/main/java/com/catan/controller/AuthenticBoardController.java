@@ -1,8 +1,6 @@
 package com.catan.controller;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -20,24 +18,22 @@ import com.catan.view.UIComponents;
 
 import javafx.animation.Animation;
 import javafx.animation.ScaleTransition;
+import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.ChoiceDialog;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tooltip;
 import javafx.scene.effect.DropShadow;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
-
 /**
  * Controller für das authentische CATAN-Board mit exakt 54 Siedlungen und 72 Straßen.
  */
@@ -74,6 +70,7 @@ public class AuthenticBoardController {
     public void renderBoard() {
     	if (game.hasMovedRobber() == true) {
         boardPane.getChildren().clear();
+        boardPane.setStyle("-fx-background-color: #87CEFA;"); // Hellblau (SkyBlue)
         System.out.println("robber position: " + board.getRobberPosition());
         renderHexagonTiles(game.isBeginning());
         renderRobberPosition();
@@ -113,12 +110,36 @@ public class AuthenticBoardController {
                 hexagon.setOnMouseClicked(e -> handleTileClick(finalHexCoord));
                 
                 boardPane.getChildren().add(hexagon);
+                if (tile.hasRobber()) {
+                ImageView robberImage = new ImageView(new Image(getClass().getResourceAsStream("/images/robber.jpg")));
+                robberImage.setFitWidth(30);
+                robberImage.setFitHeight(30);
+                robberImage.setLayoutX(BOARD_CENTER_X + hexCenter.x - 15);
+                robberImage.setLayoutY(BOARD_CENTER_Y + hexCenter.y - 15);
+                boardPane.getChildren().add(robberImage);
+                }
                 
                 // Nummern-Token für Nicht-Wüsten-Tiles
                 if (tile.getNumberToken() > 0) {
                     Text numberText = UIComponents.createNumberToken(tile.getNumberToken());
-                    numberText.setLayoutX(BOARD_CENTER_X + hexCenter.x);
-                    numberText.setLayoutY(BOARD_CENTER_Y + hexCenter.y);
+                    numberText.setTextOrigin(VPos.CENTER);
+                    numberText.applyCss();
+                    // Breite und Höhe bestimmen
+                    double textWidth = numberText.getBoundsInLocal().getWidth();
+                    double textHeight = numberText.getBoundsInLocal().getHeight();
+                    double centerX = BOARD_CENTER_X + hexCenter.x;
+                    double centerY = BOARD_CENTER_Y + hexCenter.y;
+                    //Hintergrundkreis für Nummern-Token
+                    Circle backgroundCircle = new Circle(13,Color.web("#FFFFFF", 0.8));
+                    backgroundCircle.setLayoutX(centerX);
+                    backgroundCircle.setLayoutY(centerY);
+                    backgroundCircle.setStroke(Color.BLACK);
+                    backgroundCircle.setStrokeWidth(0.5);
+
+                    // Text zentrieren
+                    numberText.setLayoutX(centerX - textWidth / 2);
+                    numberText.setLayoutY(centerY + numberText.getBaselineOffset() - textHeight / 2 - 9);
+                    boardPane.getChildren().add(backgroundCircle);
                     boardPane.getChildren().add(numberText);
                 }
             }
@@ -472,6 +493,7 @@ public class AuthenticBoardController {
      * Stylt ein Terrain-Tile basierend auf seinem Typ.
      */
     private void styleTerrainTile(Polygon hexagon, TerrainTile tile) {
+        /*
         Color fillColor = switch (tile.getTerrainType()) {
             case FOREST -> UIComponents.FOREST_COLOR;
             case HILLS -> UIComponents.HILLS_COLOR;
@@ -480,8 +502,17 @@ public class AuthenticBoardController {
             case MOUNTAINS -> UIComponents.MOUNTAINS_COLOR;
             case DESERT -> UIComponents.DESERT_COLOR;
         };
-        
-        hexagon.setFill(fillColor);
+        hexagon.setFill(fillColor);*/
+        String imagePath = switch (tile.getTerrainType()) {
+            case FOREST -> "/images/forest.jpg";
+            case HILLS -> "/images/hills.jpg";
+            case PASTURE -> "/images/pasture.jpg";
+            case FIELDS -> "/images/fields.jpg";
+            case MOUNTAINS -> "/images/mountains.jpg";
+            case DESERT -> "/images/desert.jpg";
+        };
+        Image image = new Image(getClass().getResourceAsStream(imagePath));
+        hexagon.setFill(new ImagePattern(image));
         hexagon.setStroke(Color.BLACK);
         hexagon.setStrokeWidth(2.0);
         
