@@ -227,15 +227,17 @@ public class MainController implements Initializable {
 
     
     @FXML
-    private void endTurn() {
-        if (game != null && game.hasCompletedPlacementForCurrentPhase() && game.hasRolledDice() && game.hasMovedRobber()) {
+    private void endTurn() {    	
+    	if (game != null && game.hasCompletedPlacementForCurrentPhase() && game.hasRolledDice() && game.hasMovedRobber()) { 
+    		boolean isBeginning = game.isBeginning(); //wichtig vor endturn abzufragen
             game.endTurn();
-            boardController.renderBoard();
             updateGameStatus();
             if (game.getStolenResourcesLog() != null) {
             	gameLogArea.appendText(game.getStolenResourcesLog() + "\n");
             }
-            
+            if (isBeginning) {
+            	boardController.renderBoard();
+            }
             // Clear dice roll for new turn
             if (game.getCurrentPhase() == CatanGame.GamePhase.PLAYING) {
                 diceRollLabel.setText("Dice Roll: -");
@@ -245,11 +247,14 @@ public class MainController implements Initializable {
                 endTurnButton.setDisable(true);
                 System.out.println("MEIN ENDTURN STATEMENT");
                 game.setHasRolledDice(false); //für nächste Phase
-                boardController.renderBoard();                
+        		boardController.renderBoard();
+               // boardController.renderBoard();                
             }
             
         }
-    }
+        
+        }
+    
     
     private void updateGameStatus() {
         if (game == null) return;
