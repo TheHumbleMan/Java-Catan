@@ -57,6 +57,7 @@ public class UIComponents {
         Polygon hexagon = createHexagon(radius);
         
         // Set color based on terrain type
+        /* Test 
         Color fillColor = switch (tile.getTerrainType()) {
             case FOREST -> FOREST_COLOR;
             case HILLS -> HILLS_COLOR;
@@ -66,7 +67,8 @@ public class UIComponents {
             case DESERT -> DESERT_COLOR;
         };
         
-        hexagon.setFill(fillColor);
+        
+        hexagon.setFill(fillColor);*/
         hexagon.setStroke(Color.BLACK);
         hexagon.setStrokeWidth(2.0);
         
@@ -130,13 +132,13 @@ public class UIComponents {
      */
     public static Text createNumberToken(int number) {
         Text text = new Text(String.valueOf(number));
-        text.setFont(Font.font("Arial", FontWeight.BOLD, 16));
+        text.setFont(Font.font("Arial", FontWeight.BOLD, 20));
         text.setFill(Color.BLACK);
         
         // Highlight high-probability numbers
         if (number == 6 || number == 8) {
             text.setFill(Color.RED);
-            text.setFont(Font.font("Arial", FontWeight.BOLD, 18));
+            text.setFont(Font.font("Arial", FontWeight.BOLD, 20));
         }
         
         // Center the text using TextOrigin
@@ -386,7 +388,10 @@ public class UIComponents {
     
     /**
      * Style an existing hexagon polygon based on terrain tile.
-     */
+     * Wurde rausgenommen, da es in AuthenticBoardController bereits implementiert ist.
+     * @deprecated Use the createHexagonalTerrainTile method instead for consistent styling.
+    */
+    @Deprecated
     public static void styleTerrainTile(Polygon hexagon, TerrainTile tile) {
         // Set color based on terrain type
         Color fillColor = switch (tile.getTerrainType()) {

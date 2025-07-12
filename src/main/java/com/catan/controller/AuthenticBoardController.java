@@ -1,8 +1,6 @@
 package com.catan.controller;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -20,18 +18,17 @@ import com.catan.view.UIComponents;
 
 import javafx.animation.Animation;
 import javafx.animation.ScaleTransition;
+import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.ChoiceDialog;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tooltip;
 import javafx.scene.effect.DropShadow;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
@@ -75,6 +72,7 @@ public class AuthenticBoardController {
     	if (game.hasMovedRobber() == true) {
         boardPane.getChildren().clear();
         System.out.println("robber position: " + board.getRobberPosition());
+        boardPane.setStyle("-fx-background-color: #87CEFA;"); // Himmelblauer Hintergrund
         renderHexagonTiles(game.isBeginning());
         renderRobberPosition();
         renderSettlementSpots(game.isBeginning());
@@ -113,12 +111,50 @@ public class AuthenticBoardController {
                 hexagon.setOnMouseClicked(e -> handleTileClick(finalHexCoord));
                 
                 boardPane.getChildren().add(hexagon);
+                if (tile.hasRobber()) {
+                ImageView robberImage = new ImageView(new Image(getClass().getResourceAsStream("/images/robber.jpg")));
+                robberImage.setFitWidth(30);
+                robberImage.setFitHeight(30);
+                robberImage.setLayoutX(BOARD_CENTER_X + hexCenter.x - 15);
+                robberImage.setLayoutY(BOARD_CENTER_Y + hexCenter.y - 15);
+                boardPane.getChildren().add(robberImage);
+}
                 
                 // Nummern-Token für Nicht-Wüsten-Tiles
                 if (tile.getNumberToken() > 0) {
+                    /* 
                     Text numberText = UIComponents.createNumberToken(tile.getNumberToken());
                     numberText.setLayoutX(BOARD_CENTER_X + hexCenter.x);
                     numberText.setLayoutY(BOARD_CENTER_Y + hexCenter.y);
+                    boardPane.getChildren().add(numberText);
+                    */
+
+                    Text numberText = UIComponents.createNumberToken(tile.getNumberToken());
+                    /* 
+                    double centerX = BOARD_CENTER_X + hexCenter.x;
+                    double centerY = BOARD_CENTER_Y + hexCenter.y;
+                    numberText.setLayoutX(centerX);
+                    numberText.setLayoutY(centerY);
+                    numberText.setTextOrigin(VPos.CENTER);*/
+                    numberText.setTextOrigin(VPos.CENTER);
+                    numberText.applyCss();
+                    double textWidth = numberText.getBoundsInLocal().getWidth();
+                    double textHeight = numberText.getBoundsInLocal().getHeight();
+                    double centerX = BOARD_CENTER_X + hexCenter.x;
+                    double centerY = BOARD_CENTER_Y + hexCenter.y;
+
+
+                    // Hintergrund-Kreis
+                    Circle backgroundCircle = new Circle(14, Color.web("#FFFFFF", 0.8)); // Halbtransparenter weißer Hintergrund
+                    backgroundCircle.setLayoutX(centerX);
+                    backgroundCircle.setLayoutY(centerY);
+                    backgroundCircle.setStroke(Color.BLACK);
+                    backgroundCircle.setStrokeWidth(0.5);
+
+                    numberText.setLayoutX(centerX - textWidth / 2);
+                    numberText.setLayoutY(centerY + numberText.getBaselineOffset() - textHeight / 2 -textHeight * 0.28);
+                    // Reihenfolge ist wichtig: ZUERST Hintergrund, dann Text
+                    boardPane.getChildren().add(backgroundCircle);
                     boardPane.getChildren().add(numberText);
                 }
             }
@@ -161,7 +197,7 @@ public class AuthenticBoardController {
                 if (building != null) {
                     settlementSpot.setFill(getPlayerColor(building.getOwner()));
                     settlementSpot.setStroke(Color.BLACK);
-                    settlementSpot.setStrokeWidth(2.0);          
+                    settlementSpot.setStrokeWidth(2.0);
 
                  // Hover-Effekte und click button
                     if (canBuildCity && !isInitialSettlementPlaced && game.hasRolledDice()) {
@@ -472,6 +508,8 @@ public class AuthenticBoardController {
      * Stylt ein Terrain-Tile basierend auf seinem Typ.
      */
     private void styleTerrainTile(Polygon hexagon, TerrainTile tile) {
+        /* Hier wird die Farbe des Hexagons basierend auf dem Terrain-Typ gesetzt.
+        // wurde durch Bilder ersetzt.
         Color fillColor = switch (tile.getTerrainType()) {
             case FOREST -> UIComponents.FOREST_COLOR;
             case HILLS -> UIComponents.HILLS_COLOR;
@@ -482,6 +520,20 @@ public class AuthenticBoardController {
         };
         
         hexagon.setFill(fillColor);
+        */
+
+        // Hier wird das Bild des Hexagons basierend auf dem Terrain-Typ gesetzt.
+        String imagePath = switch (tile.getTerrainType()) {
+            case FOREST -> "/images/forest.jpg";
+            case HILLS -> "/images/hills.jpg";
+            case PASTURE -> "/images/pasture.jpg";
+            case FIELDS -> "/images/fields.jpg";
+            case MOUNTAINS -> "/images/mountains.jpg";
+            case DESERT -> "/images/desert.jpg";
+        };
+        Image image = new Image(getClass().getResourceAsStream(imagePath));
+        hexagon.setFill(new ImagePattern(image));
+
         hexagon.setStroke(Color.BLACK);
         hexagon.setStrokeWidth(2.0);
         
