@@ -157,16 +157,23 @@ public class MainController implements Initializable {
             // For now, just a placeholder action
             tradeButton.setDisable(true);
             gameLogArea.appendText(game.getCurrentPlayer()+" handelt.\n");
-
+            // Open a popup for trading
             try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("PopupView.fxml"));
+               FXMLLoader loader = new FXMLLoader(getClass().getResource("/popUp.fxml"));
                 Parent popupRoot = loader.load();
+                System.out.println("Popup geladen: " + popupRoot);
+
 
                 Stage popupStage = new Stage();
                 popupStage.setTitle("Handelsfenster");
-                popupStage.initModality(Modality.APPLICATION_MODAL); // blockiert Hauptfenster
+                popupStage.initModality(Modality.APPLICATION_MODAL);
                 popupStage.setScene(new Scene(popupRoot));
-                popupStage.showAndWait(); // Popup bleibt offen, bis es geschlossen wird
+                popupStage.setWidth(300);
+                popupStage.setHeight(200);
+                popupStage.centerOnScreen();
+                //popupStage.showAndWait();
+                popupStage.show(); // statt showAndWait();
+
             } catch (IOException e) {
                 e.printStackTrace();
             }

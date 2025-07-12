@@ -3,9 +3,11 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.deinpaket.PopupController">
+<AnchorPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.catan.controller.popUpController"
+            prefWidth="300" prefHeight="200">
     <children>
-        <Label text="Trade-Fenster" layoutX="20" layoutY="20"/>
-        <Button text="Schließen" layoutX="20" layoutY="60" onAction="#handleClose"/>
+        <Label text="Popup geöffnet!" layoutX="20" layoutY="20"/>
+        <Button fx:id="closeButton" text="Schließen" layoutX="20" layoutY="60" onAction="#handleClose"/>
     </children>
 </AnchorPane>
