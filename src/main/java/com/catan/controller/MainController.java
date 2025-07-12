@@ -176,9 +176,13 @@ public class MainController implements Initializable {
                 //popupStage.showAndWait();
                 popupStage.show(); // statt showAndWait();
 
+            //} catch (IOException e) {
+              //  e.printStackTrace();
             } catch (IOException e) {
+                System.err.println("Fehler beim Laden des FXML:");
                 e.printStackTrace();
             }
+
 
             playerLogArea.setText(" \n");
             Map<ResourceType, Integer> resources = game.getCurrentPlayer().getResources();
