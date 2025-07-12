@@ -60,6 +60,7 @@ public class CatanGame {
         this.currentPhase = GamePhase.INITIAL_PLACEMENT_1;
         this.gameFinished = false;
         this.hasRolledDice = true;
+        this.hasMovedRobber = true;
         this.lastDiceRoll = 0;
     }
     
@@ -201,15 +202,19 @@ public class CatanGame {
         		        Map.Entry::getValue
         		    ));
         	Map<HexCoordinate, TerrainTile> tiles = board.getAllTiles();
+        	/*Map<HexCoordinate, TerrainTile> tiles = unfilteredTiles.entrySet().stream()
+        		    .filter(entry -> !entry.getValue().hasRobber()) 
+        		    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)); */
         	for (Building building : playerBuildings.values()) {
         		List<HexCoordinate> neighbourHexes = board.getHexNeighbours(building.getVertexCoordinate());
         		for (HexCoordinate neighbourHex : neighbourHexes) {
+        			if (neighbourHex != board.getRobberPosition()) { //evtl ist board.getRobberPosition nicht nötig wegen tile.hasRobber, aber wollte nicht weiter testen, und es funktioniert
         			TerrainTile tile = tiles.get(neighbourHex);
         			//System.out.println("Checking tile at " + neighbourHex + " with numberToken " + tile.getNumberToken() +
         	                 //  " for roll " + roll);
 
         			TerrainType type = tile.compareTokens(roll);
-        			if (type != null) {
+        			if (type != null && !tile.hasRobber()) {
         			player.setResources(type.getResourceType(), building.getResourceProduction());
         			/*
         			Map<ResourceType, Integer> playerResources = player.getResources();
@@ -218,7 +223,7 @@ public class CatanGame {
         			    System.out.println(" - " + resource + ": " + amount));
         			
         			*/
-
+        			}
         			}
     }
         	}
@@ -586,18 +591,24 @@ public class CatanGame {
             setHasMovedRobber(true);
             board.setRobberPosition(newPosition);
             List<Player> adjacentPlayers = determinePlayers(newPosition);
+            System.out.println("es kommt an, size: " + adjacentPlayers.size());
             Player selectedPlayer = choosePlayer(adjacentPlayers);
             if (selectedPlayer != null) {
             stealFromPlayer(selectedPlayer);
             }
         }
     } 
+    //sorgt für erkennung aller spieler der hexes
     private List<Player> determinePlayers(HexCoordinate position) {
     	List<Player> adjacentPlayers = new ArrayList<>();
     	for (Building building : board.getBuildings().values()) {
-    		if (building.getVertexCoordinate().getX() == position.getQ() && building.getVertexCoordinate().getY() == position.getR()) {
-    			adjacentPlayers.add(building.getOwner());
-    		}
+    		VertexCoordinate normalizedVertex = building.getVertexCoordinate();
+    		List<VertexCoordinate> unnormalizedVertices = board.getNormalizedToUnnormalized().get(normalizedVertex);
+    		for (VertexCoordinate vertex : unnormalizedVertices) {
+				if (vertex.getX() == position.getQ() && vertex.getY() == position.getR() && building.getOwner() != getCurrentPlayer()) {
+					adjacentPlayers.add(building.getOwner());
+				}
+			}
     	}
     	return adjacentPlayers;
     	
@@ -630,7 +641,8 @@ public class CatanGame {
     	    return selectedPlayer;
     	}
     private void stealFromPlayer(Player selectedPlayer) {
-    	
+    	Map<ResourceType, Integer> stolenResources = selectedPlayer.stealRandomResource();
+    	getCurrentPlayer().addResources(stolenResources);
     }
     
     

@@ -85,9 +85,9 @@ public class AuthenticBoardController {
         		settlement_count + " Siedlungsmöglichkeiten, " + 
                          board.getValidVertices().size() + " Siedlungsoptionen");
     	}
-    	else {
+    	/*else {
     		moveRobber()
-    	}
+    	} */
         				
     }
     

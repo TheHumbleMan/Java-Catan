@@ -172,7 +172,7 @@ public class MainController implements Initializable {
     
     @FXML
     private void endTurn() {
-        if (game != null && game.hasCompletedPlacementForCurrentPhase() && game.hasRolledDice()) {
+        if (game != null && game.hasCompletedPlacementForCurrentPhase() && game.hasRolledDice() && game.hasMovedRobber()) {
             game.endTurn();
             boardController.renderBoard();
             updateGameStatus();

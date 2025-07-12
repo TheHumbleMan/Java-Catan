@@ -1,7 +1,10 @@
 package com.catan.model;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -145,6 +148,32 @@ public class Player {
         int current = resources.getOrDefault(type, 0);
         resources.put(type, current - amount);
     }
+    public Map<ResourceType, Integer> stealRandomResource() {
+        Map<ResourceType, Integer> resMap = getResources();
+        List<ResourceType> weightedList = new ArrayList<>();
+        for (Map.Entry<ResourceType, Integer> entry : resMap.entrySet()) {
+            ResourceType type = entry.getKey();
+            int count = entry.getValue();
+            for (int i = 0; i < count; i++) {
+                weightedList.add(type);
+            }
+        }
+
+        if (weightedList.isEmpty()) {
+            return Collections.emptyMap(); // Spieler hat keine Ressourcen
+        }
+
+        Collections.shuffle(weightedList);
+        ResourceType stolen = weightedList.get(0);
+
+        Map<ResourceType, Integer> stolenMap = new HashMap<>();
+        stolenMap.put(stolen, 1);
+
+        spendResources(stolenMap); // Einheitlich mit deinem System
+
+        return stolenMap;
+    }
+    
     public void addBuilding(Building building) {
     	if (building.getType() == Building.Type.SETTLEMENT) {
     		buildSettlement();
