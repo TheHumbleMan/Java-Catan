@@ -5,9 +5,29 @@
 
 <AnchorPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.catan.controller.popUpController"
-            prefWidth="300" prefHeight="200">
+            prefWidth="400" prefHeight="320">
+
     <children>
-        <Label text="Popup geöffnet!" layoutX="20" layoutY="20"/>
-        <Button fx:id="closeButton" text="Schließen" layoutX="20" layoutY="60" onAction="#handleClose"/>
+        <VBox spacing="10" layoutX="20" layoutY="20">
+            <HBox spacing="10">
+                <Label text="Spieler wählen:"/>
+                <ComboBox fx:id="playerComboBox" prefWidth="200"/>
+            </HBox>
+
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="Ich gebe:"/>
+                <ComboBox fx:id="giveResourceComboBox" prefWidth="140"/>
+                <Spinner fx:id="giveAmountSpinner" prefWidth="50"/>
+            </HBox>
+
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="Ich möchte:"/>
+                <ComboBox fx:id="receiveResourceComboBox" prefWidth="140"/>
+                <Spinner fx:id="receiveAmountSpinner" prefWidth="50"/>
+            </HBox>
+
+            <Button text="Handel anbieten" onAction="#handleTradeConfirm" prefWidth="150"/>
+        </VBox>
     </children>
 </AnchorPane>
+
