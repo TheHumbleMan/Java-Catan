@@ -136,9 +136,9 @@ public class AuthenticBoardController {
                     backgroundCircle.setLayoutY(centerY);
                     backgroundCircle.setStroke(Color.BLACK);
                     backgroundCircle.setStrokeWidth(0.5);
-
                     // Text zentrieren
                     numberText.setLayoutX(centerX - textWidth / 2);
+                    // Vertikale Zentrierung anpassen (Baseline-Offset berücksichtigen und manuelle Verschiebung nach obern)
                     numberText.setLayoutY(centerY + numberText.getBaselineOffset() - textHeight / 2 - 9);
                     boardPane.getChildren().add(backgroundCircle);
                     boardPane.getChildren().add(numberText);
@@ -183,7 +183,7 @@ public class AuthenticBoardController {
                 if (building != null) {
                     settlementSpot.setFill(getPlayerColor(building.getOwner()));
                     settlementSpot.setStroke(Color.BLACK);
-                    settlementSpot.setStrokeWidth(2.0);          
+                    settlementSpot.setStrokeWidth(2.0);
 
                  // Hover-Effekte und click button
                     if (canBuildCity && !isInitialSettlementPlaced && game.hasRolledDice()) {
@@ -502,16 +502,6 @@ public class AuthenticBoardController {
      * Stylt ein Terrain-Tile basierend auf seinem Typ.
      */
     private void styleTerrainTile(Polygon hexagon, TerrainTile tile) {
-        /*
-        Color fillColor = switch (tile.getTerrainType()) {
-            case FOREST -> UIComponents.FOREST_COLOR;
-            case HILLS -> UIComponents.HILLS_COLOR;
-            case PASTURE -> UIComponents.PASTURE_COLOR;
-            case FIELDS -> UIComponents.FIELDS_COLOR;
-            case MOUNTAINS -> UIComponents.MOUNTAINS_COLOR;
-            case DESERT -> UIComponents.DESERT_COLOR;
-        };
-        hexagon.setFill(fillColor);*/
         String imagePath = switch (tile.getTerrainType()) {
             case FOREST -> "/images/forestSmall.jpg";
             case HILLS -> "/images/hillsSmall.jpeg";
@@ -526,7 +516,7 @@ public class AuthenticBoardController {
         hexagon.setStrokeWidth(2.0);
         
         // Räuber-Anzeige
-        /*
+        /* Rausgenommen, da jetzt in renderHexagonTiles()
         if (tile.hasRobber()) {
             renderRobberPosition();
         } */
