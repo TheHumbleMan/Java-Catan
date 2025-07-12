@@ -143,9 +143,10 @@ public class MainController implements Initializable {
             // For now, just a placeholder action
             tradeButton.setDisable(true);
             gameLogArea.appendText(game.getCurrentPlayer()+": handelt.\n");
+            playerLogArea.setText(" \n");
             Map<ResourceType, Integer> resources = game.getCurrentPlayer().getResources();
             for (Map.Entry<ResourceType, Integer> entry : resources.entrySet()) {
-                playerLogArea.setText(entry.getKey() + ": " + entry.getValue() + "\n");
+                playerLogArea.appendText(entry.getKey() + ": " + entry.getValue() + "\n");
             }
             System.out.println("Trade action triggered. Implement trade logic here.");
             // You can open a trade dialog or perform other actions as needed
@@ -160,9 +161,10 @@ public class MainController implements Initializable {
             // For now, just a placeholder action
             tradeWithBankButton.setDisable(true);
             gameLogArea.appendText(game.getCurrentPlayer()+": handelt am Hafen.\n");
+            playerLogArea.appendText("   \n");
             Map<ResourceType, Integer> resources = game.getCurrentPlayer().getResources();
             for (Map.Entry<ResourceType, Integer> entry : resources.entrySet()) {
-                playerLogArea.setText(entry.getKey() + ": " + entry.getValue() + "\n");
+                playerLogArea.appendText(entry.getKey() + ": " + entry.getValue() + "\n");
             }
             System.out.println("Trade with bank action triggered. Implement trade logic here.");
             // You can open a trade dialog or perform other actions as needed
