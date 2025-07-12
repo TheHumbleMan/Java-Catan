@@ -23,7 +23,6 @@ import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Tooltip;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
@@ -48,6 +47,7 @@ public class AuthenticBoardController {
     private static final double SETTLEMENT_SIZE = 8.0;
     private static final double ROAD_LENGTH = 20.0;
     private static final double ROAD_WIDTH = 4.0;
+    private static final double ROBBER_SIZE = 70.0; // Größe des Räubers
     
     private final CatanGame game;
     private final AuthenticCatanBoard board;
@@ -73,7 +73,6 @@ public class AuthenticBoardController {
         boardPane.setStyle("-fx-background-color: #87CEFA;"); // Hellblau (SkyBlue)
         System.out.println("robber position: " + board.getRobberPosition());
         renderHexagonTiles();
-        renderRobberPosition();
         renderSettlementSpots();
         renderRoadSpots(game.isBeginning());
         int settlement_count = new HashSet<>(board.getValidVertices().values()).size();
@@ -110,12 +109,13 @@ public class AuthenticBoardController {
                 hexagon.setOnMouseClicked(e -> handleTileClick(finalHexCoord));
                 
                 boardPane.getChildren().add(hexagon);
+                // Render Räuber wenn vorhanden
                 if (tile.hasRobber()) {
-                ImageView robberImage = new ImageView(new Image(getClass().getResourceAsStream("/images/robber.jpg")));
-                robberImage.setFitWidth(30);
-                robberImage.setFitHeight(30);
-                robberImage.setLayoutX(BOARD_CENTER_X + hexCenter.x - 15);
-                robberImage.setLayoutY(BOARD_CENTER_Y + hexCenter.y - 15);
+                ImageView robberImage = new ImageView(new Image(getClass().getResourceAsStream("/images/robber3Small.png")));
+                robberImage.setFitWidth(ROBBER_SIZE);
+                robberImage.setFitHeight(ROBBER_SIZE);
+                robberImage.setLayoutX(BOARD_CENTER_X + hexCenter.x - (ROBBER_SIZE / 2));
+                robberImage.setLayoutY(BOARD_CENTER_Y + hexCenter.y - (ROBBER_SIZE / 2));
                 boardPane.getChildren().add(robberImage);
                 }
                 
@@ -135,9 +135,9 @@ public class AuthenticBoardController {
                     backgroundCircle.setLayoutY(centerY);
                     backgroundCircle.setStroke(Color.BLACK);
                     backgroundCircle.setStrokeWidth(0.5);
-
                     // Text zentrieren
                     numberText.setLayoutX(centerX - textWidth / 2);
+                    // Vertikale Zentrierung anpassen (Baseline-Offset berücksichtigen und manuelle Verschiebung nach obern)
                     numberText.setLayoutY(centerY + numberText.getBaselineOffset() - textHeight / 2 - 9);
                     boardPane.getChildren().add(backgroundCircle);
                     boardPane.getChildren().add(numberText);
@@ -185,7 +185,7 @@ public class AuthenticBoardController {
                 if (building != null) {
                     settlementSpot.setFill(getPlayerColor(building.getOwner()));
                     settlementSpot.setStroke(Color.BLACK);
-                    settlementSpot.setStrokeWidth(2.0);          
+                    settlementSpot.setStrokeWidth(2.0);
 
                  // Hover-Effekte und click button
                     if (canBuildCity && !isInitialSettlementPlaced && game.hasRolledDice()) {
@@ -322,6 +322,14 @@ public class AuthenticBoardController {
             roadSegment.toFront();
         }
     }
+    /*
+     * Rendert die Position des Räubers.
+     * Diese Methode ist veraltet und sollte nicht mehr verwendet werden.
+     * Stattdessen wird der Räuber jetzt direkt in renderHexagonTiles() gerendert
+     * und als ImageView hinzugefügt. (als RobberImage)
+     */
+    /*
+    @Deprecated
     private void renderRobberPosition(){
     	HexCoordinate robberPosition = board.getRobberPosition();
     	RoundedPoint2D realCoords = robberPosition.toPixelCatan(HEX_RADIUS);
@@ -347,7 +355,7 @@ public class AuthenticBoardController {
         boardPane.getChildren().add(robber);
         robber.toFront();
     	
-    }
+    }*/
     
     /**
      * Behandelt Klicks auf Hexagon-Tiles (Räuber-Bewegung).
@@ -498,19 +506,9 @@ public class AuthenticBoardController {
      * Stylt ein Terrain-Tile basierend auf seinem Typ.
      */
     private void styleTerrainTile(Polygon hexagon, TerrainTile tile) {
-        /*
-        Color fillColor = switch (tile.getTerrainType()) {
-            case FOREST -> UIComponents.FOREST_COLOR;
-            case HILLS -> UIComponents.HILLS_COLOR;
-            case PASTURE -> UIComponents.PASTURE_COLOR;
-            case FIELDS -> UIComponents.FIELDS_COLOR;
-            case MOUNTAINS -> UIComponents.MOUNTAINS_COLOR;
-            case DESERT -> UIComponents.DESERT_COLOR;
-        };
-        hexagon.setFill(fillColor);*/
         String imagePath = switch (tile.getTerrainType()) {
             case FOREST -> "/images/forestSmall.jpg";
-            case HILLS -> "/images/hillsSmall.jpg";
+            case HILLS -> "/images/hillsSmall.jpeg";
             case PASTURE -> "/images/pastureSmall.jpg";
             case FIELDS -> "/images/fieldsSmall.jpg";
             case MOUNTAINS -> "/images/mountainsSmall.jpg";
@@ -522,9 +520,10 @@ public class AuthenticBoardController {
         hexagon.setStrokeWidth(2.0);
         
         // Räuber-Anzeige
+        /* Rausgenommen, da jetzt in renderHexagonTiles()
         if (tile.hasRobber()) {
             renderRobberPosition();
-        }
+        } */
         
         // Hover-Effekte
         hexagon.setOnMouseEntered(e -> hexagon.setStroke(Color.YELLOW));
