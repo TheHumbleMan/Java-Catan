@@ -27,6 +27,7 @@ import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tooltip;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
@@ -71,8 +72,11 @@ public class AuthenticBoardController {
      * Rendert das komplette authentische CATAN-Board.
      */
     public void renderBoard() {
+    	if (game.hasMovedRobber() == true) {
         boardPane.getChildren().clear();
+        System.out.println("robber position: " + board.getRobberPosition());
         renderHexagonTiles(game.isBeginning());
+        renderRobberPosition();
         renderSettlementSpots(game.isBeginning());
         renderRoadSpots(game.isBeginning());
         int settlement_count = new HashSet<>(board.getValidVertices().values()).size();
@@ -80,6 +84,10 @@ public class AuthenticBoardController {
         System.out.println("✓ Authentisches CATAN-Board gerendert: " + 
         		settlement_count + " Siedlungsmöglichkeiten, " + 
                          board.getValidVertices().size() + " Siedlungsoptionen");
+    	}
+    	/*else {
+    		moveRobber()
+    	} */
         				
     }
     
@@ -173,6 +181,7 @@ public class AuthenticBoardController {
                     // Städte sind größer
                     if (building.getType() == Building.Type.CITY) {
                         settlementSpot.setRadius(SETTLEMENT_SIZE * 1.5);
+                        settlementSpot.setFill(getPlayerColor(game.getCurrentPlayer()).darker());
                         
                     }
                 }
@@ -287,14 +296,42 @@ public class AuthenticBoardController {
             roadSegment.toFront();
         }
     }
+    private void renderRobberPosition(){
+    	HexCoordinate robberPosition = board.getRobberPosition();
+    	RoundedPoint2D realCoords = robberPosition.toPixelCatan(HEX_RADIUS);
+    	realCoords.setX(realCoords.getX() + BOARD_CENTER_X);
+    	realCoords.setY(realCoords.getY() + BOARD_CENTER_Y);
+    	Polygon robber = new Polygon();
+    	robber.getPoints().addAll(
+    		     0.0, -10.0,   // Spitze oben
+    		    10.0, 10.0,    // unten rechts
+    		   -10.0, 10.0     // unten links
+    		);
+    	robber.setFill(Color.BLACK);
+        robber.setStroke(Color.GOLD);
+        robber.setStrokeWidth(2.0);
+        robber.setLayoutX(realCoords.getX());
+        robber.setLayoutY(realCoords.getY());
+
+        // Optionaler Schatteneffekt
+        DropShadow ds = new DropShadow(6, Color.DARKGRAY);
+        robber.setEffect(ds);
+
+        // Zum Board hinzufügen
+        boardPane.getChildren().add(robber);
+        robber.toFront();
+    	
+    }
     
     /**
      * Behandelt Klicks auf Hexagon-Tiles (Räuber-Bewegung).
      */
     private void handleTileClick(HexCoordinate hexCoord) {
         // Implementiere Räuber-Bewegung
+    	if (game.hasMovedRobber() == false) {
         game.moveRobber(hexCoord);
         renderBoard(); // Re-render nach Änderung
+    	}
     }
     
     /**
@@ -450,8 +487,7 @@ public class AuthenticBoardController {
         
         // Räuber-Anzeige
         if (tile.hasRobber()) {
-            hexagon.setStroke(Color.RED);
-            hexagon.setStrokeWidth(4.0);
+            renderRobberPosition();
         }
         
         // Hover-Effekte

@@ -10,6 +10,9 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+import javafx.scene.control.Alert;
+import javafx.scene.control.ChoiceDialog;
+
 /**
  * Main game class that manages the CATAN game state and rules.
  * Handles turn management, dice rolling, resource production, and victory conditions.
@@ -28,7 +31,7 @@ public class CatanGame {
     private Player winner;
     private int lastDiceRoll;
     private boolean hasRolledDice;
-    private HexCoordinate robberPosition;
+    private boolean hasMovedRobber;
     
     public enum GamePhase {
         INITIAL_PLACEMENT_1,
@@ -51,13 +54,13 @@ public class CatanGame {
         }
         
         // Initialize board
-        this.robberPosition = new HexCoordinate(0, 0); //MUSS MAN NOCH ÄNDERN, STARTET JETZT IMMER IN DER MITTE
         this.board = new AuthenticCatanBoard();
         this.random = new Random();
         this.currentPlayerIndex = 0;
         this.currentPhase = GamePhase.INITIAL_PLACEMENT_1;
         this.gameFinished = false;
         this.hasRolledDice = true;
+        this.hasMovedRobber = true;
         this.lastDiceRoll = 0;
     }
     
@@ -97,6 +100,13 @@ public class CatanGame {
     public void setHasRolledDice(boolean hasRolledDice) {
         this.hasRolledDice = hasRolledDice;
     }
+    public boolean hasMovedRobber() {
+        return hasMovedRobber;
+    }
+
+    public void setHasMovedRobber(boolean hasMovedRobber) {
+        this.hasMovedRobber = hasMovedRobber;
+    }
     
     public int rollDice() {
         if (currentPhase != GamePhase.PLAYING) {
@@ -126,6 +136,8 @@ public class CatanGame {
                 discardRandomCards(player, cardsToDiscard);
             }
         }
+        hasMovedRobber = false;
+        System.out.println("7 GEÜWRFELT (in handleSevenRolled aktuell)");
         
         // Current player must move the robber
         // In a real implementation, this would trigger UI for robber placement
@@ -190,15 +202,19 @@ public class CatanGame {
         		        Map.Entry::getValue
         		    ));
         	Map<HexCoordinate, TerrainTile> tiles = board.getAllTiles();
+        	/*Map<HexCoordinate, TerrainTile> tiles = unfilteredTiles.entrySet().stream()
+        		    .filter(entry -> !entry.getValue().hasRobber()) 
+        		    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)); */
         	for (Building building : playerBuildings.values()) {
         		List<HexCoordinate> neighbourHexes = board.getHexNeighbours(building.getVertexCoordinate());
         		for (HexCoordinate neighbourHex : neighbourHexes) {
+        			if (neighbourHex != board.getRobberPosition()) { //evtl ist board.getRobberPosition nicht nötig wegen tile.hasRobber, aber wollte nicht weiter testen, und es funktioniert
         			TerrainTile tile = tiles.get(neighbourHex);
         			//System.out.println("Checking tile at " + neighbourHex + " with numberToken " + tile.getNumberToken() +
         	                 //  " for roll " + roll);
 
         			TerrainType type = tile.compareTokens(roll);
-        			if (type != null) {
+        			if (type != null && !tile.hasRobber()) {
         			player.setResources(type.getResourceType(), building.getResourceProduction());
         			/*
         			Map<ResourceType, Integer> playerResources = player.getResources();
@@ -207,7 +223,7 @@ public class CatanGame {
         			    System.out.println(" - " + resource + ": " + amount));
         			
         			*/
-
+        			}
         			}
     }
         	}
@@ -563,7 +579,7 @@ public class CatanGame {
      */
     public void moveRobber(HexCoordinate newPosition) {
         // Entferne Räuber von aktueller Position
-        TerrainTile currentTile = board.getHexTile(robberPosition);
+        TerrainTile currentTile = board.getHexTile(board.getRobberPosition());
         if (currentTile != null) {
             currentTile.setRobber(false);
         }
@@ -572,9 +588,62 @@ public class CatanGame {
         TerrainTile newTile = board.getHexTile(newPosition);
         if (newTile != null) {
             newTile.setRobber(true);
-            robberPosition = newPosition;
+            setHasMovedRobber(true);
+            board.setRobberPosition(newPosition);
+            List<Player> adjacentPlayers = determinePlayers(newPosition);
+            System.out.println("es kommt an, size: " + adjacentPlayers.size());
+            Player selectedPlayer = choosePlayer(adjacentPlayers);
+            if (selectedPlayer != null) {
+            stealFromPlayer(selectedPlayer);
+            }
         }
     } 
+    //sorgt für erkennung aller spieler der hexes
+    private List<Player> determinePlayers(HexCoordinate position) {
+    	List<Player> adjacentPlayers = new ArrayList<>();
+    	for (Building building : board.getBuildings().values()) {
+    		VertexCoordinate normalizedVertex = building.getVertexCoordinate();
+    		List<VertexCoordinate> unnormalizedVertices = board.getNormalizedToUnnormalized().get(normalizedVertex);
+    		for (VertexCoordinate vertex : unnormalizedVertices) {
+				if (vertex.getX() == position.getQ() && vertex.getY() == position.getR() && building.getOwner() != getCurrentPlayer()) {
+					adjacentPlayers.add(building.getOwner());
+				}
+			}
+    	}
+    	return adjacentPlayers;
+    	
+    }
+    
+    private Player choosePlayer(List<Player> adjacentPlayers) {
+    	 if (adjacentPlayers == null || adjacentPlayers.isEmpty()) return null;
+
+    	    Optional<Player> result = Optional.empty();
+
+    	    while (result.isEmpty()) {
+    	        ChoiceDialog<Player> dialog = new ChoiceDialog<>(adjacentPlayers.get(0), adjacentPlayers);
+    	        dialog.setTitle("Spieler auswählen");
+    	        dialog.setHeaderText("Wähle einen Spieler aus, von dem du klauen willst:");
+    	        dialog.setContentText("Spieler:");
+
+    	        result = dialog.showAndWait();
+
+    	        if (result.isEmpty()) {
+    	            Alert alert = new Alert(Alert.AlertType.WARNING);
+    	            alert.setTitle("Auswahl erforderlich");
+    	            alert.setHeaderText("Du musst einen Spieler auswählen!");
+    	            alert.setContentText("Bitte wähle einen Spieler aus der Liste.");
+    	            alert.showAndWait();
+    	        }
+    	    }
+
+    	    Player selectedPlayer = result.get();
+    	    System.out.println("Du hast gewählt: " + selectedPlayer.getName());
+    	    return selectedPlayer;
+    	}
+    private void stealFromPlayer(Player selectedPlayer) {
+    	Map<ResourceType, Integer> stolenResources = selectedPlayer.stealRandomResource();
+    	getCurrentPlayer().addResources(stolenResources);
+    }
     
     
 }

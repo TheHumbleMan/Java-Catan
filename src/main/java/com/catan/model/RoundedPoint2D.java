@@ -3,8 +3,8 @@ package com.catan.model;
 import java.util.Objects;
 
 public class RoundedPoint2D {
-    public final double x;
-    public final double y;
+    public double x;
+    public double y;
 
     public RoundedPoint2D(double x, double y) {
         this.x = x;
@@ -35,6 +35,13 @@ public class RoundedPoint2D {
 
     public double getY() {
         return y;
+    }
+    public void setX(double x) {
+        this.x = x;
+    }
+
+    public void setY(double y) {
+        this.y = y;
     }
 }
 
