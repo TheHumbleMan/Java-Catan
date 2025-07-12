@@ -34,6 +34,7 @@ public class CatanGame {
     private int lastDiceRoll;
     private boolean hasRolledDice;
     private boolean hasMovedRobber;
+    private String stolenResourcesLog;
     
     public enum GamePhase {
         INITIAL_PLACEMENT_1,
@@ -72,6 +73,13 @@ public class CatanGame {
     
     public List<Player> getPlayers() {
         return new ArrayList<>(players);
+    }
+    public String getStolenResourcesLog() {
+        return stolenResourcesLog;
+    }
+
+    public void setStolenResourcesLog(String stolenResourcesLog) {
+        this.stolenResourcesLog = stolenResourcesLog;
     }
     
     public AuthenticCatanBoard getBoard() {
@@ -596,7 +604,11 @@ public class CatanGame {
             System.out.println("es kommt an, size: " + adjacentPlayers.size());
             Player selectedPlayer = choosePlayer(adjacentPlayers);
             if (selectedPlayer != null) {
-            stealFromPlayer(selectedPlayer);
+	            Map<ResourceType, Integer>stolenResources = stealFromPlayer(selectedPlayer);
+	            stolenResourcesLog = getSingleStolenResourceAsString(selectedPlayer, stolenResources);            	           
+	            }
+            else {
+            	stolenResourcesLog = (getSingleStolenResourceAsString(selectedPlayer, null));
             }
         }
     } 
@@ -649,9 +661,25 @@ public class CatanGame {
     	    System.out.println("Du hast gewählt: " + selectedPlayer.getName());
     	    return selectedPlayer;
     	}
-    private void stealFromPlayer(Player selectedPlayer) {
+    private Map<ResourceType, Integer> stealFromPlayer(Player selectedPlayer) {
     	Map<ResourceType, Integer> stolenResources = selectedPlayer.stealRandomResource();
     	getCurrentPlayer().addResources(stolenResources);
+    	return stolenResources;
+    }
+    public String getSingleStolenResourceAsString(Player selectedPlayer, Map<ResourceType, Integer> stolenResources) {
+        if (stolenResources == null || stolenResources.isEmpty()) {
+            return getCurrentPlayer().getName() + " hat in dieser Runde keine Ressource gestohlen.";
+        }
+
+        Map.Entry<ResourceType, Integer> entry = stolenResources.entrySet().iterator().next();
+        ResourceType type = entry.getKey();
+        int amount = entry.getValue();
+
+        return String.format("%s hat in dieser Runde von %s %d %s gestohlen",
+        		getCurrentPlayer().getName(),
+        		selectedPlayer.getName(),
+        		amount,
+        		type.getGermanName());
     }
     
     
