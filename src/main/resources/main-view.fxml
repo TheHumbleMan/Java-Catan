@@ -76,13 +76,14 @@
             </VBox>
             <Separator />
             <VBox fx:id="gameControlsBox" spacing="10.0">
-			  <children>
-			    <Button fx:id="rollDiceButton" onAction="#rollDice" text="Würfeln"/>
+              <children>
+                <Button fx:id="rollDiceButton" onAction="#rollDice" text="Würfeln"/>
              <Button fx:id="tradeButton" onAction="#trade" text="Handeln"/>
              <Button fx:id="tradeWithBankButton" onAction="#tradeWithBank" text="Handeln (Bank)"/>
-			    <Button fx:id="endTurnButton" onAction="#endTurn" text="Zug beenden"/>
-			  </children>
-			</VBox>
+             <Button fx:id="buyDevelopmentCardButton" onAction="#buyDevelopmentCard" text="Entwicklungskarte kaufen"/>
+                <Button fx:id="endTurnButton" onAction="#endTurn" text="Zug beenden"/>
+              </children>
+            </VBox>
             <Separator />
             <ScrollPane fitToWidth="true" prefHeight="200.0">
                 <content>
