@@ -161,7 +161,9 @@ public class MainController implements Initializable {
             try {
                FXMLLoader loader = new FXMLLoader(getClass().getResource("/popUp.fxml"));
                 Parent popupRoot = loader.load();
-                System.out.println("Popup geladen: " + popupRoot);
+
+                  popUpController popUpController = loader.getController();
+                  popUpController.setGame(game);  // game an PopUpController übergeben
 
 
                 Stage popupStage = new Stage();
