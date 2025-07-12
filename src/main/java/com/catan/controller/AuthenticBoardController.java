@@ -504,12 +504,12 @@ public class AuthenticBoardController {
         };
         hexagon.setFill(fillColor);*/
         String imagePath = switch (tile.getTerrainType()) {
-            case FOREST -> "/images/forest.jpg";
-            case HILLS -> "/images/hills.jpg";
-            case PASTURE -> "/images/pasture.jpg";
-            case FIELDS -> "/images/fields.jpg";
-            case MOUNTAINS -> "/images/mountains.jpg";
-            case DESERT -> "/images/desert.jpg";
+            case FOREST -> "/images/forestSmall.jpg";
+            case HILLS -> "/images/hillsSmall.jpg";
+            case PASTURE -> "/images/pastureSmall.jpg";
+            case FIELDS -> "/images/fieldsSmall.jpg";
+            case MOUNTAINS -> "/images/mountainsSmall.jpg";
+            case DESERT -> "/images/desertSmall.jpg";
         };
         Image image = new Image(getClass().getResourceAsStream(imagePath));
         hexagon.setFill(new ImagePattern(image));
