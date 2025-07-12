@@ -177,6 +177,9 @@ public class MainController implements Initializable {
             game.endTurn();
             boardController.renderBoard();
             updateGameStatus();
+            if (game.getStolenResourcesLog() != null) {
+            	gameLogArea.appendText(game.getStolenResourcesLog() + "\n");
+            }
             
             // Clear dice roll for new turn
             if (game.getCurrentPhase() == CatanGame.GamePhase.PLAYING) {
