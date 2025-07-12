@@ -304,6 +304,9 @@ public VertexCoordinate getNormalizedVertexCoordinate(int x, int y) {
     public HexCoordinate getRobberPosition() {
         return robberPosition;
     }
+    public void setRobberPosition(HexCoordinate robberPosition) {
+    	this.robberPosition = robberPosition;
+    }
     
     public Set<HexCoordinate> getHexPositions() {
         return hexTiles.keySet();

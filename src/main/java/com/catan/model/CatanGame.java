@@ -10,6 +10,9 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+import javafx.scene.control.Alert;
+import javafx.scene.control.ChoiceDialog;
+
 /**
  * Main game class that manages the CATAN game state and rules.
  * Handles turn management, dice rolling, resource production, and victory conditions.
@@ -28,7 +31,7 @@ public class CatanGame {
     private Player winner;
     private int lastDiceRoll;
     private boolean hasRolledDice;
-    private HexCoordinate robberPosition;
+    private boolean hasMovedRobber;
     
     public enum GamePhase {
         INITIAL_PLACEMENT_1,
@@ -51,7 +54,6 @@ public class CatanGame {
         }
         
         // Initialize board
-        this.robberPosition = new HexCoordinate(0, 0); //MUSS MAN NOCH ÄNDERN, STARTET JETZT IMMER IN DER MITTE
         this.board = new AuthenticCatanBoard();
         this.random = new Random();
         this.currentPlayerIndex = 0;
@@ -97,6 +99,13 @@ public class CatanGame {
     public void setHasRolledDice(boolean hasRolledDice) {
         this.hasRolledDice = hasRolledDice;
     }
+    public boolean hasMovedRobber() {
+        return hasMovedRobber;
+    }
+
+    public void setHasMovedRobber(boolean hasMovedRobber) {
+        this.hasMovedRobber = hasMovedRobber;
+    }
     
     public int rollDice() {
         if (currentPhase != GamePhase.PLAYING) {
@@ -126,6 +135,8 @@ public class CatanGame {
                 discardRandomCards(player, cardsToDiscard);
             }
         }
+        hasMovedRobber = false;
+        System.out.println("7 GEÜWRFELT (in handleSevenRolled aktuell)");
         
         // Current player must move the robber
         // In a real implementation, this would trigger UI for robber placement
@@ -563,7 +574,7 @@ public class CatanGame {
      */
     public void moveRobber(HexCoordinate newPosition) {
         // Entferne Räuber von aktueller Position
-        TerrainTile currentTile = board.getHexTile(robberPosition);
+        TerrainTile currentTile = board.getHexTile(board.getRobberPosition());
         if (currentTile != null) {
             currentTile.setRobber(false);
         }
@@ -572,9 +583,55 @@ public class CatanGame {
         TerrainTile newTile = board.getHexTile(newPosition);
         if (newTile != null) {
             newTile.setRobber(true);
-            robberPosition = newPosition;
+            setHasMovedRobber(true);
+            board.setRobberPosition(newPosition);
+            List<Player> adjacentPlayers = determinePlayers(newPosition);
+            Player selectedPlayer = choosePlayer(adjacentPlayers);
+            if (selectedPlayer != null) {
+            stealFromPlayer(selectedPlayer);
+            }
         }
     } 
+    private List<Player> determinePlayers(HexCoordinate position) {
+    	List<Player> adjacentPlayers = new ArrayList<>();
+    	for (Building building : board.getBuildings().values()) {
+    		if (building.getVertexCoordinate().getX() == position.getQ() && building.getVertexCoordinate().getY() == position.getR()) {
+    			adjacentPlayers.add(building.getOwner());
+    		}
+    	}
+    	return adjacentPlayers;
+    	
+    }
+    
+    private Player choosePlayer(List<Player> adjacentPlayers) {
+    	 if (adjacentPlayers == null || adjacentPlayers.isEmpty()) return null;
+
+    	    Optional<Player> result = Optional.empty();
+
+    	    while (result.isEmpty()) {
+    	        ChoiceDialog<Player> dialog = new ChoiceDialog<>(adjacentPlayers.get(0), adjacentPlayers);
+    	        dialog.setTitle("Spieler auswählen");
+    	        dialog.setHeaderText("Wähle einen Spieler aus, von dem du klauen willst:");
+    	        dialog.setContentText("Spieler:");
+
+    	        result = dialog.showAndWait();
+
+    	        if (result.isEmpty()) {
+    	            Alert alert = new Alert(Alert.AlertType.WARNING);
+    	            alert.setTitle("Auswahl erforderlich");
+    	            alert.setHeaderText("Du musst einen Spieler auswählen!");
+    	            alert.setContentText("Bitte wähle einen Spieler aus der Liste.");
+    	            alert.showAndWait();
+    	        }
+    	    }
+
+    	    Player selectedPlayer = result.get();
+    	    System.out.println("Du hast gewählt: " + selectedPlayer.getName());
+    	    return selectedPlayer;
+    	}
+    private void stealFromPlayer(Player selectedPlayer) {
+    	
+    }
     
     
 }

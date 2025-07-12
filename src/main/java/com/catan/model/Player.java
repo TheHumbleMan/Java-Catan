@@ -212,5 +212,9 @@ public class Player {
     public void setResources(ResourceType type, int multiplicity) {
     	resources.merge(type, multiplicity, Integer::sum);
     }
+    @Override
+    public String toString() {
+        return name;
+    }
 
 }
