@@ -150,7 +150,6 @@ public class MainController implements Initializable {
                     playerLogArea.appendText(entry.getKey() + ": " + entry.getValue() + "\n");
                 }
             }
-            System.out.println("Trade action triggered. Implement trade logic here.");
             // You can open a trade dialog or perform other actions as needed
 
         }
@@ -168,7 +167,6 @@ public class MainController implements Initializable {
                     playerLogArea.appendText(entry.getKey() + ": " + entry.getValue() + "\n");
             }
             }
-            System.out.println("Trade with bank action triggered. Implement trade logic here.");
 
         }
     }
