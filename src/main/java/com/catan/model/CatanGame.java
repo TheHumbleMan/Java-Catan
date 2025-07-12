@@ -105,7 +105,6 @@ public class CatanGame {
         
         int die1 = random.nextInt(6) + 1;
         int die2 = random.nextInt(6) + 1;
-        setHasRolledDice(true);
         lastDiceRoll = die1 + die2;
         
         if (lastDiceRoll == 7) {
@@ -279,7 +278,7 @@ public class CatanGame {
         } else {
         	if (!skipInkrement) {
         	    currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
-        	    setHasRolledDice(false); //für nächste Phase
+        	    
             }
         	}
         	skipInkrement = false;
@@ -423,6 +422,9 @@ public class CatanGame {
     public boolean placeRoad(EdgeCoordinate edge, Player player) {
         if (canPlaceRoad(edge, player)) {
             board.getRoads().put(edge, new Road(player, edge));
+            if (!isBeginning()) {
+            player.removeResource(Player.ROAD_COST);
+            }
             return true;
         }
         return false;

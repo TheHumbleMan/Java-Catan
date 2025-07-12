@@ -109,6 +109,9 @@ public class MainController implements Initializable {
     private void rollDice() {
         if (game != null && game.getCurrentPhase() == CatanGame.GamePhase.PLAYING) {
             int roll = game.rollDice();
+            game.setHasRolledDice(true);
+            endTurnButton.setDisable(false);
+            boardController.renderBoard();
             diceRollLabel.setText("Dice Roll: " + roll);
             game.ingameResourceDistribution(roll);
             updateGameStatus();
@@ -128,7 +131,10 @@ public class MainController implements Initializable {
             if (game.getCurrentPhase() == CatanGame.GamePhase.PLAYING) {
                 diceRollLabel.setText("Dice Roll: -");
                 rollDiceButton.setDisable(false);
+                endTurnButton.setDisable(true);
+                System.out.println("MEIN ENDTURN STATEMENT");
                 game.setHasRolledDice(false); //für nächste Phase
+                boardController.renderBoard();
             }
             
         }

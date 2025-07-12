@@ -5,12 +5,8 @@ import java.util.List;
 /**
  * Represents a road on the CATAN board.
  */
-public class Road {
-    // Cost of building a road in resources
-    public static final java.util.Map<ResourceType, Integer> COST = java.util.Map.of(
-        ResourceType.LUMBER, 1,
-        ResourceType.BRICK, 1
-    );
+public class Road {   
+    
     
     private final Player owner;
     private final EdgeCoordinate edge; // New coordinate system
