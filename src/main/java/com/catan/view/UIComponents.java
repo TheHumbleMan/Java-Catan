@@ -57,6 +57,7 @@ public class UIComponents {
         Polygon hexagon = createHexagon(radius);
         
         // Set color based on terrain type
+        /*
         Color fillColor = switch (tile.getTerrainType()) {
             case FOREST -> FOREST_COLOR;
             case HILLS -> HILLS_COLOR;
@@ -65,8 +66,8 @@ public class UIComponents {
             case MOUNTAINS -> MOUNTAINS_COLOR;
             case DESERT -> DESERT_COLOR;
         };
-        
         hexagon.setFill(fillColor);
+        */
         hexagon.setStroke(Color.BLACK);
         hexagon.setStrokeWidth(2.0);
         
@@ -389,6 +390,7 @@ public class UIComponents {
      */
     public static void styleTerrainTile(Polygon hexagon, TerrainTile tile) {
         // Set color based on terrain type
+        /*
         Color fillColor = switch (tile.getTerrainType()) {
             case FOREST -> FOREST_COLOR;
             case HILLS -> HILLS_COLOR;
@@ -398,7 +400,7 @@ public class UIComponents {
             case DESERT -> DESERT_COLOR;
         };
         
-        hexagon.setFill(fillColor);
+        hexagon.setFill(fillColor);*/
         hexagon.setStroke(Color.BLACK);
         hexagon.setStrokeWidth(2.0);
         
