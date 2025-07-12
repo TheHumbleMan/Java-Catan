@@ -199,18 +199,34 @@ public class CatanGame {
 
         			TerrainType type = tile.compareTokens(roll);
         			if (type != null) {
-        			player.setResources(type.getResourceType(), 1);
+        			player.setResources(type.getResourceType(), building.getResourceProduction());
+        			/*
         			Map<ResourceType, Integer> playerResources = player.getResources();
         			System.out.println("Resources for player " + player.getName() + ":");
         			playerResources.forEach((resource, amount) -> 
         			    System.out.println(" - " + resource + ": " + amount));
         			
-        			
+        			*/
 
         			}
     }
         	}
     	}
+    }
+    
+    public void listPlayersResources() {
+    	for (Player player : getPlayers()) {    	   	
+    	Map<ResourceType, Integer> playerResources = player.getResources();
+		System.out.println("Resources for player " + player.getName() + ":");
+		playerResources.forEach((resource, amount) -> 
+		    System.out.println(" - " + resource + ": " + amount));
+    	}
+    }
+    public void listPlayersVictoryPoints() {
+        for (Player player : getPlayers()) {
+            System.out.println("Victory points for player " + player.getName() + ":");
+            System.out.println(" - " + player.getVictoryPoints());
+        }
     }
     	
     public boolean offerTrade(Player otherPlayer, Map<ResourceType, Integer> give, Map<ResourceType, Integer> receive) {
@@ -388,14 +404,13 @@ public class CatanGame {
      */
     public void placeBuilding(Building.Type type, VertexCoordinate vertex, Player player) {
             board.getBuildings().put(vertex, new Building(type, player, vertex));
+            player.addVictoryPoints(1); //bei beiden Aktionen, da bei city ja bereits siedlung besteht
             if (type == Building.Type.SETTLEMENT && !isBeginning()) {
-            	player.addVictoryPoints(1);
             	player.removeResource(Player.SETTLEMENT_COST);
             }
             else if (type == Building.Type.CITY && !isBeginning()) {
             	player.removeResource(Player.CITY_COST);
             	//da ja bereits durch siedlung einer geaddet wurde
-            	player.addVictoryPoints(1);
             }
 
             

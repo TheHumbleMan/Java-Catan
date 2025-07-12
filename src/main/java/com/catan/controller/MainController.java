@@ -114,6 +114,8 @@ public class MainController implements Initializable {
             boardController.renderBoard();
             diceRollLabel.setText("Dice Roll: " + roll);
             game.ingameResourceDistribution(roll);
+            game.listPlayersResources(); //die beiden nur zum Überblick vor grafischer Impl.
+            game.listPlayersVictoryPoints();
             updateGameStatus();
             rollDiceButton.setDisable(true);
 

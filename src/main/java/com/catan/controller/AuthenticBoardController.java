@@ -18,6 +18,8 @@ import com.catan.model.TerrainTile;
 import com.catan.model.VertexCoordinate;
 import com.catan.view.UIComponents;
 
+import javafx.animation.Animation;
+import javafx.animation.ScaleTransition;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
@@ -33,6 +35,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 
 /**
  * Controller für das authentische CATAN-Board mit exakt 54 Siedlungen und 72 Straßen.
@@ -150,12 +153,27 @@ public class AuthenticBoardController {
                 if (building != null) {
                     settlementSpot.setFill(getPlayerColor(building.getOwner()));
                     settlementSpot.setStroke(Color.BLACK);
-                    settlementSpot.setStrokeWidth(2.0);
-                    settlementSpot.setOnMouseClicked(e -> handleSettlementClick(vertex));
+                    settlementSpot.setStrokeWidth(2.0);          
 
+                 // Hover-Effekte und click button
+                    if (canBuildCity && !isInitialSettlementPlaced && game.hasRolledDice()) {
+                    	startPulseEffect(settlementSpot);
+                    	settlementSpot.setOnMouseClicked(e -> handleSettlementClick(vertex, settlementSpot));
+                    	
+                    	settlementSpot.setOnMouseEntered(e -> {
+                        settlementSpot.setScaleX(1.2);
+                        settlementSpot.setScaleY(1.2);
+                    });
+                    	settlementSpot.setOnMouseExited(e -> {
+                        settlementSpot.setScaleX(1.0);
+                        settlementSpot.setScaleY(1.0);
+                    });
+                    }
+                    
                     // Städte sind größer
                     if (building.getType() == Building.Type.CITY) {
                         settlementSpot.setRadius(SETTLEMENT_SIZE * 1.5);
+                        
                     }
                 }
             }
@@ -302,7 +320,7 @@ public class AuthenticBoardController {
             
         }
     }
-    private void handleSettlementClick(VertexCoordinate vertex) {
+    private void handleSettlementClick(VertexCoordinate vertex, Circle settlementSpot) {
     	Player currentPlayer = game.getCurrentPlayer();
     	//die prints nur zur überprüfung
     	System.out.println("In canPlaceCity, boolean ownsBuilding: " + board.getBuildings().entrySet().stream()
@@ -318,6 +336,7 @@ public class AuthenticBoardController {
         if (game.canPlaceCity(vertex, currentPlayer, game.isBeginning())) {
         	System.out.println("in handleSettlementClick nach canPlaceCity");
             game.placeBuilding(Building.Type.CITY, vertex, currentPlayer);
+            stopPulseEffect(settlementSpot);
             //DIE ZWEI IFS SIND PUR FÜR DIE STARTPHASE!!!
             if (game.isBeginning()) {
             	currentPlayer.setInitialSettlementPlaced(true);
@@ -332,6 +351,29 @@ public class AuthenticBoardController {
             }
             renderBoard(); // Re-render nach Änderung
             
+        }
+    }
+    private void stopPulseEffect(Node node) {
+        if (node.getUserData() instanceof ScaleTransition pulse) {
+            pulse.stop();
+            node.setScaleX(1.0);
+            node.setScaleY(1.0);
+            node.setUserData(null);
+        }
+    }
+    private void startPulseEffect(Circle settlementSpot) {
+    	if (settlementSpot.getUserData() == null) {
+            ScaleTransition pulse = new ScaleTransition(Duration.seconds(0.5), settlementSpot);
+            pulse.setFromX(1.0);
+            pulse.setFromY(1.0);
+            pulse.setToX(1.2);
+            pulse.setToY(1.2);
+            pulse.setAutoReverse(true);
+            pulse.setCycleCount(Animation.INDEFINITE);
+            pulse.play();
+
+            // Merken, dass der Effekt läuft
+            settlementSpot.setUserData(pulse);
         }
     }
     
