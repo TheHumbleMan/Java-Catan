@@ -131,7 +131,7 @@ public class MainController implements Initializable {
             rollDiceButton.setDisable(true);
             tradeButton.setDisable(false);
             tradeWithBankButton.setDisable(false);
-            gameLogArea.appendText(game.getCurrentPlayer()+": hat gewürfelt.\n");
+            gameLogArea.appendText(game.getCurrentPlayer()+": hat "+roll+ " gewürfelt.\n");
 
         }
     }
