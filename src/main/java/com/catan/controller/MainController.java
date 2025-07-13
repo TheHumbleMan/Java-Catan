@@ -219,6 +219,7 @@ public class MainController implements Initializable {
         }
         printPlayerInfo();
         printResources();
+        boardController.renderBoard();
     }
     @FXML
     private void showTradeResponseWindow(TradeOffer offer) {
