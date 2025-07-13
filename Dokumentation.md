@@ -482,7 +482,7 @@ Das Spiel ist so designed, dass es leicht erweitert werden kann:
 
 Dieses Projekt ist eine Implementierung der CATAN-Spielregeln zu Bildungszwecken. **CATAN** ist ein Markenzeichen von Klaus Teuber und Catan GmbH.
 
-### Autor
+### Autoren
 Nele Matti, Tabea Schmidt, Robin von Bardeleben, Christian Hartmann, Robert Koller, Christopher Knape
 TIT24
 
