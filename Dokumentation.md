@@ -100,6 +100,7 @@ public class AuthenticBoardController {
     // Authentische CATAN-Farben und Styling
     // Hover-Effekte und Tooltips
     // Räuber-Bewegung
+    // Click-event handeling
 }
 ```
 
@@ -107,27 +108,12 @@ public class AuthenticBoardController {
 
 ```java
 public class CatanGame {
-    // Standardmäßig authentisches Board
-    // Neue Konstruktor-Überladungen
-    // Support für alle drei Board-Typen
-    // Vollständige Spielregeln-Implementation
+    // sehr wichtige Klasse
+    // verknüpft Klassen wie Player, Building
+    // besitzt wichtige Hauptfunktion wie Prüfung der "Bauerlaubnis" des Spielers
+    // Zuständig für Verteilung der Ressourcen und Bewegung des Räubers
+    // aber auch zuständig für die richtige Hinterlegung der Board aktionen
 }
-```
-
-### 4. UI-Komponenten (UIComponents)
-
-```java
-// Hexagonale Spielfelder
-public static Group createEnhancedHexagonalTile(
-    double radius, String terrainType, int numberToken)
-
-// Gebäudeplätze (Siedlungen/Städte)
-public static Circle createBuildingSpot(
-    double radius, String availability)
-
-// Straßenplätze
-public static Rectangle createRoadSpot(
-    double length, double width, double rotation, String availability)
 ```
 
 ## 🔧 Wichtige Implementierungsdetails
@@ -148,15 +134,13 @@ final double BOARD_CENTER_Y = 350.0;             // Standardzentrum
 
 ```java
 // Ultra-hohe Präzision für Duplikatserkennung
-double precision = 1000.0; // Sub-Pixel-Präzision
-long roundedX = Math.round(vertexX * precision);
-long roundedY = Math.round(vertexY * precision);
-String vertexKey = roundedX + "," + roundedY;
+düber RoundedPoint2D, erkennt Werte +-1 als gleich,
+perfekt für Vermeidung von Vergleichsfehlern
 ```
 
 ### Smart Filtering System
 
-- **Intelligente Filterung**: Nur relevante Positionen werden angezeigt (~10-20 statt 114)
+- **Intelligente Filterung**: Nur relevante Straßen/Siedlungsplätze werden hervorgehoben
 - **Kontextbasierte Anzeige**: Bauplätze basierend auf Spielzustand und aktuellem Spieler
 - **Performance-Optimierung**: ~90% weniger UI-Elemente durch intelligente Filterung
 
@@ -188,21 +172,29 @@ String vertexKey = roundedX + "," + roundedY;
 
 ```java
 // Straßen-Kosten
-public static final Map<ResourceType, Integer> ROAD_COST = Map.of(
+ppublic static final Map<ResourceType, Integer> ROAD_COST = Map.of(
     ResourceType.LUMBER, 1,
     ResourceType.BRICK, 1
 );
 
 // Siedlungs-Kosten
-public static final Map<ResourceType, Integer> SETTLEMENT_COST = Map.of(
+ppublic static final Map<ResourceType, Integer> SETTLEMENT_COST = Map.of(
     ResourceType.LUMBER, 1,
     ResourceType.BRICK, 1,
     ResourceType.WOOL, 1,
     ResourceType.GRAIN, 1
-);
+);
+/ Stadt-Kosten
+
+public static final Map<ResourceType, Integer> CITY_COST =  Map.of(
+
+   ResourceType.ORE, 3
+
+   ResourceType.GRAIN, 1
 ```
 
-## 🧪 Qualitätssicherung & Tests
+## 🧪 Qualitätssicherung & Tests
+
 
 ### Test-Abdeckung
 
