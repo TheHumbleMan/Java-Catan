@@ -71,9 +71,6 @@ public class MainController implements Initializable {
     
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        for (String font : javafx.scene.text.Font.getFamilies()) {
-            System.out.println(font);
-        }
         // Initialize UI components
         // TODO: Add UI styling methods to UIComponents class if needed
 
@@ -82,7 +79,7 @@ public class MainController implements Initializable {
         playerSetupBox.setStyle("-fx-background-color: #87CEFA;");
         rightPanel.setStyle("-fx-background-color: #c4883fff;");
         playerInfoArea.setStyle("-fx-background-color: #deb887;");
-        resourceLine.setStyle("-fx-font-family: 'Segoe UI Emoji', 'Noto Color Emoji', 'Apple Color Emoji'; -fx-font-size: 14px; wrapText=true");
+        resourceLine.setStyle("-fx-font-size: 14px;");
 
 
         // Hide game controls initially
@@ -394,11 +391,11 @@ public class MainController implements Initializable {
     public void printResources() {
         Player currentPlayer = game.getCurrentPlayer();
         StringBuilder sb = new StringBuilder();
-        String lumber = "H:" + String.valueOf(currentPlayer.getResourceCount(ResourceType.LUMBER));
-        String brick  = "  " + "L:" + String.valueOf(currentPlayer.getResourceCount(ResourceType.BRICK));
-        String wool   = "  " + "W:" + String.valueOf(currentPlayer.getResourceCount(ResourceType.WOOL));
-        String grain  = "  " + "G:" + String.valueOf(currentPlayer.getResourceCount(ResourceType.GRAIN));
-        String ore    = "  " + "S:" + String.valueOf(currentPlayer.getResourceCount(ResourceType.ORE));
+        String lumber = "Holz:" + String.valueOf(currentPlayer.getResourceCount(ResourceType.LUMBER));
+        String brick  = "  " + "Lehm:" + String.valueOf(currentPlayer.getResourceCount(ResourceType.BRICK));
+        String wool   = "  " + "Wolle:" + String.valueOf(currentPlayer.getResourceCount(ResourceType.WOOL));
+        String grain  = "  " + "Getreide:" + String.valueOf(currentPlayer.getResourceCount(ResourceType.GRAIN));
+        String ore    = "  " + "Stein:" + String.valueOf(currentPlayer.getResourceCount(ResourceType.ORE));
         sb.append(lumber).append(brick).append(wool).append(grain).append(ore);
         resourceLine.setText(sb.toString());
         System.out.println("Ressourcen aktualisiert: " + sb.toString());
