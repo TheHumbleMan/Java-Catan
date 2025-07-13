@@ -429,8 +429,24 @@ public class CatanGame {
         		return false;
         	}
         }
+      //prüft ob Anbindung zu Straße besteht
+        List<Road> ownedRoads = board.getRoads().values().stream()
+        	    .filter(b -> b.getOwner().equals(player))
+        	    .collect(Collectors.toList());
+        for (Road road : ownedRoads) {
+            List<VertexCoordinate> roadVertices = road.getEdgeCoordinate().getConnectedVertices();
+
+            for (VertexCoordinate roadVertex : roadVertices) {
+                if (roadVertex.equals(vertex) && !isBeginning()) {
+                    return true;
+                }
+            }
+        }
+        if (isBeginning()) {
+        	return true;
+        }
         
-        return true;
+        return false;
     }
     
     //legacy, behalten für den fall der fälle
