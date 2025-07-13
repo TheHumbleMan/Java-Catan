@@ -12,6 +12,7 @@ import com.catan.model.Player;
 import com.catan.model.ResourceType;
 import com.catan.model.TradeOffer;
 
+import javafx.application.HostServices;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -29,7 +30,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-
 
 /**
  * Main controller for the CATAN game UI.
@@ -64,10 +64,14 @@ public class MainController implements Initializable {
     @FXML private ScrollPane scrollPane;
     @FXML private Label resourceLine;
     
+    
     private CatanGame game;
     private AuthenticBoardController boardController;
     private BankTradeController bankTradeController;
     private PlayerTradeController playerTradeController;
+    private HostServices hostServices;
+
+
 
 
     
@@ -91,6 +95,11 @@ public class MainController implements Initializable {
         //sodass am Anfang gefragt wird nach Namen
         playerSetupBox.setVisible(true);
     }
+
+    public void setHostServices(HostServices hostServices) {
+        this.hostServices = hostServices;
+    }
+
 
     @FXML
     private void startGame() {
@@ -411,4 +420,14 @@ public class MainController implements Initializable {
         System.out.println("Spiel wird beendet...");
         System.exit(0); // Anwendung schließen
     }
+
+    @FXML
+    private void handleAboutCatan() {
+        if (hostServices != null) {
+            hostServices.showDocument("https://www.catan.de/sites/default/files/2021-07/695217_catan_basisjubi25_manual_web.pdf"); // oder dein Wunsch-Link
+        } else {
+            System.err.println("HostServices nicht gesetzt!");
+        }
+    }
+
 }
