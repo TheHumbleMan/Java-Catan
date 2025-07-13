@@ -269,8 +269,8 @@ Java-Catan/
 │   │   │           │   ├── TerrainType.java
 │   │   │           │   ├── TradeOffer.java
 │   │   │           │   └── VertexCoordinate.java       # Vertex-Koordinaten
-│   │   │           ├── view/                           # UI-Komponenten
-│   │   │           │   └── UIComponents.java
+│   │   │           └── view/                           # UI-Komponenten
+│   │   │               └── UIComponents.java
 │   │   └── resources/
 │   │       ├── images/
 │   │       │   └── [Spiel-Grafiken]
