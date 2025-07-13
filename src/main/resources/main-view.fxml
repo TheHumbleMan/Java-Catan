@@ -27,7 +27,7 @@
             
             <HBox spacing="20.0" alignment="CENTER_LEFT">
                <children>
-                  <Label fx:id="currentPlayerLabel" text="Current Player: -" style="-fx-font-weight: bold; -fx-font-size: 14px;" />
+                  <Label fx:id="currentPlayerLabel" text="Aktueller Spieler: -" style="-fx-font-weight: bold; -fx-font-size: 14px;" />
                   <Label fx:id="gamePhaseLabel" text="Phase: -" />
                   <Label fx:id="diceRollLabel" text="Letzter Wurf: -" />
                </children>

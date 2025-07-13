@@ -121,6 +121,8 @@ public class MainController implements Initializable {
             
             // Create and initialize the board controller
             boardController = new AuthenticBoardController(game, gamePane);
+            boardController = new AuthenticBoardController(game, gamePane);
+            boardController.setMainController(this); // ← Controllerübergabe
             
             // Render the board
             boardController.renderBoard();
@@ -148,6 +150,7 @@ public class MainController implements Initializable {
             }
         }*/
         printPlayerInfo();
+        printResources();
     }
     
     @FXML
@@ -179,6 +182,7 @@ public class MainController implements Initializable {
                 }
             }*/
             printPlayerInfo();
+            printResources();
 
         }
     }
@@ -227,6 +231,8 @@ public class MainController implements Initializable {
             // offerTrade nach Fenster zum Auswählen der Person und ressourcen
 
         }
+        printPlayerInfo();
+        printResources();
     }
      
     @FXML
@@ -245,6 +251,8 @@ public class MainController implements Initializable {
             }
 
         }
+        printPlayerInfo();
+        printResources();
     }
 
         @FXML
@@ -261,6 +269,8 @@ public class MainController implements Initializable {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        printPlayerInfo();
+        printResources();
     }
 
     
@@ -310,7 +320,7 @@ public class MainController implements Initializable {
         if (game == null) return;
         game.checkVictoryCondition();
         Player currentPlayer = game.getCurrentPlayer();
-        currentPlayerLabel.setText("Current Player: " + currentPlayer.getName() + 
+        currentPlayerLabel.setText("Aktueller Spieler: " + currentPlayer.getName() + 
                                    " (VP: " + currentPlayer.getVictoryPoints() + ")");
         
         String phase = switch (game.getCurrentPhase()) {
@@ -341,16 +351,11 @@ public class MainController implements Initializable {
     }
 
     @FXML
-    private void printPlayerInfo(){
+    public void printPlayerInfo(){
         playerInfoHeader.setText("Spieler-Info: " + game.getCurrentPlayer().getName());
+        /* Druckt die Resourcen ins Spieler-Info-Feld
         playerLogArea.setText("Resourcen:\n"); //Resourcen anzeigen
         Map<ResourceType, Integer> resources = game.getCurrentPlayer().getResources();
-        /*
-        for (Map.Entry<ResourceType, Integer> entry : resources.entrySet()) {
-            if(entry.getKey() != null){
-                playerLogArea.appendText(entry.getKey() + ": " + entry.getValue() + "\n");
-            }
-        }*/
         StringBuilder sb = new StringBuilder();
         List<Map.Entry<ResourceType, Integer>> entries = new ArrayList<>(resources.entrySet());
         for (int i = 0; i < entries.size(); i++) {
@@ -362,25 +367,30 @@ public class MainController implements Initializable {
                 }
             }
         }
-            // Set the text area with the formatted string
+        // Set the text area with the formatted string
         playerLogArea.appendText(sb.toString());
+         */
+        playerLogArea.setText("Hier könnte ihre Werbung stehen:\n");
+        playerLogArea.appendText("Übrige Siedlungen: " + game.getCurrentPlayer().getSettlementCount() + "/5" + "\n");
+        playerLogArea.appendText("Übrige Städte: " + game.getCurrentPlayer().getCityCount() + "/4" + "\n");
+        playerLogArea.appendText("Übrige Straßen: " + game.getCurrentPlayer().getRoadCount()+ "/15");
+
     }
 
     /*
      * Druckt die Resourcen in das Recourcen-Feld
      */
     @FXML
-    private void printResources() {
+    public void printResources() {
         Player currentPlayer = game.getCurrentPlayer();
         StringBuilder sb = new StringBuilder();
-        String lumber = " " + "🌲x" + String.valueOf(currentPlayer.getResourceCount(ResourceType.LUMBER));
-        String brick = " " + "🧱x" + String.valueOf(currentPlayer.getResourceCount(ResourceType.BRICK));
-        String wool = " " + "🐑x" + String.valueOf(currentPlayer.getResourceCount(ResourceType.WOOL));
-        String grain = " " + "🌾x" + String.valueOf(currentPlayer.getResourceCount(ResourceType.GRAIN));
-        String ore = " " + "⛰️x" + String.valueOf(currentPlayer.getResourceCount(ResourceType.ORE));
+        String lumber = "H:" + String.valueOf(currentPlayer.getResourceCount(ResourceType.LUMBER));
+        String brick  = "  " + "L:" + String.valueOf(currentPlayer.getResourceCount(ResourceType.BRICK));
+        String wool   = "  " + "W:" + String.valueOf(currentPlayer.getResourceCount(ResourceType.WOOL));
+        String grain  = "  " + "G:" + String.valueOf(currentPlayer.getResourceCount(ResourceType.GRAIN));
+        String ore    = "  " + "S:" + String.valueOf(currentPlayer.getResourceCount(ResourceType.ORE));
         sb.append(lumber).append(brick).append(wool).append(grain).append(ore);
         resourceLine.setText(sb.toString());
-        resourceLine.setText("🌲x3  🧱x1  🐑x2  🌾x0  ⛰️x4");
         System.out.println("Ressourcen aktualisiert: " + sb.toString());
     }
 

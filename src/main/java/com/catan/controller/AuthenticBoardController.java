@@ -63,6 +63,13 @@ public class AuthenticBoardController {
             throw new IllegalArgumentException("Game muss authentisches CATAN-Board verwenden");
         }
     }
+
+    // Setter für MainController, um auf UI-Elemente zuzugreifen
+    private MainController mainController;
+    public void setMainController(MainController controller) {
+        this.mainController = controller;
+    }
+
     
     /**
      * Rendert das komplette authentische CATAN-Board.
@@ -85,7 +92,8 @@ public class AuthenticBoardController {
     	/*else {
     		moveRobber()
     	} */
-        				
+        mainController.printPlayerInfo(); // Aktualisiert Spielerinfo
+        mainController.printResources(); // Aktualisiert Ressourcenanzeige
     }
 
     /**
