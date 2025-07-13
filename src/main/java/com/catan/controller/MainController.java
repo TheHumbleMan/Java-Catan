@@ -147,6 +147,7 @@ public class MainController implements Initializable {
         }
         printPlayerInfo();
         printResources();
+        gameLogArea.appendText(game.getCurrentPlayer().getName() + ": Beginnt das Spiel.\n");
     }
 
     @FXML
@@ -311,10 +312,12 @@ public class MainController implements Initializable {
     private void endTurn() {
     	if (game != null && game.hasCompletedPlacementForCurrentPhase() && game.hasRolledDice() && game.hasMovedRobber()) { 
     		boolean isBeginning = game.isBeginning(); //wichtig vor endturn abzufragen
+            gameLogArea.appendText(game.getCurrentPlayer().getName() + ": Runde beendet.\n");
             game.endTurn();
             updateGameStatus();
             printPlayerInfo();
             printResources();
+            gameLogArea.appendText(game.getCurrentPlayer().getName() + ": Runde beginnt.\n");
 
             if (game.getStolenResourcesLog() != null) {
             	gameLogArea.appendText(game.getStolenResourcesLog() + "\n");
