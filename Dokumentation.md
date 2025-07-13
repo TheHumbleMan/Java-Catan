@@ -17,7 +17,7 @@ Das Java-CATAN Projekt ist eine vollständige Implementierung des klassischen Br
 ### Koordinatensystem-Implementation
 
 Das Projekt verwendet ein duales Koordinatensystem für maximale Präzision:
-
+Grundsätzlich wurden für nötige Vergleiche gerundete Werte verglichen (RoundedPoint2D)
 #### 1. Hexagonales Koordinatensystem (HexCoordinate)
 
 ```java
@@ -43,29 +43,34 @@ public class VertexCoordinate {
     private final int direction; // 0-5 für 6 Ecken
 }
 
-// Edge-Koordinaten für Straßenplätze  
+// Edge-Koordinaten für Straßenplätze, Definition über 2 VertexCoordinaten für Eindeutigkeit 
 public class EdgeCoordinate {
-    private final HexCoordinate hexCoordinate;
-    private final int direction; // 0-5 für 6 Kanten
+	private final VertexCoordinate vertexA;
+   	private final VertexCoordinate vertexB;
 }
 ```
 
-### Mathematische Grundlagen
+### Mathematische Grundlagen/Konzepte
 
 ```java
 // Hexagonale Gitter-Positionierung
-double hexCenterX = centerX + (hexCoord.getQ() * hexSize * 1.5);
-double hexCenterY = centerY + (hexCoord.getR() * hexSize * Math.sqrt(3)) + 
-                   (hexCoord.getQ() * hexSize * Math.sqrt(3) * 0.5);
+double hexWidth = Math.sqrt(3) * hexSize; // für pointy-top
+        double hexHeight = 2.0 * hexSize;
+        double vertSpacing = 0.75 * hexHeight;
+        double x;
+        double y = r * vertSpacing;
+für die Fälle, dass die Reihe nicht ganz außen oder mittig ist, muss die Verschiebung
+für den Catan-Look beachtet werden
 
 // Vertex-Berechnung (Pointy-top)
-double angle = (Math.PI / 3.0 * i) + (Math.PI / 6.0); // 30° Offset
-double vertexX = hexCenterX + hexSize * Math.cos(angle);
-double vertexY = hexCenterY + hexSize * Math.sin(angle);
+double vertexX = centerX + hexCenter.x + vertexRadius * Math.cos((Math.PI / 2) - (direction * Math.PI / 3.0));
+        double vertexY = centerY + hexCenter.y - vertexRadius * Math.sin((Math.PI / 2) - (direction * Math.PI / 3.0));
+Im Grunde 60% Verschiebung relevant pro direction Einheit (also Kante des Hexagons), Startpunkt egal
 
 // Edge-Zentrum-Berechnung
-double edgeCenterX = (vertex1X + vertex2X) / 2.0;
-double edgeCenterY = (vertex1Y + vertex2Y) / 2.0;
+double edgeCenterX = (vertex1Xpos + vertex2Xpos) / 2.0;
+double edgeCenterY = (vertex1Ypos + vertex2Ypos) / 2.0;
+Konzeptionell wurden vorher mit einer anderen Funktion (toPixel) die Koordinaten berechnet und daraufhin halbiert um den Mittelpunkt zu erhalten, da eine Straße immer über 2 Punkte definiert ist
 ```
 
 ## 🎮 Hauptkomponenten
@@ -77,10 +82,11 @@ Das Herzstück des Projekts - implementiert das originale CATAN-Spielbrett:
 ```java
 public class AuthenticCatanBoard {
     // Exakt 54 Siedlungsplätze (VertexCoordinate)
-    // Exakt 72 Straßenpositionen (EdgeCoordinate)
+    // Exakt 72 Straßenpositionen (EdgeCoordinate) über VertexCoordinate Paar
     // 19 Hexagon-Tiles im originalen CATAN 3-4-5-4-3 Layout
     // Mathematisch korrekte Duplikate-Entfernung
     // Vollständige Spiellogik für Gebäude- und Straßenplatzierung
+    // Koordinaten mapping in verschiedene Richtungen z.b Catan -> "reale"
 }
 ```
 
@@ -90,7 +96,6 @@ Optimierte Rendering-Engine für das authentische Board:
 
 ```java
 public class AuthenticBoardController {
-    // Optimales Rendering mit HEX_SPACING = 95.0
     // Interaktive Siedlungs- und Straßenplatzierung
     // Authentische CATAN-Farben und Styling
     // Hover-Effekte und Tooltips

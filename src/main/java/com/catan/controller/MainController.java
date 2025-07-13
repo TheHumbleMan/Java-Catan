@@ -68,7 +68,6 @@ public class MainController implements Initializable {
     private CatanGame game;
     private AuthenticBoardController boardController;
     private BankTradeController bankTradeController;
-    private PlayerTradeController playerTradeController;
     private HostServices hostServices;
 
 
@@ -131,7 +130,6 @@ public class MainController implements Initializable {
             
             //für banklogik
             bankTradeController = new BankTradeController(game);
-            playerTradeController = new PlayerTradeController(game);
             
             // Create and initialize the board controller
             boardController = new AuthenticBoardController(game, gamePane);
@@ -207,24 +205,6 @@ public class MainController implements Initializable {
     } catch (IOException e) {
         e.printStackTrace();
     }
-
-            /* Löschen?
-            String logMessage = playerTradeController.showTradeDialog();
-            if (logMessage != null) {
-            	gameLogArea.appendText(logMessage + "\n");
-            }
-            boardController.renderBoard();
-
-
-            playerLogArea.setText(" \n");
-            Map<ResourceType, Integer> resources = game.getCurrentPlayer().getResources();
-            for (Map.Entry<ResourceType, Integer> entry : resources.entrySet()) {
-                if(entry.getKey() != null){
-                    playerLogArea.appendText(entry.getKey() + " " + entry.getValue() + "\n");
-                }
-            }
-            // offerTrade nach Fenster zum Auswählen der Person und ressourcen
-*/
         }
         printPlayerInfo();
         printResources();
