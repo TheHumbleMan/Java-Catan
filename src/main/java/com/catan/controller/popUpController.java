@@ -79,31 +79,28 @@ public class popUpController {
     }
 
     @FXML
-    private void handleTradeConfirm() {
-        TradeOffer offer = new TradeOffer(
-            game.getCurrentPlayer(),
-            game.getPlayerByName(playerComboBox.getValue()),
-            giveResourceComboBox.getValue(),
-            giveAmountSpinner.getValue(),
-            receiveResourceComboBox.getValue(),
-            receiveAmountSpinner.getValue()
-        );
+private void handleTradeConfirm() {
+    TradeOffer offer = new TradeOffer(
+        game.getCurrentPlayer(),
+        game.getPlayerByName(playerComboBox.getValue()),
+        giveResourceComboBox.getValue(),
+        giveAmountSpinner.getValue(),
+        receiveResourceComboBox.getValue(),
+        receiveAmountSpinner.getValue()
+    );
 
-        if (onOfferCreated != null) {
-            onOfferCreated.accept(offer);
-        }
+    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+    alert.setTitle("Handelsangebot erstellt");
+    alert.setHeaderText(null);
+    alert.setContentText("Angebot wurde erstellt und weitergeleitet.");
+    alert.showAndWait();  // Warte hier, bis der Nutzer bestätigt
 
-        // Erst Fenster schließen
-        Stage stage = (Stage) playerComboBox.getScene().getWindow();
-        stage.close();
-
-        // Dann eine Informationsbox modal und blockierend anzeigen,
-        // so friert das UI nicht ein, weil das Popup weg ist
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Handelsangebot erstellt");
-        alert.setHeaderText(null);
-        alert.setContentText("Angebot wurde erstellt und weitergeleitet.");
-        alert.showAndWait();
+    if (onOfferCreated != null) {
+        onOfferCreated.accept(offer);
     }
+
+    ((Stage) playerComboBox.getScene().getWindow()).close();
+}
+
 
 }
