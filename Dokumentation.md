@@ -163,7 +163,7 @@ perfekt für Vermeidung von Vergleichsfehlern
 | Ressourcen | ✅ | Ressourcen-Management (Holz, Lehm, Wolle, Getreide, Erz) |
 | Würfel-Mechanik | ✅ | Würfel-Mechanik mit Ressourcen-Produktion |
 | Räuber | ✅ | Räuber-Mechanik bei Würfelwurf 7 |
-| Handel | ✅ | Handel zwischen Spielern |
+| Handel | ✅ | Handel zwischen Spielern und mit Hafen |
 | Siegpunkte | ✅ | Siegpunkt-System |
 | Anfangsplatzierung | ✅ | Anfangsplatzierung von Siedlungen und Straßen |
 | Lokalisierung | ✅ | Deutsche und englische Lokalisierung |
@@ -392,7 +392,7 @@ Das Ziel ist es, als erster Spieler **7 Siegpunkte** zu erreichen durch:
 
 1. **Würfeln**: Aktiver Spieler würfelt zwei Würfel
 2. **Ressourcen-Produktion**: Alle Spieler erhalten Ressourcen von Feldern mit der gewürfelten Zahl
-3. **Handeln**: Spieler können Ressourcen tauschen
+3. **Handeln**: Spieler können Ressourcen untereinander oder mit Hafen mit 4:1 tauschen 
 4. **Bauen**: Spieler kann Siedlungen, Städte oder Straßen bauen
 5. **Zug beenden**: Nächster Spieler ist dran
 
