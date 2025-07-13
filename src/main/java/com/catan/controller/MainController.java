@@ -269,7 +269,7 @@ public class MainController implements Initializable {
     @FXML
     private void tradeWithBank() {
         if (game != null && game.getCurrentPhase() == CatanGame.GamePhase.PLAYING && game.hasRolledDice() && game.hasMovedRobber()) {
-            gameLogArea.appendText(game.getCurrentPlayer()+" handelt mit der Bank.\n");
+            gameLogArea.appendText(game.getCurrentPlayer()+" handelt mit dem Hafen.\n");
             
             // Bank-Handel-Dialog anzeigen
             String logMessage = bankTradeController.showTradeDialog();
