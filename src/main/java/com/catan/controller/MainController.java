@@ -424,8 +424,8 @@ public class MainController implements Initializable {
     @FXML
     private void handleAboutCatan() {
         if (hostServices != null) {
-            hostServices.showDocument("https://www.catan.de/sites/default/files/2021-07/695217_catan_basisjubi25_manual_web.pdf"); // oder dein Wunsch-Link
-        } else {
+            //hostServices.showDocument("https://www.catan.de/catan-verstehen/spielregeln");
+            hostServices.showDocument("https://www.catan.de/sites/default/files/2025-03/4002051684655_CAT_NE_Basis34_Manual_DE_web.pdf");
             System.err.println("HostServices nicht gesetzt!");
         }
     }
