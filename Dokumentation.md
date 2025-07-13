@@ -417,7 +417,6 @@ Das Ziel ist es, als erster Spieler **7 Siegpunkte** zu erreichen durch:
 1. **Siedlungen bauen** (1 Siegpunkt)
 2. **Städte bauen** (2 Siegpunkte)
 3. **Längste Handelsstraße** (2 Siegpunkte)
-4. **Größte Rittermacht** (2 Siegpunkte)
 
 ### Spielablauf
 
