@@ -251,26 +251,21 @@ Java-Catan/
 │   │   │           │   ├── PlayerTradeController.java  # Handel zwischen Spielern
 │   │   │           │   ├── PopUpController.java        # Pop-up Dialog Controller
 │   │   │           │   └── TradeResponseController.java # Handels-Antwort Controller
-│   │   │           ├── demo/                           # Test- und Demo-Tools
-│   │   │           │   ├── AuthenticBoardDemo.java     # Board-System Demonstration
-│   │   │           │   └── DeduplicationTest.java      # Duplikat-Eliminierung Test
-│   │   │           ├── model/                          # Spiel-Logik
-│   │   │           │   ├── AuthenticCatanBoard.java    # Authentisches CATAN-Board
-│   │   │           │   ├── Building.java
-│   │   │           │   ├── CatanGame.java
-│   │   │           │   ├── EdgeCoordinate.java         # Kanten-Koordinaten
-│   │   │           │   ├── HexCoordinate.java          # Hexagon-Koordinaten
-│   │   │           │   ├── Player.java
-│   │   │           │   ├── PlayerColor.java
-│   │   │           │   ├── ResourceType.java
-│   │   │           │   ├── Road.java
-│   │   │           │   ├── RoundedPoint2D.java
-│   │   │           │   ├── TerrainTile.java
-│   │   │           │   ├── TerrainType.java
-│   │   │           │   ├── TradeOffer.java
-│   │   │           │   └── VertexCoordinate.java       # Vertex-Koordinaten
-│   │   │           └── view/                           # UI-Komponenten
-│   │   │               └── UIComponents.java
+│   │   │           └── model/                          # Spiel-Logik
+│   │   │               ├── AuthenticCatanBoard.java    # Authentisches CATAN-Board
+│   │   │               ├── Building.java
+│   │   │               ├── CatanGame.java
+│   │   │               ├── EdgeCoordinate.java         # Kanten-Koordinaten
+│   │   │               ├── HexCoordinate.java          # Hexagon-Koordinaten
+│   │   │               ├── Player.java
+│   │   │               ├── PlayerColor.java
+│   │   │               ├── ResourceType.java
+│   │   │               ├── Road.java
+│   │   │               ├── RoundedPoint2D.java
+│   │   │               ├── TerrainTile.java
+│   │   │               ├── TerrainType.java
+│   │   │               ├── TradeOffer.java
+│   │   │               └── VertexCoordinate.java       # Vertex-Koordinaten
 │   │   └── resources/
 │   │       ├── images/
 │   │       │   └── [Spiel-Grafiken]
@@ -453,13 +448,6 @@ Dieses Projekt ist eine Implementierung der CATAN-Spielregeln zu Bildungszwecken
 
 ### Autoren
 Nele Matti, Tabea Schmidt, Robin von Bardeleben, Christian Hartmann, Robert Koller, Christopher Knape
+
 TIT24
 
-### Technische Credits
-- **Java JDK 17+**: Programmiersprache und Runtime
-- **JavaFX**: Grafische Benutzeroberfläche
-- **Maven**: Build-Management und Abhängigkeiten
-- **JUnit**: Unit-Testing Framework
-- **JavaFX**: Grafische Benutzeroberfläche
-- **Maven**: Build-Management und Abhängigkeiten
-- **JUnit**: Unit-Testing Framework
