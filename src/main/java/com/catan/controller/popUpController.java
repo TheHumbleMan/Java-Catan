@@ -92,17 +92,18 @@ public class popUpController {
             onOfferCreated.accept(offer);
         }
 
-        // Erst Fenster schließen
-        Stage stage = (Stage) playerComboBox.getScene().getWindow();
-        stage.close();
+       Stage currentStage = (Stage) playerComboBox.getScene().getWindow();
 
-        // Dann eine Informationsbox modal und blockierend anzeigen,
-        // so friert das UI nicht ein, weil das Popup weg ist
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Handelsangebot erstellt");
         alert.setHeaderText(null);
         alert.setContentText("Angebot wurde erstellt und weitergeleitet.");
         alert.showAndWait();
+
+      currentStage.close();
+
+        // Optional: Fenster schließen
+        currentStage.close();
     }
 
 }
