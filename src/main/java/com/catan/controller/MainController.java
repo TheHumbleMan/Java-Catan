@@ -360,7 +360,12 @@ public class MainController implements Initializable {
         playerInfoHeader.setText("Spieler-Info: " + game.getCurrentPlayer().getName());
         playerLogArea.setText("Übrige Siedlungen: " + game.getCurrentPlayer().getSettlementCount() + "/5" + "\n");
         playerLogArea.appendText("Übrige Städte: " + game.getCurrentPlayer().getCityCount() + "/4" + "\n");
-        playerLogArea.appendText("Übrige Straßen: " + game.getCurrentPlayer().getRoadCount()+ "/15");
+        playerLogArea.appendText("Übrige Straßen: " + game.getCurrentPlayer().getRoadCount()+ "/15" + "\n");
+        playerLogArea.appendText("\n");
+        playerLogArea.appendText("Kosten: \n");
+        playerLogArea.appendText("-Straße: 1xHolz, 1xLehm\n");
+        playerLogArea.appendText("-Siedlung: 1xHolz, 1xLehm, 1xGetreide, 1xWolle\n");
+        playerLogArea.appendText("-Stadt: 3xErz, 2xGetreide");
 
     }
 
