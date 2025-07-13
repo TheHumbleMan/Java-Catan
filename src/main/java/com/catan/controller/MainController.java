@@ -10,6 +10,7 @@ import java.util.ResourceBundle;
 import com.catan.model.CatanGame;
 import com.catan.model.Player;
 import com.catan.model.ResourceType;
+import com.catan.model.TradeOffer;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -197,30 +198,25 @@ public class MainController implements Initializable {
             tradeButton.setDisable(true);
             gameLogArea.appendText(game.getCurrentPlayer()+" handelt.\n");
             // Open a popup for trading
-            try {
-               FXMLLoader loader = new FXMLLoader(getClass().getResource("/popUp.fxml"));
-                Parent popupRoot = loader.load();
+             try {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/popUp.fxml"));
+        Parent root = loader.load();
 
-                  popUpController popUpController = loader.getController();
-                  popUpController.setGame(game);  // game an PopUpController übergeben
+        popUpController controller = loader.getController();
+        controller.setGame(game);
 
+        controller.setOnOfferCreated(this::showTradeResponseWindow);
 
-                Stage popupStage = new Stage();
-                popupStage.setTitle("Handelsfenster");
-                popupStage.initModality(Modality.APPLICATION_MODAL);
-                popupStage.setScene(new Scene(popupRoot));
-                popupStage.setWidth(350);
-                popupStage.setHeight(200);
-                popupStage.centerOnScreen();
-                //popupStage.showAndWait();
-                popupStage.show(); // statt showAndWait();
+        Stage popupStage = new Stage();
+        popupStage.setTitle("Handel anbieten");
+        popupStage.setScene(new Scene(root));
+        popupStage.initModality(Modality.APPLICATION_MODAL);
+        popupStage.showAndWait();
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
 
-            //} catch (IOException e) {
-              //  e.printStackTrace();
-            } catch (IOException e) {
-                System.err.println("Fehler beim Laden des FXML:");
-                e.printStackTrace();
-            }
+            
 
 
             playerLogArea.setText(" \n");
@@ -236,6 +232,25 @@ public class MainController implements Initializable {
         printPlayerInfo();
         printResources();
     }
+    @FXML
+    private void showTradeResponseWindow(TradeOffer offer) {
+    try {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/tradeResponse.fxml"));
+        Parent root = loader.load();
+
+        TradeResponseController ctrl = loader.getController();
+        ctrl.setTradeOffer(offer); // Angebot übergeben
+
+        Stage popup = new Stage();
+        popup.setScene(new Scene(root));
+        popup.setTitle("Antwort auf Handel von " + offer.getFromPlayer().getName());
+        popup.initModality(Modality.APPLICATION_MODAL);
+        popup.showAndWait();
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+}
+
      
     @FXML
     private void tradeWithBank() {

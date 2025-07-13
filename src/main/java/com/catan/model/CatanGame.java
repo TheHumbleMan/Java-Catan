@@ -74,6 +74,12 @@ public class CatanGame {
     public List<Player> getPlayers() {
         return new ArrayList<>(players);
     }
+    public Player getPlayerByName(String name) {
+        return players.stream()
+            .filter(p -> p.getName().equals(name))
+            .findFirst()
+            .orElseThrow(() -> new IllegalArgumentException("Kein Spieler mit Name: " + name));
+    }
     public String getStolenResourcesLog() {
         return stolenResourcesLog;
     }
