@@ -49,6 +49,7 @@ public class MainController implements Initializable {
     @FXML private Button rollDiceButton;
     @FXML private Button tradeButton;
     @FXML private Button tradeWithBankButton;
+    @FXML private Button buyDevelopmentCardButton;
     @FXML private Button endTurnButton;
     @FXML private VBox gameControlsBox;
     @FXML private TextArea gameLogArea;
@@ -174,6 +175,7 @@ public class MainController implements Initializable {
             rollDiceButton.setDisable(true);
             tradeButton.setDisable(false);
             tradeWithBankButton.setDisable(false);
+            buyDevelopmentCardButton.setDisable(false);
             gameLogArea.appendText(game.getCurrentPlayer()+" hat "+roll+ " gewürfelt.\n");
 
             /*            // Update player info header and log area
@@ -260,6 +262,28 @@ public class MainController implements Initializable {
         printResources();
     }
 
+
+    @FXML
+    private void buyDevelopmentCard() {
+        if (game != null && game.getCurrentPhase() == CatanGame.GamePhase.PLAYING && game.hasRolledDice() && game.hasMovedRobber() ) {
+            buyDevelopmentCardButton.setDisable(true);
+            gameLogArea.appendText(game.getCurrentPlayer().getName() + " möchte eine Entwicklungskarte kaufen.\n");
+            if (game.getCurrentPlayer().canBuyDevelopmentCard()) {                
+                gameLogArea.appendText(game.getCurrentPlayer().getName() + " hat eine Entwicklungskarte gekauft.\n");
+                playerLogArea.setText("   \n");
+                Map<ResourceType, Integer> resources = game.getCurrentPlayer().getResources();
+                for (Map.Entry<ResourceType, Integer> entry : resources.entrySet()) {
+                    if(entry.getKey() != null){
+                        playerLogArea.appendText(entry.getKey() + ": " + entry.getValue() + "\n");
+                    }
+                }
+                
+            } else {
+                gameLogArea.appendText(game.getCurrentPlayer().getName() + " kann keine Entwicklungskarte kaufen.\n");
+            }
+        }
+    }
+
     
     @FXML
     private void endTurn() {    	
@@ -291,6 +315,7 @@ public class MainController implements Initializable {
                 rollDiceButton.setDisable(false);
                 tradeWithBankButton.setDisable(true);
                 tradeButton.setDisable(true);
+                buyDevelopmentCardButton.setDisable(true);
                 endTurnButton.setDisable(true);
                 System.out.println("MEIN ENDTURN STATEMENT");
                 game.setHasRolledDice(false); //für nächste Phase
@@ -333,6 +358,7 @@ public class MainController implements Initializable {
             rollDiceButton.setDisable(game.getCurrentPhase() != CatanGame.GamePhase.PLAYING);
             tradeButton.setDisable(game.getCurrentPhase() != CatanGame.GamePhase.PLAYING);
             tradeWithBankButton.setDisable(game.getCurrentPhase() != CatanGame.GamePhase.PLAYING);
+            buyDevelopmentCardButton.setDisable(game.getCurrentPhase() != CatanGame.GamePhase.PLAYING);
             endTurnButton.setDisable(false);
         }
     }

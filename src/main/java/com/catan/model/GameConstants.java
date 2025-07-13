@@ -1,6 +1,10 @@
 package com.catan.model;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Utility class for managing game constants and helper methods.
@@ -28,6 +32,14 @@ public class GameConstants {
     
     // Dice probabilities (for AI or statistical analysis)
     private static final Map<Integer, Integer> DICE_PROBABILITY_DOTS = createDiceProbabilityMap();
+    
+    // Entwicklungskarten-Konstanten
+    public static final int INITIAL_KNIGHT_CARDS = 14;
+    public static final int INITIAL_VICTORY_POINT_CARDS = 5;
+    public static final int INITIAL_ROAD_BUILDING_CARDS = 2;
+    public static final int INITIAL_YEAR_OF_PLENTY_CARDS = 2;
+    public static final int INITIAL_MONOPOLY_CARDS = 2;
+    public static final int TOTAL_DEVELOPMENT_CARDS = 25;
     
     /**
      * Get the probability dots (number of ways to roll) for a given dice sum.
