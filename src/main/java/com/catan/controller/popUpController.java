@@ -38,8 +38,10 @@ public class popUpController {
 
     private void initializeDropdowns() {
         List<String> players = game.getPlayers().stream()
-            .map(Player::getName)
-            .toList();
+        .map(Player::getName)
+        .filter(name -> !name.equals(game.getCurrentPlayer().getName()))  // den aktuellen Spieler rausfiltern
+        .toList();
+
 
         List<String> resources = Arrays.stream(ResourceType.values())
             .map(Enum::name)
