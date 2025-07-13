@@ -72,7 +72,6 @@ public class MainController implements Initializable {
     private CatanGame game;
     private AuthenticBoardController boardController;
     private BankTradeController bankTradeController;
-    private PlayerTradeController playerTradeController;
     private HostServices hostServices; // Für das Öffnen von externen Links
 
 
