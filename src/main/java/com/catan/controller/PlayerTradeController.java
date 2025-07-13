@@ -1,15 +1,22 @@
 package com.catan.controller;
 
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import javafx.stage.*;
-import javafx.util.StringConverter;
-
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import com.catan.model.CatanGame;
 import com.catan.model.Player;
 import com.catan.model.ResourceType;
+
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
+import javafx.scene.layout.GridPane;
+import javafx.stage.Modality;
+import javafx.stage.StageStyle;
+import javafx.util.StringConverter;
 
 public class PlayerTradeController {
 	private final CatanGame game;
@@ -55,7 +62,7 @@ public class PlayerTradeController {
         playerChoiceBox.setConverter(playerConverter);
         
         // ResourceTypes (Enums)
-        List<ResourceType> resourceTypes = List.of(ResourceType.values());        
+        List<ResourceType> resourceTypes = List.of(ResourceType.values());
 
         // ChoiceBoxes für ResourceType
         ChoiceBox<ResourceType> giveBox = new ChoiceBox<>();
