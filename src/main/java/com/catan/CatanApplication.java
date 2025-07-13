@@ -14,7 +14,7 @@ import javafx.stage.Stage;
 public class CatanApplication extends Application {
     
     private static final String TITLE = "CATAN - Das Spiel";
-    private static final int WINDOW_WIDTH = 800; //1200 davor
+    private static final int WINDOW_WIDTH = 950; //1200 davor
     private static final int WINDOW_HEIGHT = 600; // 800 davor
     
     @Override
