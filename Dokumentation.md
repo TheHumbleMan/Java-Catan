@@ -353,9 +353,8 @@ Java-Catan/
 - **Hover-Effekte**: Responsive Benutzeroberfläche mit Tooltips
 
 #### Farbkodierung:
-- 🟢 **Grün**: Verfügbare Bauplätze
-- 🔴 **Rot**: Nicht verfügbare Bauplätze
-- 🟤 **Braun**: Bereits bebaute Plätze
+- Verfügbare Bauplätze werden grün (🟢) angezeigt
+-  Von Spielern gebaute Elemente werden blau, rot, orange oder weiß eingefärbt (🔵🔴🟠⚪)
 
 ## 🔄 Entwicklungsgeschichte
 
