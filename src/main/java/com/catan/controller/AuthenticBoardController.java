@@ -34,7 +34,16 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 /**
- * Controller für das authentische CATAN-Board mit exakt 54 Siedlungen und 72 Straßen.
+ * Controller für das authentische CATAN-Board.
+ * <p>
+ * Verantwortlich für das Rendern aller Spielfeldelemente wie Hexfelder, Siedlungen, Straßen, Räuber und Spieleranzeige.
+ * Unterstützt Interaktionen wie den Bau von Gebäuden, das Platzieren von Straßen und die Bewegung des Räubers.
+ * </p>
+ * <p>
+ * Voraussetzungen: Das übergebene {@link CatanGame} muss ein {@link AuthenticCatanBoard} enthalten.
+ * </p>
+ * 
+ * @author [Dein Name]
  */
 public class AuthenticBoardController {
     
@@ -134,8 +143,18 @@ public class AuthenticBoardController {
                 // Klick-Handler für Räuber-Bewegung
                 final HexCoordinate finalHexCoord = hexCoord;
                 hexagon.setOnMouseClicked(e -> handleTileClick(finalHexCoord));
+                
                 boardPane.getChildren().add(hexagon);
-
+                // Render Räuber wenn vorhanden
+                if (tile.hasRobber()) {
+                ImageView robberImage = new ImageView(new Image(getClass().getResourceAsStream("/images/robber3Small.png")));
+                robberImage.setFitWidth(ROBBER_SIZE);
+                robberImage.setFitHeight(ROBBER_SIZE);
+                robberImage.setLayoutX(BOARD_CENTER_X + hexCenter.x - (ROBBER_SIZE / 2));
+                robberImage.setLayoutY(BOARD_CENTER_Y + hexCenter.y - (ROBBER_SIZE / 2));
+                boardPane.getChildren().add(robberImage);
+                }
+                
                 // Nummern-Token für Nicht-Wüsten-Tiles
                 if (tile.getNumberToken() > 0) {
                     Text numberText = UIComponents.createNumberToken(tile.getNumberToken());
@@ -159,17 +178,6 @@ public class AuthenticBoardController {
                     boardPane.getChildren().add(backgroundCircle);
                     boardPane.getChildren().add(numberText);
                 }
-
-                // Render Räuber wenn vorhanden
-                if (tile.hasRobber()) {
-                ImageView robberImage = new ImageView(new Image(getClass().getResourceAsStream("/images/robber3Small.png")));
-                robberImage.setFitWidth(ROBBER_SIZE);
-                robberImage.setFitHeight(ROBBER_SIZE);
-                robberImage.setLayoutX(BOARD_CENTER_X + hexCenter.x - (ROBBER_SIZE / 2));
-                robberImage.setLayoutY(BOARD_CENTER_Y + hexCenter.y - (ROBBER_SIZE / 2));
-                boardPane.getChildren().add(robberImage);
-                }
-                
             }
         }
     }

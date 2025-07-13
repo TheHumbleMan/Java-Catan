@@ -44,8 +44,8 @@ public class popUpController {
 
 
         List<String> resources = Arrays.stream(ResourceType.values())
-            .map(Enum::name)
-            .toList();
+                .map(Enum::name)
+                .toList();
 
         playerComboBox.getItems().addAll(players);
         giveResourceComboBox.getItems().addAll(resources);

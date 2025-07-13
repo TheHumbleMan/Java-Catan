@@ -152,9 +152,6 @@ public class CatanGame {
         return yearOfPlentyCardsRemaining;
     }
     
-    public int getMonopolyCardsRemaining() {
-        return monopolyCardsRemaining;
-    }
 
     private void initializeDevelopmentCards() {
         this.knightCardsRemaining = 14;          // 14 Ritterkarten
