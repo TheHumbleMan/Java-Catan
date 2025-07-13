@@ -34,6 +34,11 @@ public class CatanGame {
     private boolean hasRolledDice;
     private boolean hasMovedRobber;
     private String stolenResourcesLog;
+    private int knightCardsRemaining;
+    private int victoryPointCardsRemaining;
+    private int roadBuildingCardsRemaining;
+    private int yearOfPlentyCardsRemaining;
+    private int monopolyCardsRemaining;
     
     public enum GamePhase {
         INITIAL_PLACEMENT_1,
@@ -65,6 +70,7 @@ public class CatanGame {
         this.hasRolledDice = true;
         this.hasMovedRobber = true;
         this.lastDiceRoll = 0;
+        this.initializeDevelopmentCards();
     }
     
     public Player getCurrentPlayer() {
@@ -123,7 +129,34 @@ public class CatanGame {
     public void setHasMovedRobber(boolean hasMovedRobber) {
         this.hasMovedRobber = hasMovedRobber;
     }
+    public int getKnightCardsRemaining() {
+        return knightCardsRemaining;
+    }
     
+    public int getVictoryPointCardsRemaining() {
+        return victoryPointCardsRemaining;
+    }
+    
+    public int getRoadBuildingCardsRemaining() {
+        return roadBuildingCardsRemaining;
+    }
+    
+    public int getYearOfPlentyCardsRemaining() {
+        return yearOfPlentyCardsRemaining;
+    }
+    
+    public int getMonopolyCardsRemaining() {
+        return monopolyCardsRemaining;
+    }
+
+    private void initializeDevelopmentCards() {
+        this.knightCardsRemaining = 14;          // 14 Ritterkarten
+        this.victoryPointCardsRemaining = 5;     // 5 Siegpunktkarten
+        this.roadBuildingCardsRemaining = 2;     // 2 Straßenbau-Karten
+        this.yearOfPlentyCardsRemaining = 2;     // 2 Erfindung-Karten
+        this.monopolyCardsRemaining = 2;         // 2 Monopol-Karten
+    }
+
     public int rollDice() {
         if (currentPhase != GamePhase.PLAYING) {
             return 0;
@@ -741,5 +774,14 @@ public class CatanGame {
     	}
     }
     
+    public int getTotalDevelopmentCardsRemaining() {
+        return knightCardsRemaining + victoryPointCardsRemaining + 
+               roadBuildingCardsRemaining + yearOfPlentyCardsRemaining + 
+               monopolyCardsRemaining;
+    }
+    
+    public boolean hasDevelopmentCardsRemaining() {
+        return getTotalDevelopmentCardsRemaining() > 0;
+    }
     
 }
