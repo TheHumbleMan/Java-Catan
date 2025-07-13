@@ -413,7 +413,7 @@ Java-Catan/
 
 ### Ziel des Spiels
 
-Das Ziel ist es, als erster Spieler **10 Siegpunkte** zu erreichen durch:
+Das Ziel ist es, als erster Spieler **7 Siegpunkte** zu erreichen durch:
 
 1. **Siedlungen bauen** (1 Siegpunkt)
 2. **Städte bauen** (2 Siegpunkte)
@@ -497,5 +497,5 @@ TIT24
 
 ## Status: ✅ VOLLSTÄNDIG IMPLEMENTIERT UND OPTIMIERT
 
-**Letztes Update**: 13. Juni 2025  
+**Letztes Update**: 13. Juli 2025  
 **Alle Anforderungen erfüllt**: Authentisches hexagonales CATAN-Board mit optimaler Benutzerfreundlichkeit und Performance
