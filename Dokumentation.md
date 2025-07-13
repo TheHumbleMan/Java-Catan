@@ -438,7 +438,7 @@ Das Ziel ist es, als erster Spieler **10 Siegpunkte** zu erreichen durch:
 
 Das Spiel ist so designed, dass es leicht erweitert werden kann:
 
-- **Entwicklungskarten hinzufügen**: Ritter, Monopol, Erfindung (bereits begonnen, konnte aus Zeitgründen nicht mehr vollständig umgesetzt werden)
+- **Entwicklungskarten hinzufügen**: Ritter, Monopol, Erfindung, Straßenbau, Siegpunkt (bereits begonnen, konnte aus Zeitgründen nicht mehr vollständig umgesetzt werden)
 - **KI-Spieler implementieren**: Verschiedene Schwierigkeitsgrade
 - **Netzwerk-Multiplayer**: Online-Spiel zwischen entfernten Spielern
 - **Zusätzliche Spielvarianten**: Seefahrer-Erweiterung, Städte & Ritter
