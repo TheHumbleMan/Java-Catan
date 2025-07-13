@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Represents a road on the CATAN board.
  */
-public class Road {   
+public class Road {
     
     
     private final Player owner;
@@ -33,7 +33,7 @@ public class Road {
     
     public String toString() {
         List<VertexCoordinate> vertices = edge.getConnectedVertices();
-        return String.format("Road{owner=%s, from=%s, to=%s}", 
+        return String.format("Road{owner=%s, from=%s, to=%s}",
                              owner.getName(), vertices.get(0), vertices.get(1));
     }
 }
