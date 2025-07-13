@@ -423,8 +423,7 @@ public class MainController implements Initializable {
         // Set the text area with the formatted string
         playerLogArea.appendText(sb.toString());
          */
-        playerLogArea.setText("Hier könnte ihre Werbung stehen:\n");
-        playerLogArea.appendText("Übrige Siedlungen: " + game.getCurrentPlayer().getSettlementCount() + "/5" + "\n");
+        playerLogArea.setText("Übrige Siedlungen: " + game.getCurrentPlayer().getSettlementCount() + "/5" + "\n");
         playerLogArea.appendText("Übrige Städte: " + game.getCurrentPlayer().getCityCount() + "/4" + "\n");
         playerLogArea.appendText("Übrige Straßen: " + game.getCurrentPlayer().getRoadCount()+ "/15");
 
