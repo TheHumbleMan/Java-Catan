@@ -1,15 +1,17 @@
 package com.catan.controller;
 
-import javafx.fxml.FXML;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.SpinnerValueFactory;
-import javafx.scene.control.Alert;
-
+import java.util.Arrays;
 import java.util.List;
 
 import com.catan.model.CatanGame;
 import com.catan.model.Player;
+import com.catan.model.ResourceType;
+
+import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
 
 
 
@@ -29,14 +31,24 @@ public class popUpController {
     private String[] players; // Will be initialized in initialize()
     private List<String> resources = List.of("Holz", "Lehm", "Getreide", "Schaf", "Erz");
      
-    public void setGame(CatanGame game) {
+      public void setGame(CatanGame game) {
         this.game = game;
+        initializeDropdowns(); // ruft alles auf, sobald game gesetzt ist
     }
-
     @FXML
-    public void initialize() {
-        // Convert List<Player> to String[] (e.g., using getName())
-        
+    private void initializeDropdowns() {
+
+        List<String> players = game.getPlayers().stream()
+            .map(Player::getName)
+            .toList();
+
+        List<String> resources = Arrays.stream(ResourceType.values())
+            .map(Enum::name)
+            .toList();
+
+        playerComboBox.getItems().addAll(players);
+        giveResourceComboBox.getItems().addAll(resources);
+        receiveResourceComboBox.getItems().addAll(resources);
 
         playerComboBox.getSelectionModel().selectFirst();
         giveResourceComboBox.getSelectionModel().selectFirst();
@@ -44,16 +56,13 @@ public class popUpController {
 
         giveAmountSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, 1));
         receiveAmountSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, 1));
+
     }
 
     @FXML
     private void handleTradeConfirm() {
-        List<Player> playerList = game.getPlayers();
-        players = playerList.stream().map(Player::getName).toArray(String[]::new);
 
-        playerComboBox.getItems().addAll(players);
-        giveResourceComboBox.getItems().addAll(resources);
-        receiveResourceComboBox.getItems().addAll(resources);
+        
         String selectedPlayer = playerComboBox.getValue();
         String giveRes = giveResourceComboBox.getValue();
         int giveAmt = giveAmountSpinner.getValue();
