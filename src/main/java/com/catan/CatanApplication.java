@@ -1,11 +1,11 @@
 package com.catan;
 
+import java.io.IOException;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-
-import java.io.IOException;
 
 /**
  * Main application class for the CATAN board game.
@@ -27,7 +27,7 @@ public class CatanApplication extends Application {
         stage.setScene(scene);
         stage.setResizable(true);
         stage.setMinWidth(800);
-        stage.setMinHeight(600);
+        stage.setMinHeight(620);
         stage.show();
     }
 

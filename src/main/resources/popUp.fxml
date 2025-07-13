@@ -11,7 +11,7 @@
         <VBox spacing="10" layoutX="20" layoutY="20">
             <HBox spacing="10">
                 <Label text="Spieler wählen:"/>
-                <ComboBox fx:id="playerComboBox" prefWidth="200"/>
+                <ComboBox fx:id="playerComboBox" prefWidth="140"/>
             </HBox>
 
             <HBox spacing="10" alignment="CENTER_LEFT">

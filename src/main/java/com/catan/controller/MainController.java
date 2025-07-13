@@ -74,7 +74,7 @@ public class MainController implements Initializable {
         rootPane.setStyle("-fx-background-color: #deb887;");
         mainMenuBar.setStyle("-fx-background-color: #D3D3D3;");
         playerSetupBox.setStyle("-fx-background-color: #87CEFA;");
-        rightPanel.setStyle("-fx-background-color: #a06c2dff;");
+        rightPanel.setStyle("-fx-background-color: #c4883fff;");
         playerInfoArea.setStyle("-fx-background-color: #deb887;");
         
 
@@ -200,7 +200,7 @@ public class MainController implements Initializable {
                 popupStage.setTitle("Handelsfenster");
                 popupStage.initModality(Modality.APPLICATION_MODAL);
                 popupStage.setScene(new Scene(popupRoot));
-                popupStage.setWidth(300);
+                popupStage.setWidth(350);
                 popupStage.setHeight(200);
                 popupStage.centerOnScreen();
                 //popupStage.showAndWait();
@@ -341,11 +341,25 @@ public class MainController implements Initializable {
         playerInfoHeader.setText("Spieler-Info: " + game.getCurrentPlayer().getName());
         playerLogArea.setText("Resourcen:\n"); //Resourcen anzeigen
         Map<ResourceType, Integer> resources = game.getCurrentPlayer().getResources();
+        /*
         for (Map.Entry<ResourceType, Integer> entry : resources.entrySet()) {
             if(entry.getKey() != null){
                 playerLogArea.appendText(entry.getKey() + ": " + entry.getValue() + "\n");
             }
+        }*/
+        StringBuilder sb = new StringBuilder();
+        List<Map.Entry<ResourceType, Integer>> entries = new ArrayList<>(resources.entrySet());
+        for (int i = 0; i < entries.size(); i++) {
+            Map.Entry<ResourceType, Integer> entry = entries.get(i);
+            if (entry.getKey() != null) {
+                sb.append(entry.getKey()).append(": ").append(entry.getValue());
+                if (i < entries.size() - 1) {
+                    sb.append("\n");  // Nur zwischen den Zeilen
+                }
+            }
         }
+            // Set the text area with the formatted string
+        playerLogArea.appendText(sb.toString());
     }
 
     @FXML

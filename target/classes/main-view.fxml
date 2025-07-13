@@ -76,7 +76,7 @@
          <children>
             <VBox fx:id="resourcePanel" spacing="5.0">
                <children>
-                  <Label text="Ressourcen:" style="-fx-font-weight: bold;" />
+                  <Label text="Ressourcen:" style="-fx-font-weight: bold; -fx-font-size: 14px;" />
                </children>
             </VBox>
             <Separator />
@@ -95,7 +95,7 @@
                      <children>
 
                    <!-- Label MIT Margin außerhalb -->
-                        <Label fx:id="playerInfoHeader" text="Spieler-Info:" style="-fx-font-weight: bold;" prefHeight="20.0">
+                        <Label fx:id="playerInfoHeader" text="Spieler-Info:" style="-fx-font-weight: bold; -fx-font-size: 14px;" prefHeight="20.0">
                         
                            <VBox.margin>
                               <Insets top="10.0" left="10.0" />
