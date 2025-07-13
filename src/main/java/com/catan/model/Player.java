@@ -110,7 +110,7 @@ public class Player {
     	for (Map.Entry<ResourceType, Integer> entry : resourcesToSubtract.entrySet()) {
             ResourceType type = entry.getKey();
             int amount = entry.getValue();
-        resources.put(type, resources.get(type) - amount);                          
+        resources.put(type, resources.get(type) - amount);
     	}
     }
     //evtl obsolet

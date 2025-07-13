@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * Represents a vertex coordinate in the hexagonal CATAN board.
@@ -38,7 +37,7 @@ public class VertexCoordinate {
      * Get the hexagon tiles that share this vertex.
      */
     /**
-     * Get the adjacent Vertices 
+     * Get the adjacent Vertices
      */
     public List<VertexCoordinate> getAdjacentVertices(double hexSize, double centerX, double centerY, Map<RoundedPoint2D, VertexCoordinate> coordMap,  Map<VertexCoordinate, VertexCoordinate> validVertices) {
         List<VertexCoordinate> vertices = new ArrayList<>();

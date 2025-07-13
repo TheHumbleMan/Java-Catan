@@ -92,7 +92,7 @@ public class MainController implements Initializable {
         //sodass am Anfang gefragt wird nach Namen
         playerSetupBox.setVisible(true);
     }
-    
+
     @FXML
     private void startGame() {
         // Collect player names
@@ -145,20 +145,11 @@ public class MainController implements Initializable {
             gameStatusLabel.setText("Error starting game: " + e.getMessage());
             e.printStackTrace();
         }
-
-        /*        // Update player info header and log area
-        playerInfoHeader.setText("Spieler-Info: " + game.getCurrentPlayer().getName());
-        playerLogArea.setText("Resourcen:\n"); //Resourcen anzeigen
-            Map<ResourceType, Integer> resources = game.getCurrentPlayer().getResources();
-            for (Map.Entry<ResourceType, Integer> entry : resources.entrySet()) {
-                if(entry.getKey() != null){
-                    playerLogArea.appendText(entry.getKey() + ": " + entry.getValue() + "\n");
-            }
-        }*/
         printPlayerInfo();
         printResources();
+        gameLogArea.appendText(game.getCurrentPlayer().getName() + ": Beginnt das Spiel.\n");
     }
-    
+
     @FXML
     private void rollDice() {
         if (game != null && game.getCurrentPhase() == CatanGame.GamePhase.PLAYING) {
@@ -178,26 +169,16 @@ public class MainController implements Initializable {
             tradeWithBankButton.setDisable(false);
             buyDevelopmentCardButton.setDisable(false);
             gameLogArea.appendText(game.getCurrentPlayer()+" hat "+roll+ " gewürfelt.\n");
-
-            /*            // Update player info header and log area
-             //playerInfoHeader.setText("Spieler-Info: " + game.getCurrentPlayer().getName());
-            playerLogArea.setText("Resourcen:\n"); //Resourcen anzeigen
-            Map<ResourceType, Integer> resources = game.getCurrentPlayer().getResources();
-            for (Map.Entry<ResourceType, Integer> entry : resources.entrySet()) {
-                if(entry.getKey() != null){
-                    playerLogArea.appendText(entry.getKey() + ": " + entry.getValue() + "\n");
-                }
-            }*/
             printPlayerInfo();
             printResources();
-
+            
         }
     }
      
     @FXML
     private void trade() {
     	if (game != null && game.getCurrentPhase() == CatanGame.GamePhase.PLAYING && game.hasRolledDice() && game.hasMovedRobber()) {
-            //tradeWithBankButton.setDisable(true);
+            //tradeWithBankButton.setDisable(true); Löschen?
             gameLogArea.appendText(game.getCurrentPlayer()+" handelt.\n");
             // Open a popup for trading
              try {
@@ -220,7 +201,7 @@ public class MainController implements Initializable {
         e.printStackTrace();
     }
 
-            /* 
+            /* Löschen?
             String logMessage = playerTradeController.showTradeDialog();
             if (logMessage != null) {
             	gameLogArea.appendText(logMessage + "\n");
@@ -310,7 +291,7 @@ public class MainController implements Initializable {
         if (game != null && game.getCurrentPhase() == CatanGame.GamePhase.PLAYING && game.hasRolledDice() && game.hasMovedRobber() ) {
             buyDevelopmentCardButton.setDisable(true);
             gameLogArea.appendText(game.getCurrentPlayer().getName() + " möchte eine Entwicklungskarte kaufen.\n");
-            if (game.getCurrentPlayer().canBuyDevelopmentCard()) {                
+            if (game.getCurrentPlayer().canBuyDevelopmentCard()) {
                 gameLogArea.appendText(game.getCurrentPlayer().getName() + " hat eine Entwicklungskarte gekauft.\n");
                 playerLogArea.setText("   \n");
                 Map<ResourceType, Integer> resources = game.getCurrentPlayer().getResources();
@@ -328,22 +309,15 @@ public class MainController implements Initializable {
 
     
     @FXML
-    private void endTurn() {    	
+    private void endTurn() {
     	if (game != null && game.hasCompletedPlacementForCurrentPhase() && game.hasRolledDice() && game.hasMovedRobber()) { 
     		boolean isBeginning = game.isBeginning(); //wichtig vor endturn abzufragen
+            gameLogArea.appendText(game.getCurrentPlayer().getName() + ": Runde beendet.\n");
             game.endTurn();
             updateGameStatus();
-            /*            // Update player info header and log area
-            playerInfoHeader.setText("Spieler-Info: " + game.getCurrentPlayer().getName());
-            playerLogArea.setText("Resourcen:\n"); //Resourcen anzeigen
-            Map<ResourceType, Integer> resources = game.getCurrentPlayer().getResources();
-            for (Map.Entry<ResourceType, Integer> entry : resources.entrySet()) {
-                if(entry.getKey() != null){
-                    playerLogArea.appendText(entry.getKey() + ": " + entry.getValue() + "\n");
-            }
-            }*/
             printPlayerInfo();
             printResources();
+            gameLogArea.appendText(game.getCurrentPlayer().getName() + ": Runde beginnt.\n");
 
             if (game.getStolenResourcesLog() != null) {
             	gameLogArea.appendText(game.getStolenResourcesLog() + "\n");
@@ -362,7 +336,7 @@ public class MainController implements Initializable {
                 System.out.println("MEIN ENDTURN STATEMENT");
                 game.setHasRolledDice(false); //für nächste Phase
         		boardController.renderBoard();
-               // boardController.renderBoard();                
+               // boardController.renderBoard();
             }
             
         }
@@ -374,7 +348,7 @@ public class MainController implements Initializable {
         if (game == null) return;
         game.checkVictoryCondition();
         Player currentPlayer = game.getCurrentPlayer();
-        currentPlayerLabel.setText("Aktueller Spieler: " + currentPlayer.getName() + 
+        currentPlayerLabel.setText("Aktueller Spieler: " + currentPlayer.getName() +
                                    " (VP: " + currentPlayer.getVictoryPoints() + ")");
         
         String phase = switch (game.getCurrentPhase()) {
@@ -408,23 +382,6 @@ public class MainController implements Initializable {
     @FXML
     public void printPlayerInfo(){
         playerInfoHeader.setText("Spieler-Info: " + game.getCurrentPlayer().getName());
-        /* Druckt die Resourcen ins Spieler-Info-Feld
-        playerLogArea.setText("Resourcen:\n"); //Resourcen anzeigen
-        Map<ResourceType, Integer> resources = game.getCurrentPlayer().getResources();
-        StringBuilder sb = new StringBuilder();
-        List<Map.Entry<ResourceType, Integer>> entries = new ArrayList<>(resources.entrySet());
-        for (int i = 0; i < entries.size(); i++) {
-            Map.Entry<ResourceType, Integer> entry = entries.get(i);
-            if (entry.getKey() != null) {
-                sb.append(entry.getKey()).append(": ").append(entry.getValue());
-                if (i < entries.size() - 1) {
-                    sb.append("\n");  // Nur zwischen den Zeilen
-                }
-            }
-        }
-        // Set the text area with the formatted string
-        playerLogArea.appendText(sb.toString());
-         */
         playerLogArea.setText("Übrige Siedlungen: " + game.getCurrentPlayer().getSettlementCount() + "/5" + "\n");
         playerLogArea.appendText("Übrige Städte: " + game.getCurrentPlayer().getCityCount() + "/4" + "\n");
         playerLogArea.appendText("Übrige Straßen: " + game.getCurrentPlayer().getRoadCount()+ "/15");
