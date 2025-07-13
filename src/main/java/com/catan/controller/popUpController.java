@@ -78,32 +78,28 @@ public class popUpController {
     }
 
     @FXML
-    private void handleTradeConfirm() {
-        TradeOffer offer = new TradeOffer(
-            game.getCurrentPlayer(),
-            game.getPlayerByName(playerComboBox.getValue()),
-            giveResourceComboBox.getValue(),
-            giveAmountSpinner.getValue(),
-            receiveResourceComboBox.getValue(),
-            receiveAmountSpinner.getValue()
-        );
+private void handleTradeConfirm() {
+    TradeOffer offer = new TradeOffer(
+        game.getCurrentPlayer(),
+        game.getPlayerByName(playerComboBox.getValue()),
+        giveResourceComboBox.getValue(),
+        giveAmountSpinner.getValue(),
+        receiveResourceComboBox.getValue(),
+        receiveAmountSpinner.getValue()
+    );
 
-        if (onOfferCreated != null) {
-            onOfferCreated.accept(offer);
-        }
+    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+    alert.setTitle("Handelsangebot erstellt");
+    alert.setHeaderText(null);
+    alert.setContentText("Angebot wurde erstellt und weitergeleitet.");
+    alert.showAndWait();  // Warte hier, bis der Nutzer bestätigt
 
-       Stage currentStage = (Stage) playerComboBox.getScene().getWindow();
-
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Handelsangebot erstellt");
-        alert.setHeaderText(null);
-        alert.setContentText("Angebot wurde erstellt und weitergeleitet.");
-        alert.showAndWait();
-
-      currentStage.close();
-
-        // Optional: Fenster schließen
-        currentStage.close();
+    if (onOfferCreated != null) {
+        onOfferCreated.accept(offer);
     }
+
+    ((Stage) playerComboBox.getScene().getWindow()).close();
+}
+
 
 }
