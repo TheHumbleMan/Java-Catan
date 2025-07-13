@@ -183,54 +183,17 @@ ppublic static final Map<ResourceType, Integer> SETTLEMENT_COST = Map.of(
     ResourceType.BRICK, 1,
     ResourceType.WOOL, 1,
     ResourceType.GRAIN, 1
-);
+);
+
 / Stadt-Kosten
 
 public static final Map<ResourceType, Integer> CITY_COST =  Map.of(
 
    ResourceType.ORE, 3
 
-   ResourceType.GRAIN, 1
+   ResourceType.GRAIN, 2
 ```
 
-## 🧪 Qualitätssicherung & Tests
-
-
-### Test-Abdeckung
-
-> **✅ 21/21 Tests bestanden**
-> - PlayerTest: 7 Tests bestanden
-> - CatanGameTest: 7 Tests bestanden  
-> - HexGameBoardTest: 7 Tests bestanden
-> - Kompilierung: ✅ Erfolgreich, keine Compiler-Fehler
-> - JAR-Paket: Erfolgreich erstellt
-
-### Umfangreiche Test- und Demo-Suite
-
-#### Debug- und Validierungs-Tools
-
-- **EdgeCountAnalysis**: Analysiert die Anzahl der generierten Kanten
-- **EdgeMathTest**: Mathematische Validierung der Kantenberechnung
-- **DeduplicationTest**: Test der Duplikat-Eliminierung bei Vertices/Edges
-- **VertexCoordinateTest**: Validierung des Vertex-Koordinatensystems
-- **RoadVisibilityTest**: Test der Straßen-Sichtbarkeit und -Positionierung
-- **SimpleEdgeTest**: Einfache Edge-Koordinaten Tests
-- **RealDuplicateAnalysis**: Tiefgehende Analyse echter Duplikate
-
-#### Visualisierungs- und Layout-Demos
-
-- **EnhancedBoardDemo**: Demonstration des verbesserten Board-Systems
-- **AuthenticCatanLayoutDemo**: Authentisches CATAN-Layout Showcase
-- **LayoutComparison**: Vergleich verschiedener Layout-Ansätze
-- **VisualLayoutTest**: Visuelle Darstellung der Board-Geometrie
-- **HexPositionDebug**: Debug-Tool für Hexagon-Positionen
-- **SymmetryTest**: Test der Board-Symmetrie
-
-#### Spezialisierte Generatoren
-
-- **CorrectEdgeGenerator**: Korrekte Edge-Generierung für das Board
-- **VertexDebugger**: Detailliertes Vertex-Debugging
-- **SimpleLayoutDemo**: Einfache Layout-Demonstration
 
 ## 🚀 Installation und Verwendung
 
