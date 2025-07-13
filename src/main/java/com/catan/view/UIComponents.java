@@ -215,7 +215,8 @@ public class UIComponents {
             case ORE -> "⛰️";
         };
         
-        return String.format("%s %s: %d", icon, type.getGermanName(), count);
+        //return String.format("%s %s: %d", icon, type.getGermanName(), count); damits ins recourcepanel passt
+        return String.format("%sx%d", icon, count);
     }
     
     /**

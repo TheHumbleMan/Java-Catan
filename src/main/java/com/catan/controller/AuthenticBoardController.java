@@ -52,7 +52,7 @@ public class AuthenticBoardController {
     private final CatanGame game;
     private final AuthenticCatanBoard board;
     private final Pane boardPane;
-    
+
     public AuthenticBoardController(CatanGame game, Pane boardPane) {
     	this.board = game.getBoard();
         this.game = game;
@@ -93,7 +93,7 @@ public class AuthenticBoardController {
      */
     private void renderPlayerDot() {
         Player currentPlayer = game.getCurrentPlayer();
-        Circle playerDot = new Circle(10, getPlayerColor(currentPlayer));
+        Rectangle playerDot = new Rectangle(20, 20, getPlayerColor(currentPlayer));
         playerDot.setLayoutX(30);
         playerDot.setLayoutY(20);
         playerDot.setStroke(Color.BLACK);
