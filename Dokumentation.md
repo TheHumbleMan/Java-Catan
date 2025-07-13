@@ -280,47 +280,61 @@ mvn clean package
 Java-Catan/
 ├── src/
 │   ├── main/
-│   │   ├── java/com/catan/
-│   │   │   ├── CatanApplication.java           # Haupt-Anwendungsklasse
-│   │   │   ├── controller/
-│   │   │   │   ├── MainController.java         # UI-Controller
-│   │   │   │   └── AuthenticBoardController.java # Authentisches Board-Rendering
-│   │   │   ├── demo/                           # Test- und Demo-Tools (20+ Klassen)
-│   │   │   │   ├── EnhancedBoardDemo.java      # Board-System Demonstration
-│   │   │   │   ├── EdgeCountAnalysis.java      # Kanten-Analyse Tool
-│   │   │   │   ├── VertexDebugger.java         # Vertex-Debug Tool
-│   │   │   │   ├── RoadVisibilityTest.java     # Straßen-Sichtbarkeits-Test
-│   │   │   │   └── ...weitere Demo-Tools
-│   │   │   ├── model/                          # Spiel-Logik
-│   │   │   │   ├── Building.java
-│   │   │   │   ├── CatanGame.java
-│   │   │   │   ├── GameBoard.java
-│   │   │   │   ├── AuthenticCatanBoard.java    # Authentisches CATAN-Board
-│   │   │   │   ├── HexGameBoard.java           # Hexagonales Board
-│   │   │   │   ├── HexCoordinate.java          # Hexagon-Koordinaten
-│   │   │   │   ├── EdgeCoordinate.java         # Kanten-Koordinaten  
-│   │   │   │   ├── VertexCoordinate.java       # Vertex-Koordinaten
-│   │   │   │   ├── Player.java
-│   │   │   │   ├── Road.java
-│   │   │   │   ├── TerrainTile.java
-│   │   │   │   └── ...weitere Model-Klassen
-│   │   │   └── view/                           # UI-Komponenten
-│   │   │       └── UIComponents.java
+│   │   ├── java/
+│   │   │   └── com/
+│   │   │       └── catan/
+│   │   │           ├── CatanApplication.java           # Haupt-Anwendungsklasse
+│   │   │           ├── controller/
+│   │   │           │   ├── MainController.java         # UI-Controller
+│   │   │           │   ├── AuthenticBoardController.java # Authentisches Board-Rendering
+│   │   │           │   ├── GameController.java         # Spiel-Controller
+│   │   │           │   ├── PlayerTradeController.java  # Handel zwischen Spielern
+│   │   │           │   ├── PopUpController.java        # Pop-up Dialog Controller
+│   │   │           │   └── TradeResponseController.java # Handels-Antwort Controller
+│   │   │           ├── demo/                           # Test- und Demo-Tools
+│   │   │           │   ├── AuthenticBoardDemo.java     # Board-System Demonstration
+│   │   │           │   └── DeduplicationTest.java      # Duplikat-Eliminierung Test
+│   │   │           ├── model/                          # Spiel-Logik
+│   │   │           │   ├── AuthenticCatanBoard.java    # Authentisches CATAN-Board
+│   │   │           │   ├── Building.java
+│   │   │           │   ├── CatanGame.java
+│   │   │           │   ├── City.java
+│   │   │           │   ├── DiceRoller.java
+│   │   │           │   ├── EdgeCoordinate.java         # Kanten-Koordinaten
+│   │   │           │   ├── GameBoard.java
+│   │   │           │   ├── GameState.java
+│   │   │           │   ├── HexCoordinate.java          # Hexagon-Koordinaten
+│   │   │           │   ├── HexGameBoard.java           # Hexagonales Board
+│   │   │           │   ├── Player.java
+│   │   │           │   ├── ResourceType.java
+│   │   │           │   ├── Road.java
+│   │   │           │   ├── Settlement.java
+│   │   │           │   ├── TerrainTile.java
+│   │   │           │   ├── TerrainType.java
+│   │   │           │   └── VertexCoordinate.java       # Vertex-Koordinaten
+│   │   │           ├── view/                           # UI-Komponenten
+│   │   │           │   └── UIComponents.java
 │   │   └── resources/
-│   │       └── main-view.fxml                  # JavaFX UI-Layout
+│   │       ├── images/
+│   │       │   └── [Spiel-Grafiken]
+│   │       ├── main-view.fxml                          # Haupt-UI-Layout
+│   │       ├── pupUp.fxml                              # Pop-up Dialog Layout
+│   │       └── tradeResponse.fxml                      # Handels-Antwort Layout
 │   └── test/
-│       └── java/com/catan/model/               # Unit-Tests
-│           ├── CatanGameTest.java
-│           ├── HexGameBoardTest.java
-│           ├── EdgeCoordinateTest.java         # Edge-Koordinaten Tests
-│           ├── VertexCoordinateTest.java       # Vertex-Koordinaten Tests
-│           └── ...weitere Test-Klassen
-├── target/
-│   └── java-catan-1.0.0.jar                   # Kompilierte JAR-Datei
-├── pom.xml                                     # Maven-Konfiguration
-├── README.md                                   # Projekt-Dokumentation
-├── start-catan.sh                              # Start-Script
-└── ...weitere Dokumentations-Dateien
+│       └── java/
+│           └── com/
+│               └── catan/
+│                   └── model/                          # Unit-Tests
+│                       ├── CatanGameTest.java
+│                       ├── EdgeCoordinateTest.java     # Edge-Koordinaten Tests
+│                       ├── PlayerTest.java
+│                       └── VertexCoordinateTest.java   # Vertex-Koordinaten Tests
+├── target/                                            # Maven Build-Ordner (wird automatisch erstellt)
+├── pom.xml                                            # Maven-Konfiguration
+├── README.md                                          # Projekt-Dokumentation
+├── Dokumentation.md                                   # Vollständige Dokumentation
+├── start-catan.sh                                     # Start-Script (Unix)
+└── .gitignore                                         # Git-Ignorierung
 ```
 
 ## 🎮 Bedienung
@@ -414,9 +428,8 @@ Java-Catan/
 
 Das Ziel ist es, als erster Spieler **7 Siegpunkte** zu erreichen durch:
 
-1. **Siedlungen bauen** (1 Siegpunkt)
-2. **Städte bauen** (2 Siegpunkte)
-3. **Längste Handelsstraße** (2 Siegpunkte)
+**Siedlungen bauen** (1 Siegpunkt)
+**Städte bauen** (2 Siegpunkte)
 
 ### Spielablauf
 
@@ -490,10 +503,3 @@ TIT24
 - **JavaFX**: Grafische Benutzeroberfläche
 - **Maven**: Build-Management und Abhängigkeiten
 - **JUnit**: Unit-Testing Framework
-
----
-
-## Status: ✅ VOLLSTÄNDIG IMPLEMENTIERT UND OPTIMIERT
-
-**Letztes Update**: 13. Juli 2025  
-**Alle Anforderungen erfüllt**: Authentisches hexagonales CATAN-Board mit optimaler Benutzerfreundlichkeit und Performance
