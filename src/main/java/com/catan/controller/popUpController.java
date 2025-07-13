@@ -15,17 +15,18 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 
 public class popUpController {
 
     @FXML private ComboBox<String> playerComboBox;
-    @FXML private ComboBox<String> giveResourceComboBox;
+    @FXML private ComboBox<ResourceType> giveResourceComboBox;
     @FXML private Spinner<Integer> giveAmountSpinner;
-    @FXML private ComboBox<String> receiveResourceComboBox;
     @FXML private Spinner<Integer> receiveAmountSpinner;
+    @FXML private ComboBox<ResourceType> receiveResourceComboBox;
 
     private CatanGame game;
-    private Consumer<TradeOffer> onOfferCreated; // <<<< NEU
+    private Consumer<TradeOffer> onOfferCreated;
 
     public void setGame(CatanGame game) {
         this.game = game;
@@ -38,52 +39,70 @@ public class popUpController {
 
     private void initializeDropdowns() {
         List<String> players = game.getPlayers().stream()
-        .map(Player::getName)
-        .filter(name -> !name.equals(game.getCurrentPlayer().getName()))  // den aktuellen Spieler rausfiltern
-        .toList();
-
-
-        List<String> resources = Arrays.stream(ResourceType.values())
-            .map(Enum::name)
+            .map(Player::getName)
+            .filter(name -> !name.equals(game.getCurrentPlayer().getName()))  // aktuellen Spieler ausschließen
             .toList();
 
         playerComboBox.getItems().addAll(players);
-        giveResourceComboBox.getItems().addAll(resources);
-        receiveResourceComboBox.getItems().addAll(resources);
 
+        // ResourceType direkt als Enum in ComboBoxes
+        giveResourceComboBox.getItems().addAll(ResourceType.values());
+        receiveResourceComboBox.getItems().addAll(ResourceType.values());
+
+        // StringConverter für deutschen Namen in den ResourceType-ComboBoxes
+        StringConverter<ResourceType> converter = new StringConverter<>() {
+            @Override
+            public String toString(ResourceType resource) {
+                return resource == null ? "" : resource.getGermanName();
+            }
+
+            @Override
+            public ResourceType fromString(String string) {
+                return Arrays.stream(ResourceType.values())
+                    .filter(rt -> rt.getGermanName().equals(string))
+                    .findFirst()
+                    .orElse(null);
+            }
+        };
+        giveResourceComboBox.setConverter(converter);
+        receiveResourceComboBox.setConverter(converter);
+
+        // Erste Einträge auswählen
         playerComboBox.getSelectionModel().selectFirst();
         giveResourceComboBox.getSelectionModel().selectFirst();
         receiveResourceComboBox.getSelectionModel().selectFirst();
 
+        // Spinner initialisieren
         giveAmountSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, 1));
         receiveAmountSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, 1));
     }
 
     @FXML
     private void handleTradeConfirm() {
-        // Einträge lesen
         TradeOffer offer = new TradeOffer(
             game.getCurrentPlayer(),
             game.getPlayerByName(playerComboBox.getValue()),
-            ResourceType.valueOf(giveResourceComboBox.getValue()),
+            giveResourceComboBox.getValue(),
             giveAmountSpinner.getValue(),
-            ResourceType.valueOf(receiveResourceComboBox.getValue()),
+            receiveResourceComboBox.getValue(),
             receiveAmountSpinner.getValue()
         );
 
-        // Optionaler Info-Dialog
+        if (onOfferCreated != null) {
+            onOfferCreated.accept(offer);
+        }
+
+        // Erst Fenster schließen
+        Stage stage = (Stage) playerComboBox.getScene().getWindow();
+        stage.close();
+
+        // Dann eine Informationsbox modal und blockierend anzeigen,
+        // so friert das UI nicht ein, weil das Popup weg ist
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Handelsangebot erstellt");
         alert.setHeaderText(null);
         alert.setContentText("Angebot wurde erstellt und weitergeleitet.");
         alert.showAndWait();
-
-        // Übergabe an den MainController
-        if (onOfferCreated != null) {
-            onOfferCreated.accept(offer);
-        }
-
-        // Fenster schließen
-        ((Stage) playerComboBox.getScene().getWindow()).close();
     }
+
 }
