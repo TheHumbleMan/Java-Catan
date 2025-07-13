@@ -375,7 +375,7 @@ public class MainController implements Initializable {
         String brick  = "  " + "Lehm:" + String.valueOf(currentPlayer.getResourceCount(ResourceType.BRICK));
         String wool   = "  " + "Wolle:" + String.valueOf(currentPlayer.getResourceCount(ResourceType.WOOL));
         String grain  = "  " + "Getreide:" + String.valueOf(currentPlayer.getResourceCount(ResourceType.GRAIN));
-        String ore    = "  " + "Stein:" + String.valueOf(currentPlayer.getResourceCount(ResourceType.ORE));
+        String ore    = "  " + "Erz:" + String.valueOf(currentPlayer.getResourceCount(ResourceType.ORE));
         sb.append(lumber).append(brick).append(wool).append(grain).append(ore);
         resourceLine.setText(sb.toString());
         System.out.println("Ressourcen aktualisiert: " + sb.toString());
