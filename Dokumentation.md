@@ -258,19 +258,16 @@ Java-Catan/
 │   │   │           │   ├── AuthenticCatanBoard.java    # Authentisches CATAN-Board
 │   │   │           │   ├── Building.java
 │   │   │           │   ├── CatanGame.java
-│   │   │           │   ├── City.java
-│   │   │           │   ├── DiceRoller.java
 │   │   │           │   ├── EdgeCoordinate.java         # Kanten-Koordinaten
-│   │   │           │   ├── GameBoard.java
-│   │   │           │   ├── GameState.java
 │   │   │           │   ├── HexCoordinate.java          # Hexagon-Koordinaten
-│   │   │           │   ├── HexGameBoard.java           # Hexagonales Board
 │   │   │           │   ├── Player.java
+│   │   │           │   ├── PlayerColor.java
 │   │   │           │   ├── ResourceType.java
 │   │   │           │   ├── Road.java
-│   │   │           │   ├── Settlement.java
+│   │   │           │   ├── RoundedPoint2D.java
 │   │   │           │   ├── TerrainTile.java
 │   │   │           │   ├── TerrainType.java
+│   │   │           │   ├── TradeOffer.java
 │   │   │           │   └── VertexCoordinate.java       # Vertex-Koordinaten
 │   │   │           ├── view/                           # UI-Komponenten
 │   │   │           │   └── UIComponents.java
@@ -460,6 +457,9 @@ TIT24
 
 ### Technische Credits
 - **Java JDK 17+**: Programmiersprache und Runtime
+- **JavaFX**: Grafische Benutzeroberfläche
+- **Maven**: Build-Management und Abhängigkeiten
+- **JUnit**: Unit-Testing Framework
 - **JavaFX**: Grafische Benutzeroberfläche
 - **Maven**: Build-Management und Abhängigkeiten
 - **JUnit**: Unit-Testing Framework
