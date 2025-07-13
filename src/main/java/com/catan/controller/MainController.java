@@ -212,6 +212,8 @@ public class MainController implements Initializable {
         Stage popupStage = new Stage();
         popupStage.setTitle("Handel anbieten");
         popupStage.setScene(new Scene(root));
+        popupStage.setWidth(350);
+        popupStage.setHeight(200);
         popupStage.initModality(Modality.APPLICATION_MODAL);
         popupStage.showAndWait();
     } catch (IOException e) {
