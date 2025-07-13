@@ -48,7 +48,7 @@
                <Insets top="10.0" bottom="10.0" left="100.0" right="100.0"/>
             </padding>
             <children>
-               <Label text="Spieler Namen eingeben:" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
+               <Label text="Spieler Namen eingeben:" style="-fx-font-weight: bold; -fx-font-size: 18px;"/>
                <TextField fx:id="player1Field" promptText="Spieler 1 Name" style="-fx-alignment: center;"/>
                <TextField fx:id="player2Field" promptText="Spieler 2 Name" style="-fx-alignment: center;"/>
                <TextField fx:id="player3Field" promptText="Spieler 3 Name" style="-fx-alignment: center;"/>

@@ -2,7 +2,6 @@ package com.catan.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -46,12 +45,12 @@ public class AuthenticCatanBoard {
     private final Map<EdgeCoordinate, Road> roads;
     private HexCoordinate robberPosition;
 
-  //die obere sollte für euch nur wichtig sein, ist Ausgabe von validEdges()
+    //die obere sollte für euch nur wichtig sein, ist Ausgabe von validEdges()
     //gibt gibt map aus mit der man normalisieren kann validEdges.get(edge) -> normalisiert
     private final Set<EdgeCoordinate> uniqueEdges;
     
     
-   //die obere sollte für euch nur wichtig sein, ist Ausgabe von validVertices()
+    //die obere sollte für euch nur wichtig sein, ist Ausgabe von validVertices()
     //gibt gibt map aus mit der man normalisieren kann validVertices.get(vertex) -> normalisiert
     private final Map<VertexCoordinate, VertexCoordinate> normalizedVerticeMap;
     private final Map<RoundedPoint2D, List<VertexCoordinate>> coordVerticeMap;
@@ -84,8 +83,8 @@ public class AuthenticCatanBoard {
         
         initializeHexBoard();
 
-        System.out.println("✓ Authentisches CATAN-Board initialisiert: " + 
-                           normalizedVerticeMap.size() + " Siedlungen, " + 
+        System.out.println("✓ Authentisches CATAN-Board initialisiert: " +
+                           normalizedVerticeMap.size() + " Siedlungen, " +
                            uniqueEdges.size() + " Straßen"); //eigentlich unnötige Abfrage
     }
     

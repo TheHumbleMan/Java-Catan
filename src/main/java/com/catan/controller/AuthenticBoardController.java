@@ -93,14 +93,10 @@ public class AuthenticBoardController {
         renderRoadSpots(game.isBeginning());
         renderPlayerDot();
         int settlement_count = new HashSet<>(board.getValidVertices().values()).size();
-        //board.getValidVertices().size()
-        System.out.println("✓ Authentisches CATAN-Board gerendert: " + 
-        		settlement_count + " Siedlungsmöglichkeiten, " + 
+        System.out.println("✓ Authentisches CATAN-Board gerendert: " +
+        		settlement_count + " Siedlungsmöglichkeiten, " +
                          board.getValidVertices().size() + " Siedlungsoptionen");
     	}
-    	/*else {
-    		moveRobber()
-    	} */
         mainController.printPlayerInfo(); // Aktualisiert Spielerinfo
         mainController.printResources(); // Aktualisiert Ressourcenanzeige
     }
@@ -190,7 +186,7 @@ public class AuthenticBoardController {
         Map<VertexCoordinate, VertexCoordinate> allVertices = board.getValidVertices();
         Set<VertexCoordinate> uniqueVertices = new HashSet<>(allVertices.values()); //DIE SIND JETZT NORMALIZED
         for (VertexCoordinate uniqueVertice : uniqueVertices) {
-            //System.out.println(uniqueVertice); nur überprüfung
+            //System.out.println(uniqueVertice); Zur überprüfung
         	VertexCoordinate vertex = uniqueVertice;
             RoundedPoint2D vertexPos = uniqueVertice.toPixel(HEX_RADIUS, BOARD_CENTER_X, BOARD_CENTER_Y);
             boolean canBuildSettlement = game.canPlaceSettlement(vertex, currentPlayer, game.isBeginning());
@@ -273,7 +269,7 @@ public class AuthenticBoardController {
             }
             
             // Tooltip
-            String tooltipText = isOccupied ? "Gebäude vorhanden" : 
+            String tooltipText = isOccupied ? "Gebäude vorhanden" :
                                 (canBuildAnything ? "Klicken für Siedlung" : "Nicht bebaubar");
             Tooltip tooltip = new Tooltip(tooltipText);
             Tooltip.install(settlementSpot, tooltip);
@@ -311,14 +307,6 @@ public class AuthenticBoardController {
                 com.catan.model.Road road = board.getRoads().values().stream()
                     .filter(r -> r.getEdgeCoordinate() != null && r.getEdgeCoordinate().equals(edge))
                     .findFirst().orElse(null);
-                /*
-                System.out.println("Build Road Conditions:");
-                System.out.println("game.hasRolledDice(): " + game.hasRolledDice());
-                System.out.println("game.hasSufficientResourcesForRoad(): " + game.hasSufficientResourcesForRoad());
-
-                boolean result = canBuildRoad && !isInitialRoadPlaced && game.hasRolledDice() && (game.hasSufficientResourcesForRoad() || isBeginning);
-                System.out.println("Overall result: " + result);
-                */
                 if (road != null) {
                     roadSegment.setFill(getPlayerColor(road.getOwner()));
                     roadSegment.setStroke(Color.BLACK);
@@ -349,7 +337,7 @@ public class AuthenticBoardController {
             }
             
             // Tooltip
-            String tooltipText = isRoadOccupied ? "Straße vorhanden" : 
+            String tooltipText = isRoadOccupied ? "Straße vorhanden" :
                                (canBuildRoad ? "Klicken für Straße" : "Straße nicht möglich");
             Tooltip roadTooltip = new Tooltip(tooltipText);
             Tooltip.install(roadSegment, roadTooltip);
@@ -358,41 +346,7 @@ public class AuthenticBoardController {
             roadSegment.toFront();
         }
     }
-    /*
-     * Rendert die Position des Räubers.
-     * Diese Methode ist veraltet und sollte nicht mehr verwendet werden.
-     * Stattdessen wird der Räuber jetzt direkt in renderHexagonTiles() gerendert
-     * und als ImageView hinzugefügt. (als RobberImage)
-     */
-    /*
-    @Deprecated
-    private void renderRobberPosition(){
-    	HexCoordinate robberPosition = board.getRobberPosition();
-    	RoundedPoint2D realCoords = robberPosition.toPixelCatan(HEX_RADIUS);
-    	realCoords.setX(realCoords.getX() + BOARD_CENTER_X);
-    	realCoords.setY(realCoords.getY() + BOARD_CENTER_Y);
-    	Polygon robber = new Polygon();
-    	robber.getPoints().addAll(
-    		     0.0, -10.0,   // Spitze oben
-    		    10.0, 10.0,    // unten rechts
-    		   -10.0, 10.0     // unten links
-    		);
-    	robber.setFill(Color.BLACK);
-        robber.setStroke(Color.GOLD);
-        robber.setStrokeWidth(2.0);
-        robber.setLayoutX(realCoords.getX());
-        robber.setLayoutY(realCoords.getY());
 
-        // Optionaler Schatteneffekt
-        DropShadow ds = new DropShadow(6, Color.DARKGRAY);
-        robber.setEffect(ds);
-
-        // Zum Board hinzufügen
-        boardPane.getChildren().add(robber);
-        robber.toFront();
-    	
-    }*/
-    
     /**
      * Behandelt Klicks auf Hexagon-Tiles (Räuber-Bewegung).
      */
@@ -484,6 +438,7 @@ public class AuthenticBoardController {
         }
     }
     
+    //Löschen?
     //wird aktuell nicht benutzt, aber mal drin gelassen falls ich es brauche
     private Building.Type buildingType(VertexCoordinate vertex) {
     	Building.Type type = null;
@@ -554,12 +509,6 @@ public class AuthenticBoardController {
         hexagon.setFill(new ImagePattern(image));
         hexagon.setStroke(Color.BLACK);
         hexagon.setStrokeWidth(2.0);
-        
-        // Räuber-Anzeige
-        /* Rausgenommen, da jetzt in renderHexagonTiles()
-        if (tile.hasRobber()) {
-            renderRobberPosition();
-        } */
         
         // Hover-Effekte
         hexagon.setOnMouseEntered(e -> hexagon.setStroke(Color.YELLOW));

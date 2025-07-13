@@ -834,8 +834,8 @@ public class CatanGame {
     
 
     public int getTotalDevelopmentCardsRemaining() {
-        return knightCardsRemaining + victoryPointCardsRemaining + 
-               roadBuildingCardsRemaining + yearOfPlentyCardsRemaining + 
+        return knightCardsRemaining + victoryPointCardsRemaining +
+               roadBuildingCardsRemaining + yearOfPlentyCardsRemaining +
                monopolyCardsRemaining;
     }
     
