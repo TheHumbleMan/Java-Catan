@@ -66,6 +66,7 @@ public class MainController implements Initializable {
     private CatanGame game;
     private AuthenticBoardController boardController;
     private BankTradeController bankTradeController;
+    private PlayerTradeController playerTradeController;
 
 
     
@@ -120,6 +121,7 @@ public class MainController implements Initializable {
             
             //für banklogik
             bankTradeController = new BankTradeController(game);
+            playerTradeController = new PlayerTradeController(game);
             
             // Create and initialize the board controller
             boardController = new AuthenticBoardController(game, gamePane);
@@ -191,36 +193,14 @@ public class MainController implements Initializable {
      
     @FXML
     private void trade() {
-        if (game != null && game.getCurrentPhase() == CatanGame.GamePhase.PLAYING && game.hasRolledDice() && game.hasMovedRobber()) {
-            // Implement trade logic here
-            // For now, just a placeholder action
-            tradeButton.setDisable(true);
+    	if (game != null && game.getCurrentPhase() == CatanGame.GamePhase.PLAYING && game.hasRolledDice() && game.hasMovedRobber()) {
+            //tradeWithBankButton.setDisable(true);
             gameLogArea.appendText(game.getCurrentPlayer()+" handelt.\n");
-            // Open a popup for trading
-            try {
-               FXMLLoader loader = new FXMLLoader(getClass().getResource("/popUp.fxml"));
-                Parent popupRoot = loader.load();
-
-                  popUpController popUpController = loader.getController();
-                  popUpController.setGame(game);  // game an PopUpController übergeben
-
-
-                Stage popupStage = new Stage();
-                popupStage.setTitle("Handelsfenster");
-                popupStage.initModality(Modality.APPLICATION_MODAL);
-                popupStage.setScene(new Scene(popupRoot));
-                popupStage.setWidth(350);
-                popupStage.setHeight(200);
-                popupStage.centerOnScreen();
-                //popupStage.showAndWait();
-                popupStage.show(); // statt showAndWait();
-
-            //} catch (IOException e) {
-              //  e.printStackTrace();
-            } catch (IOException e) {
-                System.err.println("Fehler beim Laden des FXML:");
-                e.printStackTrace();
+            String logMessage = playerTradeController.showTradeDialog();
+            if (logMessage != null) {
+            	gameLogArea.appendText(logMessage + "\n");
             }
+            boardController.renderBoard();
 
 
             playerLogArea.setText(" \n");

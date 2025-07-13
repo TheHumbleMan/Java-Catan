@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceDialog;
 
 /**
@@ -733,6 +734,58 @@ public class CatanGame {
     	}
     	else {
     		return player.getName() + " hat nicht genügend Ressourcen für diesen Handel.";
+    	}
+    }
+    
+    public String handlePlayerTrade(Player otherPlayer, Map<ResourceType, Integer> amountCurrentPlayer, Map<ResourceType, Integer> amountOtherPlayer) {
+    	Player currentPlayer = getCurrentPlayer();
+    	if (otherPlayer.hasSufficientResources(amountOtherPlayer) && currentPlayer.hasSufficientResources(amountCurrentPlayer)) {
+    		List<String> fromCurrentToOther = amountCurrentPlayer.entrySet().stream()
+    	        .map(e -> e.getValue() + " " + e.getKey().getGermanName())
+    	        .toList();
+
+    	    List<String> fromOtherToCurrent = amountOtherPlayer.entrySet().stream()
+    	        .map(e -> e.getValue() + " " + e.getKey().getGermanName())
+    	        .toList();
+
+    	    String tradeMessage = currentPlayer.getName() + " möchte dir, " + otherPlayer.getName() + ", "
+    	        + String.join(", ", fromCurrentToOther)
+    	        + " geben und dafür "
+    	        + String.join(", ", fromOtherToCurrent)
+    	        + " von dir erhalten.\n\nMöchtest du diesen Handel annehmen?";
+
+    	    // JavaFX Confirmation Dialog
+    	    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+    	    alert.setTitle("Handelsanfrage");
+    	    alert.setHeaderText("Handel mit " + currentPlayer.getName());
+    	    alert.setContentText(tradeMessage);
+
+    	    // Optional: Icon, Buttons etc.
+    	    Optional<ButtonType> result = alert.showAndWait();
+
+    	    if (result.isPresent() && result.get() == ButtonType.OK) {
+    	        // Handel ausführen
+    	        currentPlayer.spendResources(amountCurrentPlayer);
+    	        currentPlayer.addResources(amountOtherPlayer);
+    	        otherPlayer.spendResources(amountOtherPlayer);
+    	        otherPlayer.addResources(amountCurrentPlayer);
+
+    	        StringBuilder message = new StringBuilder();
+    	        message.append(currentPlayer.getName())
+    	               .append(" hat ")
+    	               .append(otherPlayer.getName())
+    	               .append(" ")
+    	               .append(String.join(", ", fromCurrentToOther))
+    	               .append(" gegeben und dafür ")
+    	               .append(String.join(", ", fromOtherToCurrent))
+    	               .append(" erhalten.");
+
+    	        return message.toString();
+    	    } else {
+    	        return otherPlayer.getName() + " hat den Handel abgelehnt.";
+    	    }
+    	}    	else {
+    		return currentPlayer.getName() + " oder " + otherPlayer.getName() + " hat nicht genügend Ressourcen.";
     	}
     }
     
