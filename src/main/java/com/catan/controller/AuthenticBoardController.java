@@ -75,6 +75,7 @@ public class AuthenticBoardController {
         renderHexagonTiles();
         renderSettlementSpots();
         renderRoadSpots(game.isBeginning());
+        renderPlayerDot();
         int settlement_count = new HashSet<>(board.getValidVertices().values()).size();
         //board.getValidVertices().size()
         System.out.println("✓ Authentisches CATAN-Board gerendert: " + 
@@ -85,6 +86,24 @@ public class AuthenticBoardController {
     		moveRobber()
     	} */
         				
+    }
+
+    /**
+     * Rendert Punkt mit Spielerfarbe oben Links auf dem Board
+     */
+    private void renderPlayerDot() {
+        Player currentPlayer = game.getCurrentPlayer();
+        Circle playerDot = new Circle(10, getPlayerColor(currentPlayer));
+        playerDot.setLayoutX(30);
+        playerDot.setLayoutY(20);
+        playerDot.setStroke(Color.BLACK);
+        playerDot.setStrokeWidth(2.0);
+        boardPane.getChildren().removeIf(node -> node.getUserData() != null && node.getUserData().equals("playerDot"));
+        playerDot.setUserData("playerDot");
+        // Tooltip für den Spieler
+        Tooltip playerTooltip = new Tooltip("Farbe von: " + currentPlayer.getName());
+        Tooltip.install(playerDot, playerTooltip);
+        boardPane.getChildren().add(playerDot);
     }
     
     /**
