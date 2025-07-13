@@ -707,6 +707,34 @@ public class CatanGame {
         		amount,
         		type.getGermanName());
     }
+    public String subtractPlayerRessources(Player player, Map<ResourceType, Integer> cost, Map<ResourceType, Integer> add) {
+    	if (player.hasSufficientResources(cost)) {
+			player.spendResources(cost);
+			player.addResources(add);
+			
+			 StringBuilder message = new StringBuilder();
+		        message.append(player.getName()).append(" hat ");
+
+		        // Hinzugefügte Ressourcen auflisten
+		        List<String> added = add.entrySet().stream()
+		            .map(e -> e.getValue() + " " + e.getKey().getGermanName())
+		            .toList();
+		        message.append(String.join(", ", added));
+		        message.append(" erhalten und ");
+
+		        // Abgegebene Ressourcen auflisten
+		        List<String> removed = cost.entrySet().stream()
+		            .map(e -> e.getValue() + " " + e.getKey().getGermanName())
+		            .toList();
+		        message.append(String.join(", ", removed));
+		        message.append(" ausgegeben.");
+
+		        return message.toString();
+    	}
+    	else {
+    		return player.getName() + " hat nicht genügend Ressourcen für diesen Handel.";
+    	}
+    }
     
     
 }

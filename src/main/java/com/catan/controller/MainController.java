@@ -65,6 +65,8 @@ public class MainController implements Initializable {
     
     private CatanGame game;
     private AuthenticBoardController boardController;
+    private BankTradeController bankTradeController;
+
 
     
     @Override
@@ -118,6 +120,9 @@ public class MainController implements Initializable {
         try {
             // Create game with authentic CATAN board by default
             game = new CatanGame(playerNames);
+            
+            //für banklogik
+            bankTradeController = new BankTradeController(game);
             
             // Create and initialize the board controller
             boardController = new AuthenticBoardController(game, gamePane);
@@ -238,9 +243,14 @@ public class MainController implements Initializable {
     @FXML
     private void tradeWithBank() {
         if (game != null && game.getCurrentPhase() == CatanGame.GamePhase.PLAYING && game.hasRolledDice() && game.hasMovedRobber()) {
-            tradeWithBankButton.setDisable(true);
-            gameLogArea.appendText(game.getCurrentPlayer()+" handelt am Hafen.\n");
-
+            //tradeWithBankButton.setDisable(true);
+            gameLogArea.appendText(game.getCurrentPlayer()+" handelt am mit der Bank.\n");
+            String logMessage = bankTradeController.showTradeDialog();
+            if (logMessage != null) {
+            	gameLogArea.appendText(logMessage + "\n");
+            }
+            boardController.renderBoard();
+            
             //vorher:tradeLogik
             playerLogArea.setText("   \n");
             Map<ResourceType, Integer> resources = game.getCurrentPlayer().getResources();

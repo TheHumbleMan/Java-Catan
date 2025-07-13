@@ -185,6 +185,7 @@ public class Player {
 
         return stolenMap;
     }
+    
 
     
     public int getSettlementsLeft() {
