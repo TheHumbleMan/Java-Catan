@@ -364,6 +364,11 @@ public class CatanGame {
     	return currentPlayer.hasSufficientResources(Player.CITY_COST);
     	
     }
+
+    public boolean hasSufficientResourcesForDevelopmentCard() {
+        Player currentPlayer = getCurrentPlayer();
+        return currentPlayer.hasSufficientResources(Player.DEVELOPMENT_CARD_COST);
+    }
     
     public boolean isBeginning() {
         return currentPhase == GamePhase.INITIAL_PLACEMENT_1 || currentPhase == GamePhase.INITIAL_PLACEMENT_2;

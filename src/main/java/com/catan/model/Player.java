@@ -43,6 +43,12 @@ public class Player {
         ResourceType.LUMBER, 1,
         ResourceType.BRICK, 1
     );
+
+    public static final Map<ResourceType, Integer> DEVELOPMENT_CARD_COST = Map.of(
+        ResourceType.ORE, 1,
+        ResourceType.WOOL, 1,
+        ResourceType.GRAIN, 1
+    );
     
     public Player(String name, PlayerColor color) {
     	this.buildings = new HashSet<>();
@@ -134,6 +140,10 @@ public class Player {
 
     public void setRoadCount(int road_count) {
         this.road_count = road_count;
+    }
+
+    public boolean canBuyDevelopmentCard() {
+        return hasSufficientResources(DEVELOPMENT_CARD_COST);
     }
 
     
