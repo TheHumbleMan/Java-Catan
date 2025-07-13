@@ -17,7 +17,7 @@ Das Java-CATAN Projekt ist eine vollständige Implementierung des klassischen Br
 ### Koordinatensystem-Implementation
 
 Das Projekt verwendet ein duales Koordinatensystem für maximale Präzision:
-
+Grundsätzlich wurden für nötige Vergleiche gerundete Werte verglichen (RoundedPoint2D)
 #### 1. Hexagonales Koordinatensystem (HexCoordinate)
 
 ```java
@@ -43,29 +43,34 @@ public class VertexCoordinate {
     private final int direction; // 0-5 für 6 Ecken
 }
 
-// Edge-Koordinaten für Straßenplätze  
+// Edge-Koordinaten für Straßenplätze, Definition über 2 VertexCoordinaten für Eindeutigkeit 
 public class EdgeCoordinate {
-    private final HexCoordinate hexCoordinate;
-    private final int direction; // 0-5 für 6 Kanten
+	private final VertexCoordinate vertexA;
+   	private final VertexCoordinate vertexB;
 }
 ```
 
-### Mathematische Grundlagen
+### Mathematische Grundlagen/Konzepte
 
 ```java
 // Hexagonale Gitter-Positionierung
-double hexCenterX = centerX + (hexCoord.getQ() * hexSize * 1.5);
-double hexCenterY = centerY + (hexCoord.getR() * hexSize * Math.sqrt(3)) + 
-                   (hexCoord.getQ() * hexSize * Math.sqrt(3) * 0.5);
+double hexWidth = Math.sqrt(3) * hexSize; // für pointy-top
+        double hexHeight = 2.0 * hexSize;
+        double vertSpacing = 0.75 * hexHeight;
+        double x;
+        double y = r * vertSpacing;
+für die Fälle, dass die Reihe nicht ganz außen oder mittig ist, muss die Verschiebung
+für den Catan-Look beachtet werden
 
 // Vertex-Berechnung (Pointy-top)
-double angle = (Math.PI / 3.0 * i) + (Math.PI / 6.0); // 30° Offset
-double vertexX = hexCenterX + hexSize * Math.cos(angle);
-double vertexY = hexCenterY + hexSize * Math.sin(angle);
+double vertexX = centerX + hexCenter.x + vertexRadius * Math.cos((Math.PI / 2) - (direction * Math.PI / 3.0));
+        double vertexY = centerY + hexCenter.y - vertexRadius * Math.sin((Math.PI / 2) - (direction * Math.PI / 3.0));
+Im Grunde 60% Verschiebung relevant pro direction Einheit (also Kante des Hexagons), Startpunkt egal
 
 // Edge-Zentrum-Berechnung
-double edgeCenterX = (vertex1X + vertex2X) / 2.0;
-double edgeCenterY = (vertex1Y + vertex2Y) / 2.0;
+double edgeCenterX = (vertex1Xpos + vertex2Xpos) / 2.0;
+double edgeCenterY = (vertex1Ypos + vertex2Ypos) / 2.0;
+Konzeptionell wurden vorher mit einer anderen Funktion (toPixel) die Koordinaten berechnet und daraufhin halbiert um den Mittelpunkt zu erhalten, da eine Straße immer über 2 Punkte definiert ist
 ```
 
 ## 🎮 Hauptkomponenten
@@ -77,10 +82,11 @@ Das Herzstück des Projekts - implementiert das originale CATAN-Spielbrett:
 ```java
 public class AuthenticCatanBoard {
     // Exakt 54 Siedlungsplätze (VertexCoordinate)
-    // Exakt 72 Straßenpositionen (EdgeCoordinate)
+    // Exakt 72 Straßenpositionen (EdgeCoordinate) über VertexCoordinate Paar
     // 19 Hexagon-Tiles im originalen CATAN 3-4-5-4-3 Layout
     // Mathematisch korrekte Duplikate-Entfernung
     // Vollständige Spiellogik für Gebäude- und Straßenplatzierung
+    // Koordinaten mapping in verschiedene Richtungen z.b Catan -> "reale"
 }
 ```
 
@@ -90,11 +96,11 @@ Optimierte Rendering-Engine für das authentische Board:
 
 ```java
 public class AuthenticBoardController {
-    // Optimales Rendering mit HEX_SPACING = 95.0
     // Interaktive Siedlungs- und Straßenplatzierung
     // Authentische CATAN-Farben und Styling
     // Hover-Effekte und Tooltips
     // Räuber-Bewegung
+    // Click-event handeling
 }
 ```
 
@@ -102,27 +108,12 @@ public class AuthenticBoardController {
 
 ```java
 public class CatanGame {
-    // Standardmäßig authentisches Board
-    // Neue Konstruktor-Überladungen
-    // Support für alle drei Board-Typen
-    // Vollständige Spielregeln-Implementation
+    // sehr wichtige Klasse
+    // verknüpft Klassen wie Player, Building
+    // besitzt wichtige Hauptfunktion wie Prüfung der "Bauerlaubnis" des Spielers
+    // Zuständig für Verteilung der Ressourcen und Bewegung des Räubers
+    // aber auch zuständig für die richtige Hinterlegung der Board aktionen
 }
-```
-
-### 4. UI-Komponenten (UIComponents)
-
-```java
-// Hexagonale Spielfelder
-public static Group createEnhancedHexagonalTile(
-    double radius, String terrainType, int numberToken)
-
-// Gebäudeplätze (Siedlungen/Städte)
-public static Circle createBuildingSpot(
-    double radius, String availability)
-
-// Straßenplätze
-public static Rectangle createRoadSpot(
-    double length, double width, double rotation, String availability)
 ```
 
 ## 🔧 Wichtige Implementierungsdetails
@@ -143,15 +134,13 @@ final double BOARD_CENTER_Y = 350.0;             // Standardzentrum
 
 ```java
 // Ultra-hohe Präzision für Duplikatserkennung
-double precision = 1000.0; // Sub-Pixel-Präzision
-long roundedX = Math.round(vertexX * precision);
-long roundedY = Math.round(vertexY * precision);
-String vertexKey = roundedX + "," + roundedY;
+düber RoundedPoint2D, erkennt Werte +-1 als gleich,
+perfekt für Vermeidung von Vergleichsfehlern
 ```
 
 ### Smart Filtering System
 
-- **Intelligente Filterung**: Nur relevante Positionen werden angezeigt (~10-20 statt 114)
+- **Intelligente Filterung**: Nur relevante Straßen/Siedlungsplätze werden hervorgehoben
 - **Kontextbasierte Anzeige**: Bauplätze basierend auf Spielzustand und aktuellem Spieler
 - **Performance-Optimierung**: ~90% weniger UI-Elemente durch intelligente Filterung
 
@@ -183,57 +172,28 @@ String vertexKey = roundedX + "," + roundedY;
 
 ```java
 // Straßen-Kosten
-public static final Map<ResourceType, Integer> ROAD_COST = Map.of(
+ppublic static final Map<ResourceType, Integer> ROAD_COST = Map.of(
     ResourceType.LUMBER, 1,
     ResourceType.BRICK, 1
 );
 
 // Siedlungs-Kosten
-public static final Map<ResourceType, Integer> SETTLEMENT_COST = Map.of(
+ppublic static final Map<ResourceType, Integer> SETTLEMENT_COST = Map.of(
     ResourceType.LUMBER, 1,
     ResourceType.BRICK, 1,
     ResourceType.WOOL, 1,
     ResourceType.GRAIN, 1
 );
+
+/ Stadt-Kosten
+
+public static final Map<ResourceType, Integer> CITY_COST =  Map.of(
+
+   ResourceType.ORE, 3
+
+   ResourceType.GRAIN, 2
 ```
 
-## 🧪 Qualitätssicherung & Tests
-
-### Test-Abdeckung
-
-> **✅ 21/21 Tests bestanden**
-> - PlayerTest: 7 Tests bestanden
-> - CatanGameTest: 7 Tests bestanden  
-> - HexGameBoardTest: 7 Tests bestanden
-> - Kompilierung: ✅ Erfolgreich, keine Compiler-Fehler
-> - JAR-Paket: Erfolgreich erstellt
-
-### Umfangreiche Test- und Demo-Suite
-
-#### Debug- und Validierungs-Tools
-
-- **EdgeCountAnalysis**: Analysiert die Anzahl der generierten Kanten
-- **EdgeMathTest**: Mathematische Validierung der Kantenberechnung
-- **DeduplicationTest**: Test der Duplikat-Eliminierung bei Vertices/Edges
-- **VertexCoordinateTest**: Validierung des Vertex-Koordinatensystems
-- **RoadVisibilityTest**: Test der Straßen-Sichtbarkeit und -Positionierung
-- **SimpleEdgeTest**: Einfache Edge-Koordinaten Tests
-- **RealDuplicateAnalysis**: Tiefgehende Analyse echter Duplikate
-
-#### Visualisierungs- und Layout-Demos
-
-- **EnhancedBoardDemo**: Demonstration des verbesserten Board-Systems
-- **AuthenticCatanLayoutDemo**: Authentisches CATAN-Layout Showcase
-- **LayoutComparison**: Vergleich verschiedener Layout-Ansätze
-- **VisualLayoutTest**: Visuelle Darstellung der Board-Geometrie
-- **HexPositionDebug**: Debug-Tool für Hexagon-Positionen
-- **SymmetryTest**: Test der Board-Symmetrie
-
-#### Spezialisierte Generatoren
-
-- **CorrectEdgeGenerator**: Korrekte Edge-Generierung für das Board
-- **VertexDebugger**: Detailliertes Vertex-Debugging
-- **SimpleLayoutDemo**: Einfache Layout-Demonstration
 
 ## 🚀 Installation und Verwendung
 

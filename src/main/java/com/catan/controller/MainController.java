@@ -72,8 +72,8 @@ public class MainController implements Initializable {
     private CatanGame game;
     private AuthenticBoardController boardController;
     private BankTradeController bankTradeController;
-    private PlayerTradeController playerTradeController;
     private HostServices hostServices; // Für das Öffnen von externen Links
+
 
 
 
@@ -140,7 +140,6 @@ public class MainController implements Initializable {
             
             // Controller für Bank- und Spielerhandel initialisieren
             bankTradeController = new BankTradeController(game);
-            playerTradeController = new PlayerTradeController(game);
             
             // Board-Controller erstellen und initialisieren
             boardController = new AuthenticBoardController(game, gamePane);
@@ -221,6 +220,7 @@ public class MainController implements Initializable {
                 // Callback für erstellte Handelsangebote setzen
                 controller.setOnOfferCreated(this::showTradeResponseWindow);
 
+
                 // Popup-Fenster konfigurieren und anzeigen
                 Stage popupStage = new Stage();
                 popupStage.setTitle("Handel anbieten");
@@ -232,6 +232,7 @@ public class MainController implements Initializable {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
         }
         
         // UI nach Handel aktualisieren
@@ -269,7 +270,7 @@ public class MainController implements Initializable {
     @FXML
     private void tradeWithBank() {
         if (game != null && game.getCurrentPhase() == CatanGame.GamePhase.PLAYING && game.hasRolledDice() && game.hasMovedRobber()) {
-            gameLogArea.appendText(game.getCurrentPlayer()+" handelt mit der Bank.\n");
+            gameLogArea.appendText(game.getCurrentPlayer()+" handelt mit dem Hafen.\n");
             
             // Bank-Handel-Dialog anzeigen
             String logMessage = bankTradeController.showTradeDialog();
