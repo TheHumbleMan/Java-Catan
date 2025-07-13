@@ -18,7 +18,7 @@ import javafx.scene.control.ChoiceDialog;
  * Handles turn management, dice rolling, resource production, and victory conditions.
  */
 public class CatanGame {
-    public static final int VICTORY_POINTS_TO_WIN = 10;
+    public static final int VICTORY_POINTS_TO_WIN = 5; //TESTZWECKE
     public static final int MAX_HAND_SIZE_ON_SEVEN = 7;
     
     
@@ -146,9 +146,16 @@ public class CatanGame {
         }
         hasMovedRobber = false;
         System.out.println("7 GEÜWRFELT (in handleSevenRolled aktuell)");
+        robberAlert();
         
         // Current player must move the robber
         // In a real implementation, this would trigger UI for robber placement
+    }
+    private void robberAlert() {
+    	Alert alert = new Alert(Alert.AlertType.INFORMATION);
+    	alert.setTitle("7 gewürfelt");
+        alert.setContentText("Räuber muss versetzt werden vor weiteren Handlungen!");
+        alert.showAndWait();
     }
     
     private void discardRandomCards(Player player, int count) {
@@ -324,7 +331,7 @@ public class CatanGame {
         	skipInkrement = false;
         }
     
-    private void checkVictoryCondition() {
+    public void checkVictoryCondition() {
         for (Player player : players) {
             if (player.getVictoryPoints() >= VICTORY_POINTS_TO_WIN) {
                 gameFinished = true;

@@ -16,6 +16,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -299,7 +300,7 @@ public class MainController implements Initializable {
                 endTurnButton.setDisable(true);
                 System.out.println("MEIN ENDTURN STATEMENT");
                 game.setHasRolledDice(false); //für nächste Phase
-                boardController.renderBoard();
+                boardController.renderBoard();                
             }
             
         }
@@ -307,7 +308,7 @@ public class MainController implements Initializable {
     
     private void updateGameStatus() {
         if (game == null) return;
-        
+        game.checkVictoryCondition();
         Player currentPlayer = game.getCurrentPlayer();
         currentPlayerLabel.setText("Current Player: " + currentPlayer.getName() + 
                                    " (VP: " + currentPlayer.getVictoryPoints() + ")");
@@ -324,6 +325,12 @@ public class MainController implements Initializable {
             tradeButton.setDisable(true);
             tradeWithBankButton.setDisable(true);
             endTurnButton.setDisable(true);
+            
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Spiel beendet");
+            alert.setHeaderText("🎉 " + game.getWinner().getName() + " hat gewonnen!");
+            alert.setContentText("Herzlichen Glückwunsch zum Sieg!\nDas Spiel ist beendet.");
+            alert.showAndWait();
         } else {
             gameStatusLabel.setText("Phase: " + phase);
             rollDiceButton.setDisable(game.getCurrentPhase() != CatanGame.GamePhase.PLAYING);
