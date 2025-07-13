@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"Alle Packages","u":"allpackages-index.html"},{"l":"com.catan"},{"l":"com.catan.controller"},{"l":"com.catan.model"},{"l":"com.catan.view"}];updateSearchResults();
