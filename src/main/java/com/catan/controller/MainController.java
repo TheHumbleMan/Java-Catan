@@ -61,6 +61,7 @@ public class MainController implements Initializable {
     @FXML private BorderPane rootPane;
     @FXML private VBox rightPanel;
     @FXML private ScrollPane scrollPane;
+    @FXML private Label resourceLine;
     
     private CatanGame game;
     private AuthenticBoardController boardController;
@@ -70,6 +71,9 @@ public class MainController implements Initializable {
     
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        for (String font : javafx.scene.text.Font.getFamilies()) {
+            System.out.println(font);
+        }
         // Initialize UI components
         // TODO: Add UI styling methods to UIComponents class if needed
 
@@ -78,8 +82,7 @@ public class MainController implements Initializable {
         playerSetupBox.setStyle("-fx-background-color: #87CEFA;");
         rightPanel.setStyle("-fx-background-color: #c4883fff;");
         playerInfoArea.setStyle("-fx-background-color: #deb887;");
-        
-
+        resourceLine.setStyle("-fx-font-family: 'Segoe UI Emoji', 'Noto Color Emoji', 'Apple Color Emoji'; -fx-font-size: 14px; wrapText=true");
 
 
         // Hide game controls initially
@@ -287,6 +290,7 @@ public class MainController implements Initializable {
             }
             }*/
             printPlayerInfo();
+            printResources();
 
             if (game.getStolenResourcesLog() != null) {
             	gameLogArea.appendText(game.getStolenResourcesLog() + "\n");
@@ -370,6 +374,24 @@ public class MainController implements Initializable {
         }
             // Set the text area with the formatted string
         playerLogArea.appendText(sb.toString());
+    }
+
+    /*
+     * Druckt die Resourcen in das Recourcen-Feld
+     */
+    @FXML
+    private void printResources() {
+        Player currentPlayer = game.getCurrentPlayer();
+        StringBuilder sb = new StringBuilder();
+        String lumber = " " + "🌲x" + String.valueOf(currentPlayer.getResourceCount(ResourceType.LUMBER));
+        String brick = " " + "🧱x" + String.valueOf(currentPlayer.getResourceCount(ResourceType.BRICK));
+        String wool = " " + "🐑x" + String.valueOf(currentPlayer.getResourceCount(ResourceType.WOOL));
+        String grain = " " + "🌾x" + String.valueOf(currentPlayer.getResourceCount(ResourceType.GRAIN));
+        String ore = " " + "⛰️x" + String.valueOf(currentPlayer.getResourceCount(ResourceType.ORE));
+        sb.append(lumber).append(brick).append(wool).append(grain).append(ore);
+        resourceLine.setText(sb.toString());
+        resourceLine.setText("🌲x3  🧱x1  🐑x2  🌾x0  ⛰️x4");
+        System.out.println("Ressourcen aktualisiert: " + sb.toString());
     }
 
     @FXML

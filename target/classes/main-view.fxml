@@ -76,7 +76,8 @@
          <children>
             <VBox fx:id="resourcePanel" spacing="5.0">
                <children>
-                  <Label text="Ressourcen:" style="-fx-font-weight: bold; -fx-font-size: 14px;" />
+                  <Label text="Ressourcen: " style="-fx-font-weight: bold; -fx-font-size: 14px;" />
+                  <Label fx:id="resourceLine" prefHeight="20"/>
                </children>
             </VBox>
             <Separator />
