@@ -676,13 +676,14 @@ public class CatanGame {
             Player selectedPlayer = choosePlayer(adjacentPlayers);
             if (selectedPlayer != null) {
 	            Map<ResourceType, Integer>stolenResources = stealFromPlayer(selectedPlayer);
-	            stolenResourcesLog = getSingleStolenResourceAsString(selectedPlayer, stolenResources);            	           
+	            stolenResourcesLog = getSingleStolenResourceAsString(selectedPlayer, stolenResources);
 	            }
             else {
             	stolenResourcesLog = (getSingleStolenResourceAsString(selectedPlayer, null));
             }
         }
-    } 
+    }
+
     //sorgt für erkennung aller spieler der hexes
     private Set<Player> determinePlayers(HexCoordinate position) {
     	Set<Player> adjacentPlayers = new HashSet<>();

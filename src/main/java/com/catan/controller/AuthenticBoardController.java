@@ -134,18 +134,8 @@ public class AuthenticBoardController {
                 // Klick-Handler für Räuber-Bewegung
                 final HexCoordinate finalHexCoord = hexCoord;
                 hexagon.setOnMouseClicked(e -> handleTileClick(finalHexCoord));
-                
                 boardPane.getChildren().add(hexagon);
-                // Render Räuber wenn vorhanden
-                if (tile.hasRobber()) {
-                ImageView robberImage = new ImageView(new Image(getClass().getResourceAsStream("/images/robber3Small.png")));
-                robberImage.setFitWidth(ROBBER_SIZE);
-                robberImage.setFitHeight(ROBBER_SIZE);
-                robberImage.setLayoutX(BOARD_CENTER_X + hexCenter.x - (ROBBER_SIZE / 2));
-                robberImage.setLayoutY(BOARD_CENTER_Y + hexCenter.y - (ROBBER_SIZE / 2));
-                boardPane.getChildren().add(robberImage);
-                }
-                
+
                 // Nummern-Token für Nicht-Wüsten-Tiles
                 if (tile.getNumberToken() > 0) {
                     Text numberText = UIComponents.createNumberToken(tile.getNumberToken());
@@ -169,6 +159,17 @@ public class AuthenticBoardController {
                     boardPane.getChildren().add(backgroundCircle);
                     boardPane.getChildren().add(numberText);
                 }
+
+                // Render Räuber wenn vorhanden
+                if (tile.hasRobber()) {
+                ImageView robberImage = new ImageView(new Image(getClass().getResourceAsStream("/images/robber3Small.png")));
+                robberImage.setFitWidth(ROBBER_SIZE);
+                robberImage.setFitHeight(ROBBER_SIZE);
+                robberImage.setLayoutX(BOARD_CENTER_X + hexCenter.x - (ROBBER_SIZE / 2));
+                robberImage.setLayoutY(BOARD_CENTER_Y + hexCenter.y - (ROBBER_SIZE / 2));
+                boardPane.getChildren().add(robberImage);
+                }
+                
             }
         }
     }
