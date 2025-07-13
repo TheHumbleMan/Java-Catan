@@ -4,11 +4,11 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.catan.controller.MainController">
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.catan.controller.MainController" fx:id="rootPane">
    <top>
       <VBox spacing="10.0">
          <children>
-            <MenuBar>
+            <MenuBar fx:id="mainMenuBar">
               <menus>
                 <Menu mnemonicParsing="false" text="Spiel">
                   <items>
@@ -24,9 +24,10 @@
                 </Menu>
               </menus>
             </MenuBar>
+            
             <HBox spacing="20.0" alignment="CENTER_LEFT">
                <children>
-                  <Label fx:id="currentPlayerLabel" text="Aktueller Spieler: -" style="-fx-font-weight: bold; -fx-font-size: 14px;" />
+                  <Label fx:id="currentPlayerLabel" text="Current Player: -" style="-fx-font-weight: bold; -fx-font-size: 14px;" />
                   <Label fx:id="gamePhaseLabel" text="Phase: -" />
                   <Label fx:id="diceRollLabel" text="Letzter Wurf: -" />
                </children>
@@ -34,6 +35,7 @@
                   <Insets left="10.0" right="10.0" />
                </padding>
             </HBox>
+            <Separator />
          </children>
       </VBox>
    </top>
@@ -42,12 +44,15 @@
       <children>
          <!-- Setup Panel mit Textfeldern -->
          <VBox fx:id="playerSetupBox" spacing="10.0" alignment="CENTER" visible="true">
+            <padding>
+               <Insets top="10.0" bottom="10.0" left="100.0" right="100.0"/>
+            </padding>
             <children>
                <Label text="Spieler Namen eingeben:" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
-               <TextField fx:id="player1Field" promptText="Spieler 1 Name"/>
-               <TextField fx:id="player2Field" promptText="Spieler 2 Name"/>
-               <TextField fx:id="player3Field" promptText="Spieler 3 Name"/>
-               <TextField fx:id="player4Field" promptText="Spieler 4 Name"/>
+               <TextField fx:id="player1Field" promptText="Spieler 1 Name" style="-fx-alignment: center;"/>
+               <TextField fx:id="player2Field" promptText="Spieler 2 Name" style="-fx-alignment: center;"/>
+               <TextField fx:id="player3Field" promptText="Spieler 3 Name" style="-fx-alignment: center;"/>
+               <TextField fx:id="player4Field" promptText="Spieler 4 Name" style="-fx-alignment: center;"/>
                <Button text="Spiel starten" onAction="#startGame"/>
                <Label fx:id="gameStatusLabel" textFill="red"/>
             </children>
@@ -67,7 +72,7 @@
    </StackPane>
 </center>
    <right>
-      <VBox spacing="10.0" prefWidth="250.0">
+      <VBox spacing="10.0" prefWidth="250.0" fx:id="rightPanel">
          <children>
             <VBox fx:id="resourcePanel" spacing="5.0">
                <children>
@@ -84,23 +89,23 @@
 			  </children>
 			</VBox>
             <Separator />
-            <ScrollPane fitToWidth="true" prefHeight="250.0">
+            <ScrollPane fx:id="scrollPane" fitToWidth="true" fitToHeight="true">
                 <content>
                    <VBox fx:id="playerInfoArea" spacing="5.0">
                      <children>
 
                    <!-- Label MIT Margin außerhalb -->
-                        <Label fx:id="playerInfoHeader" text="Spieler-Info:" style="-fx-font-weight: bold;" >
+                        <Label fx:id="playerInfoHeader" text="Spieler-Info:" style="-fx-font-weight: bold;" prefHeight="20.0">
                         
                            <VBox.margin>
                               <Insets top="10.0" left="10.0" />
                            </VBox.margin>
                         </Label>
 
-            <!-- TextArea MIT Margin -->
+                  <!-- TextArea MIT Margin -->
                         <TextArea fx:id="playerLogArea" editable="false" prefHeight="130.0" wrapText="true">
                            <VBox.margin>
-                              <Insets top="5.0" left="10.0" right="10.0" bottom="5.0" />
+                              <Insets top="5.0" left="10.0" right="10.0" bottom="10.0" />
                            </VBox.margin>
                         </TextArea>
 

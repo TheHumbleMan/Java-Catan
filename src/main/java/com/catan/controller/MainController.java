@@ -14,14 +14,16 @@ import com.catan.model.ResourceType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -55,15 +57,29 @@ public class MainController implements Initializable {
     @FXML private ScrollPane boardScrollPane;
     @FXML private VBox playerInfoArea;
 
+    @FXML private MenuBar mainMenuBar;
+    @FXML private BorderPane rootPane;
+    @FXML private VBox rightPanel;
+    @FXML private ScrollPane scrollPane;
     
     private CatanGame game;
     private AuthenticBoardController boardController;
+
     
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Initialize UI components
         // TODO: Add UI styling methods to UIComponents class if needed
+
+        rootPane.setStyle("-fx-background-color: #deb887;");
+        mainMenuBar.setStyle("-fx-background-color: #D3D3D3;");
+        playerSetupBox.setStyle("-fx-background-color: #87CEFA;");
+        rightPanel.setStyle("-fx-background-color: #a06c2dff;");
+        playerInfoArea.setStyle("-fx-background-color: #deb887;");
         
+
+
+
         // Hide game controls initially
         gameControlsBox.setVisible(false);
         boardScrollPane.setVisible(false);
