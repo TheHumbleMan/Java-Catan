@@ -83,10 +83,6 @@
             <Separator />
             <VBox fx:id="gameControlsBox" spacing="10.0">
 			  <children>
-			    <Button fx:id="rollDiceButton" onAction="#rollDice" text="Würfeln" prefWidth="300.0"/>
-             <Button fx:id="tradeButton" onAction="#trade" text="Handeln" prefWidth="300.0"/>
-             <Button fx:id="tradeWithBankButton" onAction="#tradeWithBank" text="Handeln (Bank)" prefWidth="300.0"/>
-			    <Button fx:id="endTurnButton" onAction="#endTurn" text="Zug beenden" prefWidth="300.0"/>
 			    <Button fx:id="rollDiceButton" onAction="#rollDice" text="Würfeln" prefWidth="250.0"/>
              <Button fx:id="tradeButton" onAction="#trade" text="Handeln" prefWidth="250.0"/>
              <Button fx:id="tradeWithBankButton" onAction="#tradeWithBank" text="Handeln (Bank)" prefWidth="250.0"/>
